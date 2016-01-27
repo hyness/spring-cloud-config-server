@@ -1,9 +1,10 @@
-FROM java:8-jdk
+FROM maven:latest
 MAINTAINER hyness <hyness@gmail.com>
 
-ENV SCCS_VERSION 1.0.3.RELEASE
 EXPOSE 8888
+COPY . /opt/spring-cloud-config-server/
 WORKDIR /opt/spring-cloud-config-server/
-VOLUME /opt/spring-cloud-config-server/config
-RUN curl -LO http://search.maven.org/remotecontent?filepath=org/springframework/cloud/spring-cloud-config-server/${SCCS_VERSION}/spring-cloud-config-server-${SCCS_VERSION}-exec.jar
-CMD java -Djava.security.egd=file:/dev/./urandom -jar spring-cloud-config-server-${SCCS_VERSION}-exec.jar
+RUN mvn package
+VOLUME /config
+WORKDIR /
+CMD java -Djava.security.egd=file:/dev/./urandom -jar /opt/spring-cloud-config-server/target/spring-cloud-config-server-*.jar --server.port=8888 --spring.config.name=application
