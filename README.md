@@ -1,32 +1,39 @@
 # Spring Cloud Config Server
-
 A docker image of [Spring Cloud Config Server](http://cloud.spring.io/spring-cloud-config/spring-cloud-config.html).
 
 ## Usage
+```
+docker run -it --name=spring-cloud-config-server \
+      -p 8888:8888 \
+      -v </path/to/config>:/config \
+      hyness/spring-cloud-config-server
+```
 
+#### Parameters
+* `-p 8888` Server port
+* `-v /config` Mounted configuration
+
+## Usage
 Spring Cloud Config Server is a normal Spring Boot application, it can be configured through all the ways a Spring Boot 
-application can be configured.  You may use environment variables or you can mount configuration in the usual places 
-Spring Boot will look for them like the working directory (which is **/opt/spring-cloud-config-server**) 
-or a subdirectory named **config**.  See the [Spring Boot documentation](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
-for further information on how to use and configure Spring Boot.
+application can be configured.  You may use environment variables or you can mount configuration in the provided volume.  The configuration file must be named **application** and may be a properties or yaml file. See the [Spring Boot documentation](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-external-config) for further information on how to use and configure Spring Boot.
 
-### Running a Config Server Using Environment Variables
+### Configuration examples
 ```
+# Using a mounted config Directory
 docker run -it -p 8888:8888 \
-      -e spring_cloud_config_server_git_uri=https://github.com/spring-cloud-samples/config-repo \
+      -v /path/to/config/dir:/config \
       hyness/spring-cloud-config-server
-```
-### Running a Config Server Using a Mounted application.properties
-```
+
+# Using a mounted application.yml
 docker run -it -p 8888:8888 \
-      -v /path/to/application.properties:/opt/spring-cloud-config-server/application.properties \
+      -v /path/to/application.properties:/config/application.yml \
       hyness/spring-cloud-config-server
-```
-### Running a Config Server Using a Mounted config Directory
-```
+
+# Configure through environment variables without a configuration file
 docker run -it -p 8888:8888 \
-      -v /path/to/config/dir:/opt/spring-cloud-config-server/config \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
+
 ```
 ### Verify Samples Above
 ```
