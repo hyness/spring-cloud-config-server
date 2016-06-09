@@ -17,8 +17,7 @@ docker run -it --name=spring-cloud-config-server \
 * `-v /config` Mounted configuration
 
 ###  Configuring Spring Cloud Config Server
-Spring Cloud Config Server is a normal Spring Boot application, it can be configured through all the ways a Spring Boot 
-application can be configured.  You may use environment variables or you can mount configuration in the provided volume.  The configuration file must be named **application** and may be a properties or yaml file. See the [Spring Boot documentation](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-external-config) for further information on how to use and configure Spring Boot.
+Spring Cloud Config Server is a normal Spring Boot application, it can be configured through all the ways a Spring Boot application can be configured.  You may use environment variables or you can mount configuration in the provided volume.  The configuration file must be named **application** and may be a properties or yaml file. See the [Spring Boot documentation](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-external-config) for further information on how to use and configure Spring Boot.
 
 
 #### Configuration examples
