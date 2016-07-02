@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hyness</groupId>
 	<artifactId>spring-cloud-config-server</artifactId>
-	<version>1.1.1.RELEASE</version>
+	<version>1.1.2.RELEASE</version>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
