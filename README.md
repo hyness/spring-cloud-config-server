@@ -29,7 +29,7 @@ docker run -it -p 8888:8888 \
 
 # Using a mounted application.yml
 docker run -it -p 8888:8888 \
-      -v /path/to/application.properties:/config/application.yml \
+      -v /path/to/application.yml:/config/application.yml \
       hyness/spring-cloud-config-server
 
 # Configure through environment variables without a configuration file
