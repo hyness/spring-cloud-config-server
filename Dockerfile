@@ -1,4 +1,4 @@
-FROM maven:latest
+FROM maven:alpine
 MAINTAINER hyness <hyness@gmail.com>
 
 EXPOSE 8888
