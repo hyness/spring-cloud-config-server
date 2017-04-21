@@ -43,3 +43,35 @@ docker run -it -p 8888:8888 \
 ```
 $ curl http://localhost:8888/foo/development
 ```
+
+### Required Backend Configuration
+Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 3 backends to choose from...
+
+#### Git
+```
+# Github example
+docker run -it -p 8888:8888 \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
+      hyness/spring-cloud-config-server
+
+# Local git repo example
+docker run -it -p 8888:8888 \
+      -v /path/to/config/files/dir:/config \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
+      hyness/spring-cloud-config-server
+```
+
+#### Filesystem
+```
+docker run -it -p 8888:8888 \
+      -v /path/to/config/files/dir:/config \
+      -e SPRING_PROFILES_ACTIVE=native \
+      hyness/spring-cloud-config-server
+```
+
+#### Vault
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=vault \
+      hyness/spring-cloud-config-server
+```
