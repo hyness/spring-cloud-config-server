@@ -24,7 +24,7 @@ Spring Cloud Config Server is a normal Spring Boot application, it can be config
 
 #### Configuration examples
 
-##### Using a mounted config Directory
+##### Using a mounted config directory
 ```
 docker run -it -p 8888:8888 \
       -v /path/to/config/dir:/config \
@@ -58,7 +58,7 @@ $ curl http://localhost:8888/foo/development
 Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 3 backends to choose from...
 
 #### Git
-##### Github example
+##### Remote git repo example
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
