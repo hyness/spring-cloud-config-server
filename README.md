@@ -23,28 +23,33 @@ Spring Cloud Config Server is a normal Spring Boot application, it can be config
 
 
 #### Configuration examples
+
+##### Using a mounted config Directory
 ```
-# Using a mounted config Directory
 docker run -it -p 8888:8888 \
       -v /path/to/config/dir:/config \
       hyness/spring-cloud-config-server
+```
 
-# Using a mounted application.yml
+##### Using a mounted application.yml
+```
 docker run -it -p 8888:8888 \
       -v /path/to/application.yml:/config/application.yml \
       hyness/spring-cloud-config-server
-
-# Configure through environment variables without a configuration file
+```
+##### Configure through environment variables without a configuration file
+```
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
-
-# Configure through command line arguments without a configuration file
+```
+##### Configure through command line arguments without a configuration file
+```
 docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server \
       --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
 ```
-#### Verify Samples Above
+##### Verify Samples Above
 ```
 $ curl http://localhost:8888/foo/development
 ```
@@ -53,13 +58,15 @@ $ curl http://localhost:8888/foo/development
 Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 3 backends to choose from...
 
 #### Git
+##### Github example
 ```
-# Github example
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
+```
 
-# Local git repo example
+##### Local git repo example
+```
 docker run -it -p 8888:8888 \
       -v /path/to/config/files/dir:/config \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
