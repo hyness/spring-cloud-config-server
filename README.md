@@ -53,14 +53,14 @@ docker run -it -p 8888:8888 \
 ##### Configure through system properties without a configuration file
 ```
 docker run -it -p 8888:8888 \
-      -e JAVA_OPTS=-Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+      -e JAVA_OPTS=-Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
 ```
 ##### Configure through command line arguments without a configuration file
 ```
 docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server \
-      --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+      --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo \
 ```
 ##### Verify Samples Above
 ```
