@@ -60,7 +60,7 @@ docker run -it -p 8888:8888 \
 ```
 docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server \
-      --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo \
+      --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
 ```
 ##### Verify Samples Above
 ```
