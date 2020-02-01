@@ -1,5 +1,5 @@
 FROM maven:alpine
-MAINTAINER hyness <hyness@freshlegacycode.org>
+LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 
 EXPOSE 8888
 COPY . /opt/spring-cloud-config-server/
