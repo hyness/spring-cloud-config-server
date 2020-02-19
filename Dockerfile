@@ -1,4 +1,4 @@
-FROM maven:alpine
+FROM maven:3.6.2-amazoncorretto-11
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 
 EXPOSE 8888
