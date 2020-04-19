@@ -1,10 +1,12 @@
-FROM maven:alpine
+FROM gradle:jdk14
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 
+COPY build.gradle.kts .
+RUN gradle -console verbose --no-build-cache --no-daemon assemble
+
+COPY entrypoint.sh build/libs/* /opt/spring-cloud-config-server/
+RUN rm -rf build.gradle.kts build
+
 EXPOSE 8888
-COPY . /opt/spring-cloud-config-server/
-WORKDIR /opt/spring-cloud-config-server/
-RUN mvn package
 VOLUME /config
-WORKDIR /
 ENTRYPOINT ["sh", "/opt/spring-cloud-config-server/entrypoint.sh"]
