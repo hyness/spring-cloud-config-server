@@ -1,11 +1,14 @@
-FROM gradle:jdk14
+FROM gradle:jdk8
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
+WORKDIR /opt/spring-cloud-config-server
 
-COPY build.gradle.kts .
-RUN gradle -console verbose --no-build-cache --no-daemon assemble
+COPY build.gradle.kts entrypoint.sh ./
+COPY src/ src/
+RUN gradle -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
 
-COPY entrypoint.sh build/libs/* /opt/spring-cloud-config-server/
-RUN rm -rf build.gradle.kts build
+WORKDIR /opt/spring-cloud-config-server
+COPY entrypoint.sh ./
+RUN rm -rf .gradle build.gradle.kts src build
 
 EXPOSE 8888
 VOLUME /config

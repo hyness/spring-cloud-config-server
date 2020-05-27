@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/).
+A docker image of [Spring Cloud Config Server](https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.3.RELEASE/reference/html/).
 
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?style=flat-square)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
@@ -70,7 +70,7 @@ $ curl http://localhost:8888/foo/development
 ```
 
 ### Required Backend Configuration
-Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 3 backends to choose from...
+Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 6 backends to choose from...
 
 #### Git
 ##### Remote git repo example
@@ -79,7 +79,6 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
 ```
-
 ##### Local git repo example
 ```
 docker run -it -p 8888:8888 \
@@ -87,7 +86,6 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
       hyness/spring-cloud-config-server
 ```
-
 #### Filesystem
 ```
 docker run -it -p 8888:8888 \
@@ -95,10 +93,33 @@ docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=native \
       hyness/spring-cloud-config-server
 ```
-
 #### Vault
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=vault \
       hyness/spring-cloud-config-server
 ```
+#### AWS S3
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=awss3 \
+      hyness/spring-cloud-config-server
+```
+#### Redis
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=redis \
+      hyness/spring-cloud-config-server
+```
+#### JDBC
+* Firebird
+* MariaDB
+* MS-SQL
+* Postgres
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=jdbc \
+      hyness/spring-cloud-config-server
+```
+
+[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/config) for more details

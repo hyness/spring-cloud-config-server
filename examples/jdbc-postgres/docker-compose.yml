@@ -1,0 +1,30 @@
+version: '3.8'
+
+# Docker Compose example for testing Postgres
+
+services:
+  config-server:
+    depends_on:
+      - postgres
+    container_name: config-server
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_PROFILES_ACTIVE=jdbc
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_JDBC=DEBUG
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/cloud_config
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=cloud_config
+    volumes:
+      - .:/docker-entrypoint-initdb.d
