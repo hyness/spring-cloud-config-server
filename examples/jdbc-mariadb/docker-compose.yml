@@ -1,0 +1,29 @@
+version: '3.8'
+
+# Docker Compose example for testing MySQL
+
+services:
+  config-server:
+    depends_on:
+      - mariadb
+    container_name: config-server
+    image: test
+    ports:
+      - "8888:8888"
+    environment:
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_PROFILES_ACTIVE=jdbc
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_JDBC=DEBUG
+      - SPRING_CLOUD_CONFIG_SERVER_JDBC_SQL=SELECT `KEY`, VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://mariadb:3306/cloud_config
+      - SPRING_DATASOURCE_USERNAME=root
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=cloud_config
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+    - .:/docker-entrypoint-initdb.d

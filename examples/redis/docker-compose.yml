@@ -1,0 +1,21 @@
+version: '3.8'
+
+# Docker Compose example for testing Redis
+
+services:
+  config-server:
+    depends_on:
+      - redis
+    container_name: config-server
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_PROFILES_ACTIVE=redis
+      - SPRING_REDIS_HOST=redis
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"

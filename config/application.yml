@@ -12,4 +12,3 @@ spring:
           uri: https://github.com/spring-cloud-samples/config-repo
 management:
   context_path: /admin
- 

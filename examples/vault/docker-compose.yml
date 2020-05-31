@@ -1,0 +1,27 @@
+version: '3.8'
+
+# Docker Compose example for testing Vault
+
+services:
+  config-server:
+    depends_on:
+      - vault
+    container_name: config-server
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_PROFILES_ACTIVE=vault
+      - SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN=00000000-0000-0000-0000-000000000000
+      - SPRING_CLOUD_CONFIG_SERVER_VAULT_HOST=vault
+      - SPRING_CLOUD_CONFIG_SERVER_VAULT_KV_VERSION=2
+  vault:
+    privileged: true
+    container_name: vault
+    image: vault
+    ports:
+      - "8200:8200"
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=00000000-0000-0000-0000-000000000000
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
