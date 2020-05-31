@@ -1,0 +1,31 @@
+version: '3.8'
+
+# Docker Compose example for testing AWS S3
+
+services:
+  config-server:
+    depends_on:
+      - localstack
+    container_name: config-server
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_PROFILES_ACTIVE=awss3
+      - SPRING_AWSS3_ENDPOINT=http://localstack:4572
+      - SPRING_CLOUD_CONFIG_SERVER_AWSS3_REGION=us-east-1
+      - SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=bucket1
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - '4563-4599:4563-4599'
+      - '8055:8080'
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - './.localstack:/tmp/localstack'
+      - '/var/run/docker.sock:/var/run/docker.sock'
