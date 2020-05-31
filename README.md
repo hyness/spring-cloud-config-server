@@ -112,14 +112,15 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ```
 #### JDBC
-* Firebird
-* MariaDB
-* MS-SQL
-* Postgres
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=jdbc \
       hyness/spring-cloud-config-server
 ```
+##### Supported Databases
+* Firebird
+* MariaDB
+* MS-SQL
+* Postgres
 
-[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/config) for more details
+[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
