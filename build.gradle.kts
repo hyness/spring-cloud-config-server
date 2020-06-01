@@ -16,7 +16,7 @@ repositories {
 }
 
 extra["springCloudVersion"] = "Hoxton.SR5"
-extra["spring-cloud-config.version"] = "2.1.8.RELEASE"
+extra["spring-cloud-config.version"] = "2.1.9.RELEASE"
 
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-config-server")
