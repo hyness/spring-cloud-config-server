@@ -10,6 +10,7 @@ WORKDIR /opt/spring-cloud-config-server
 COPY entrypoint.sh ./
 RUN rm -rf .gradle build.gradle.kts src build
 
+WORKDIR /
 EXPOSE 8888
 VOLUME /config
 ENTRYPOINT ["sh", "/opt/spring-cloud-config-server/entrypoint.sh"]
