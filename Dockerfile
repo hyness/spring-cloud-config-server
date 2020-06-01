@@ -1,4 +1,4 @@
-FROM gradle:jdk8
+FROM gradle:jdk8 as builder
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 WORKDIR /opt/spring-cloud-config-server
 
@@ -10,7 +10,11 @@ WORKDIR /opt/spring-cloud-config-server
 COPY entrypoint.sh ./
 RUN rm -rf .gradle build.gradle.kts src build
 
+FROM openjdk:8-alpine
 WORKDIR /
+COPY --from=builder /opt/spring-cloud-config-server/spring-cloud-config-server.jar /opt/spring-cloud-config-server/
+COPY entrypoint.sh /opt/spring-cloud-config-server/
 EXPOSE 8888
 VOLUME /config
 ENTRYPOINT ["sh", "/opt/spring-cloud-config-server/entrypoint.sh"]
+
