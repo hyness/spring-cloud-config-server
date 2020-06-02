@@ -2,7 +2,7 @@ FROM gradle:jdk8 as builder
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 WORKDIR /build
 
-COPY build.gradle.kts settings.gradle4 ./
+COPY build.gradle.kts settings.gradle ./
 COPY src/ src/
 RUN gradle -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
 
