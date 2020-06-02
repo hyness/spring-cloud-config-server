@@ -134,8 +134,12 @@ docker run -it -p 8888:8888 \
 
 [See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
 
+### Actuator
+The [Spring Boot actuator](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready). is enabled by default.  [Spring Boot provides configuration options](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator-properties) for managing its configuration.  The actuator can be disabled entirely by including the `no-actuator` profile
+
 ### Security
 Spring Security can be enabled through the `security` profile.
+
 ##### Basic Security
 ```
 docker run -it -p 8888:8888 \
