@@ -97,24 +97,33 @@ docker run -it -p 8888:8888 \
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=vault \
+      -e SPRING_CLOUD_CONFIG_SERVER_VAULT_HOST=localhost \
+      -e SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN=00000000-0000-0000-0000-000000000000 \
       hyness/spring-cloud-config-server
 ```
 #### AWS S3
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=awss3 \
+      -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_REGION=us-east-1 \
+      -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=bucket \
       hyness/spring-cloud-config-server
 ```
 #### Redis
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=redis \
+      -e SPRING_REDIS_HOST=localhost
+      -e SPRING_REDIS_PORT=6379
       hyness/spring-cloud-config-server
 ```
 #### JDBC
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=jdbc \
+      -e SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/database_name \
+      -e SPRING_DATASOURCE_USERNAME=myuser \
+      -e SPRING_DATASOURCE_PASSWORD=mypassword \
       hyness/spring-cloud-config-server
 ```
 ##### Supported Databases
@@ -124,3 +133,13 @@ docker run -it -p 8888:8888 \
 * Postgres
 
 [See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
+
+### Security
+Spring Security can be enabled through the `security` profile.
+##### Basic Security
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=security \
+      -e SPRING_SECURITY_USER_NAME=myuser -e SPRING_SECURITY_USER_PASSWORD=mypassword \
+      hyness/spring-cloud-config-server
+```
