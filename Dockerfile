@@ -6,7 +6,7 @@ COPY build.gradle.kts settings.gradle ./
 COPY src/ src/
 RUN gradle -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
 
-FROM openjdk:8-alpine
+FROM adoptopenjdk/openjdk8:alpine-slim
 WORKDIR /
 COPY --from=builder /build/spring-cloud-config-server.jar /opt/spring-cloud-config-server/
 COPY entrypoint.sh /opt/spring-cloud-config-server/
