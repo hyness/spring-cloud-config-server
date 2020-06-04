@@ -19,3 +19,5 @@ services:
     image: redis
     ports:
       - "6379:6379"
+    volumes:
+    - ./populate-redis.sh:/data/populate-redis.sh
