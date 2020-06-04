@@ -17,6 +17,11 @@ docker run -it --name=spring-cloud-config-server \
       hyness/spring-cloud-config-server
 ```
 
+## Image Variants
+As of version `2.2.3.RELEASE`, this image is available with a choice of alpine based adoptjdk versions
+* `hyness/spring-cloud-config-server` latest version based on jdk8
+* `hyness/spring-cloud-config-server:<jdk version>` latest version based on jdk8, jdk11 or jdk14
+* `hyness/spring-cloud-config-server:<config server version>-<jdk version>` selected version based on jdk8, jdk11, jdk14
 #### Parameters
 * `-p 8888` Server port
 * `-v /config` Mounted configuration
