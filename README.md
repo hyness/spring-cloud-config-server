@@ -9,6 +9,11 @@ A docker image of [Spring Cloud Config Server](https://cloud.spring.io/spring-cl
 [![Image Size](https://images.microbadger.com/badges/image/hyness/spring-cloud-config-server.svg)](https://microbadger.com/images/hyness/spring-cloud-config-server)
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
+## Supported tags
+* `2.2.3-RELEASE-jdk8`, `2.2.RELEASE-jdk8`, `jdk8`, `2.2.3-RELEASE`, `2.2`, `latest`
+* `2.2.3-RELEASE-jdk11`, `2.2-jdk11`, `jdk11`
+* `2.2.3-RELEASE-jdk14`, `2.2-jdk14`, `jdk14`
+
 ## Usage
 ```
 docker run -it --name=spring-cloud-config-server \
@@ -17,11 +22,6 @@ docker run -it --name=spring-cloud-config-server \
       hyness/spring-cloud-config-server
 ```
 
-## Image Variants
-As of version `2.2.3.RELEASE`, this image is available with a choice of alpine based adoptjdk versions
-* `hyness/spring-cloud-config-server` latest version based on jdk8
-* `hyness/spring-cloud-config-server:<jdk version>` latest version based on jdk8, jdk11 or jdk14
-* `hyness/spring-cloud-config-server:<config server version>-<jdk version>` selected version based on jdk8, jdk11, jdk14
 #### Parameters
 * `-p 8888` Server port
 * `-v /config` Mounted configuration
