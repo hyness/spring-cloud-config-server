@@ -13,10 +13,6 @@ version = "2.2.3.RELEASE"
 extra["springCloudVersion"] = "Hoxton.SR5"
 ext["spring-cloud-config.version"] = version
 
-springBoot {
-    mainClassName = "org.freshlegacycode.cloud.config.server.ConfigServerApplication"
-}
-
 tasks.getByName<BootJar>("bootJar") {
     layered()
     archiveFileName.value("${project.name}.jar")
