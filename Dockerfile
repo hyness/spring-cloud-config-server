@@ -1,15 +1,17 @@
-FROM gradle:jdk8 as builder
+FROM adoptopenjdk:8-jdk-hotspot as builder
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 WORKDIR /build
 
-COPY build.gradle.kts settings.gradle ./
-COPY src/ src/
-RUN gradle -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
+COPY . ./
+RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
+RUN java -Djarmode=layertools -jar spring-cloud-config-server.jar extract
 
-FROM adoptopenjdk/openjdk8:alpine-slim
-WORKDIR /
-COPY --from=builder /build/spring-cloud-config-server.jar /opt/spring-cloud-config-server/
-COPY entrypoint.sh /opt/spring-cloud-config-server/
+FROM adoptopenjdk:8-jre-hotspot
+WORKDIR /opt/spring-cloud-config-server
+COPY --from=builder /build/dependencies/ ./
+COPY --from=builder /build/spring-boot-loader/ ./
+COPY --from=builder /build/application/ ./
+COPY entrypoint.sh ./
 
 EXPOSE 8888
 VOLUME /config

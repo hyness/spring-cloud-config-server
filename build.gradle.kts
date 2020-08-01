@@ -2,23 +2,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "2.3.1.RELEASE"
-    id("io.spring.dependency-management") version "1.0.9.RELEASE"
-    kotlin("jvm") version "1.3.71"
-    kotlin("plugin.spring") version "1.3.71"
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+    kotlin("jvm")
+    kotlin("plugin.spring")
 }
-
-group = "org.freshlegacycode"
-version = "2.2.3.RELEASE"
-extra["springCloudVersion"] = "Hoxton.SR5"
-ext["spring-cloud-config.version"] = version
 
 tasks.getByName<BootJar>("bootJar") {
     layered()
-    archiveFileName.value("${project.name}.jar")
     manifest {
-        attributes("Implementation-Title" to project.name, "Implementation-Version" to archiveVersion)
+        attributes(
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to properties["springCloudConfigVersion"]
+        )
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 repositories {
@@ -39,17 +40,22 @@ dependencies {
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     runtimeOnly("org.firebirdsql.jdbc:jaybird-jdk18")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
 }
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["springCloudVersion"]}")
     }
 }
+
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {
     jvmTarget = "1.8"
 }
+
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
