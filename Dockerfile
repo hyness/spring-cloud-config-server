@@ -1,12 +1,12 @@
-FROM adoptopenjdk:8-jdk-hotspot as builder
+FROM adoptopenjdk/openjdk8:alpine-slim as builder
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 WORKDIR /build
 
 COPY . ./
-RUN ./gradlew -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
+RUN sh gradlew -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
 RUN java -Djarmode=layertools -jar spring-cloud-config-server.jar extract
 
-FROM adoptopenjdk:8-jre-hotspot
+FROM adoptopenjdk/openjdk8:alpine-slim
 WORKDIR /opt/spring-cloud-config-server
 COPY --from=builder /build/dependencies/ ./
 COPY --from=builder /build/spring-boot-loader/ ./
