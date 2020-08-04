@@ -13,6 +13,7 @@ COPY --from=builder /build/spring-boot-loader/ ./
 COPY --from=builder /build/application/ ./
 COPY entrypoint.sh ./
 
+WORKDIR /
 EXPOSE 8888
 VOLUME /config
 ENTRYPOINT ["sh", "/opt/spring-cloud-config-server/entrypoint.sh"]
