@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      server:
+        vault:
+          token: 00000000-0000-0000-0000-000000000000
+          host: vault
+          kv-version: 2
+  profiles:
+    active: vault
