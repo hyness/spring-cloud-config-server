@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+env:
+  IMAGE_NAME: test
+
+jobs:
+  gradle-build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 14
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
+
+  docker-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Log into registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+      - name: Build docker image
+        run: |
+          docker build -t $IMAGE_NAME .
+          docker tag $IMAGE_NAME ${{ github.repository }}
+      - name: Test with remote git repo
+        run: |
+          docker-compose -f examples/git/docker-compose.yml up -d
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
+          curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
+          curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
+          curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
+          docker-compose -f examples/git/docker-compose.yml down
+      - name: Test with native file repo
+        run: |
+          docker-compose -f examples/native/docker-compose.yml up -d
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
+          curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "file:config/foo-development.properties"})'
+          curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "file:config/foo-development.properties"})'
+          curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "file:config/foo-development.properties"})'
+          docker-compose -f examples/native/docker-compose.yml down
+      - name: Test with redis repo
+        run: |
+          docker-compose -f examples/redis/docker-compose.yml up -d
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
+          docker-compose -f examples/redis/docker-compose.yml exec -T redis sh populate-redis.sh
+          curl localhost:8881/redis-app/development | jq '.propertySources[0].source' | jq 'contains({"server.port": "8100"})'
+          curl localhost:8882/redis-app/development | jq '.propertySources[0].source' | jq 'contains({"server.port": "8100"})'
+          curl localhost:8883/redis-app/development | jq '.propertySources[0].source' | jq 'contains({"server.port": "8100"})'
+          docker-compose -f examples/redis/docker-compose.yml down
+      - name: Test with vault repo
+        run: |
+          docker-compose -f examples/vault/docker-compose.yml up -d
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/myapp/default; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/myapp/default; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/myapp/default; do printf '.' && sleep 1; done"
+          docker-compose -f examples/vault/docker-compose.yml exec -T vault sh populate-vault.sh
+          curl localhost:8881/myapp/default | jq '.propertySources[0].source' | jq 'contains({"foo": "myappsbar"})'
+          curl localhost:8882/myapp/default | jq '.propertySources[0].source' | jq 'contains({"foo": "myappsbar"})'
+          curl localhost:8883/myapp/default | jq '.propertySources[0].source' | jq 'contains({"foo": "myappsbar"})'
+          docker-compose -f examples/vault/docker-compose.yml down
+      - name: Test with jdbc repo
+        run: |
+          docker-compose -f examples/jdbc/postgres/docker-compose.yml up -d
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/jdbc-app/dev/latest; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/jdbc-app/dev/latest; do printf '.' && sleep 1; done"
+          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/jdbc-app/dev/latest; do printf '.' && sleep 1; done"
+          curl localhost:8881/jdbc-app/dev/latest | jq '.propertySources[0].source' | jq 'contains({"sample key": "a value"})'
+          curl localhost:8882/jdbc-app/dev/latest | jq '.propertySources[0].source' | jq 'contains({"sample key": "a value"})'
+          curl localhost:8883/jdbc-app/dev/latest | jq '.propertySources[0].source' | jq 'contains({"sample key": "a value"})'
+          docker-compose -f examples/jdbc/postgres/docker-compose.yml down

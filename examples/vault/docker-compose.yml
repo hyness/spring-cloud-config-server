@@ -1,21 +1,46 @@
-version: '3.8'
+version: '2'
 
 # Docker Compose example for testing Vault
 
 services:
-  config-server:
+  # Configured through environment variables
+  config-server-env:
     depends_on:
       - vault
-    container_name: config-server
+    container_name: config-server-env
     image: hyness/spring-cloud-config-server
     ports:
-      - "8888:8888"
+      - "8881:8888"
     environment:
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
-      - SPRING_PROFILES_ACTIVE=vault
-      - SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN=00000000-0000-0000-0000-000000000000
-      - SPRING_CLOUD_CONFIG_SERVER_VAULT_HOST=vault
-      - SPRING_CLOUD_CONFIG_SERVER_VAULT_KV_VERSION=2
+      SPRING_PROFILES_ACTIVE: vault
+      SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN: 00000000-0000-0000-0000-000000000000
+      SPRING_CLOUD_CONFIG_SERVER_VAULT_HOST: vault
+      SPRING_CLOUD_CONFIG_SERVER_VAULT_KV_VERSION: 2
+
+  # Configured through mounted config volume
+  config-server-dir:
+    depends_on:
+      - vault
+    container_name: config-server-dir
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8882:8888"
+    volumes:
+      - ./config:/config
+
+  # Configured through system properties
+  config-server-props:
+    depends_on:
+      - vault
+    container_name: config-server-props
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8883:8888"
+    environment:
+      JAVA_OPTS: |
+        -Dspring.profiles.active=vault -Dspring.cloud.config.server.vault.token=00000000-0000-0000-0000-000000000000
+        -Dspring.cloud.config.server.vault.host=vault -Dspring.cloud.config.server.vault.kv-version=2
+
   vault:
     privileged: true
     container_name: vault

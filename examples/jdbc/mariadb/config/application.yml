@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    config:
+      server:
+        jdbc:
+          sql: SELECT `key`, value from PROPERTIES where application=? and profile=? and label=?
+  datasource:
+    url: jdbc:mariadb://mariadb:3306/cloud_config
+    username: root
+  profiles:
+    active: jdbc

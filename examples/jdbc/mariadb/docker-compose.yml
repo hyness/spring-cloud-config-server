@@ -1,0 +1,49 @@
+version: '2'
+
+# Docker Compose example for testing MySQL
+
+services:
+  config-server-env:
+    depends_on:
+      - mariadb
+    container_name: config-server-env
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8881:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: jdbc
+      SPRING_CLOUD_CONFIG_SERVER_JDBC_SQL: SELECT `KEY`, VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/cloud_config
+      SPRING_DATASOURCE_USERNAME: root
+
+  # Configured through mounted config volume
+  config-server-dir:
+    depends_on:
+      - mariadb
+    container_name: config-server-dir
+    image: hyness/spring-cloud-config-server
+    ports:
+      - "8882:8888"
+    volumes:
+      - ./config:/config
+
+  # Configured through command line arguments
+  config-server-props:
+    depends_on:
+      - mariadb
+    container_name: config-server-props
+    image: hyness/spring-cloud-config-server
+    entrypoint: ["sh", "/opt/spring-cloud-config-server/entrypoint.sh", "--spring.profiles.active=jdbc", "---spring.cloud.config.server.jdbc.sql=SELECT `KEY`, VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?", "--spring.datasource.url=jdbc:mariadb://mariadb:3306/cloud_config", "--spring.datasource.username=root"]
+    ports:
+      - "8883:8888"
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: cloud_config
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+    - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql

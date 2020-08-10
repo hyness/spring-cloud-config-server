@@ -1,5 +1,6 @@
 .*
-*.iml
+!.github
+!.travis-ci.yml
 build
 target
 out

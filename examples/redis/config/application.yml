@@ -1,0 +1,5 @@
+spring:
+  redis:
+    host: redis
+  profiles:
+    active: redis

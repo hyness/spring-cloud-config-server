@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/cloud_config
+    username: root
+    password: password
+  profiles:
+    active: jdbc
