@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.4.RELEASE/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/2.2.5.RELEASE/reference/html/).
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server?style=flat-square)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
@@ -10,9 +10,9 @@ A docker image of [Spring Cloud Config Server](https://cloud.spring.io/spring-cl
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Supported tags
-* `2.2.4.RELEASE-jdk8`, `2.2-jdk8`, `jdk8`, `2.2.4-RELEASE`, `2.2`, `latest`
-* `2.2.4.RELEASE-jdk11`, `2.2-jdk11`, `jdk11`
-* `2.2.4.RELEASE-jdk14`, `2.2-jdk14`, `jdk14`
+* `2.2.5.RELEASE-jdk8`, `2.2-jdk8`, `jdk8`, `2.2.5.RELEASE`, `2.2`, `latest`
+* `2.2.5.RELEASE-jdk11`, `2.2-jdk11`, `jdk11`
+* `2.2.5.RELEASE-jdk14`, `2.2-jdk14`, `jdk14`
 
 ## Usage
 ```
