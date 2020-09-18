@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    stream:
+      defaultBinder: rabbit
+  profiles: cloud-bus-rabbit
+---
+spring:
+  cloud:
+    stream:
+      defaultBinder: kafka
+  profiles: cloud-bus-kafka

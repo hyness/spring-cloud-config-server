@@ -137,6 +137,30 @@ docker run -it -p 8888:8888 \
 * MS-SQL
 * Postgres
 
+#### Spring Cloud Bus
+
+Spring Cloud Bus links the nodes of a distributed system with a lightweight message broker. 
+The currently supported message brokers are Kafka and RabbitMQ. 
+[See the Spring Cloud Bus documentation](https://cloud.spring.io/spring-cloud-bus/reference/html) for more details
+
+##### Spring Cloud Bus (Kafka)
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=cloud-bus-kafka \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
+      -e SPRING_KAFKA_BOOTSTRAP-SERVERS=localhost:9092 \
+      hyness/spring-cloud-config-server
+```
+
+##### Spring Cloud Bus (RabbitMQ)
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=cloud-bus-rabbit \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
+      -e SPRING_RABBITMQ_HOST=localhost \
+      hyness/spring-cloud-config-server
+```
+
 [See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
 
 ### Actuator

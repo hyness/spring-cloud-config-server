@@ -28,6 +28,10 @@ repositories {
 
 dependencies {
     implementation("org.springframework.cloud:spring-cloud-config-server")
+    implementation("org.springframework.cloud:spring-cloud-config-monitor")
+    implementation("org.springframework.cloud:spring-cloud-bus")
+    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
+    implementation("org.springframework.cloud:spring-cloud-stream-binder-rabbit")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework:spring-jdbc")
