@@ -1,0 +1,15 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/spring-cloud-samples/config-repo
+  rabbitmq:
+    host: rabbitmq
+  profiles:
+    active: cloud-bus-rabbit

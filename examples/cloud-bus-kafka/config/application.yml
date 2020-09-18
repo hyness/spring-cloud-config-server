@@ -1,0 +1,15 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/spring-cloud-samples/config-repo
+  kafka:
+    bootstrap-servers: kafka:9092
+  profiles:
+    active: cloud-bus-kafka
