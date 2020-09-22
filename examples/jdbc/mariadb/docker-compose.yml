@@ -3,6 +3,7 @@ version: '2'
 # Docker Compose example for testing MySQL
 
 services:
+  # Configured through environment variables
   config-server-env:
     depends_on:
       - mariadb

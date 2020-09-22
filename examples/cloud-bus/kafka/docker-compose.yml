@@ -3,6 +3,7 @@ version: '3.8'
 # Docker Compose example for testing Spring Cloud Bus Kafka
 
 services:
+  # Configured through environment variables
   config-server-env:
     depends_on:
       - kafka
@@ -15,6 +16,8 @@ services:
       - SPRING_PROFILES_ACTIVE=cloud-bus-kafka
       - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo
       - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
+
+  # Configured through mounted config volume
   config-server-dir:
     depends_on:
       - kafka
@@ -24,6 +27,8 @@ services:
       - "8882:8888"
     volumes:
       - ./config:/config
+
+  # Configured through system properties
   config-server-props:
     depends_on:
       - kafka
@@ -33,11 +38,13 @@ services:
       - "8883:8888"
     environment:
       JAVA_OPTS: -Dmanagement.endpoints.web.exposure.include=* -Dspring.profiles.active=cloud-bus-kafka -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo -Dspring.kafka.bootstrap-servers=kafka:9092
+
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
+
   kafka:
     depends_on:
       - zookeeper

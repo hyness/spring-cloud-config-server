@@ -88,21 +88,21 @@ jobs:
           docker-compose -f examples/jdbc/postgres/docker-compose.yml down
       - name: Test with remote repo and cloud bus kafka
         run: |
-          docker-compose -f examples/cloud-bus-kafka/docker-compose.yml up -d
+          docker-compose -f examples/cloud-bus/kafka/docker-compose.yml up -d
           timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
           timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
           timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
           curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
           curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
           curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          docker-compose -f examples/cloud-bus-kafka/docker-compose.yml down
+          docker-compose -f examples/cloud-bus/kafka/docker-compose.yml down
       - name: Test with remote repo and cloud bus rabbit
         run: |
-          docker-compose -f examples/cloud-bus-rabbit/docker-compose.yml up -d
+          docker-compose -f examples/cloud-bus/rabbit/docker-compose.yml up -d
           timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
           timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
           timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
           curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
           curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
           curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          docker-compose -f examples/cloud-bus-rabbit/docker-compose.yml down
+          docker-compose -f examples/cloud-bus/rabbit/docker-compose.yml down

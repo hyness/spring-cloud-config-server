@@ -91,14 +91,14 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
       hyness/spring-cloud-config-server
 ```
-#### Filesystem
+##### Filesystem
 ```
 docker run -it -p 8888:8888 \
       -v /path/to/config/files/dir:/config \
       -e SPRING_PROFILES_ACTIVE=native \
       hyness/spring-cloud-config-server
 ```
-#### Vault
+##### Vault
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=vault \
@@ -106,7 +106,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN=00000000-0000-0000-0000-000000000000 \
       hyness/spring-cloud-config-server
 ```
-#### AWS S3
+##### AWS S3
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=awss3 \
@@ -114,7 +114,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=bucket \
       hyness/spring-cloud-config-server
 ```
-#### Redis
+##### Redis
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=redis \
@@ -122,7 +122,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_REDIS_PORT=6379
       hyness/spring-cloud-config-server
 ```
-#### JDBC
+##### JDBC
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=jdbc \
@@ -137,13 +137,20 @@ docker run -it -p 8888:8888 \
 * MS-SQL
 * Postgres
 
-#### Spring Cloud Bus
+[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
 
-Spring Cloud Bus links the nodes of a distributed system with a lightweight message broker. 
-The currently supported message brokers are Kafka and RabbitMQ. 
-[See the Spring Cloud Bus documentation](https://cloud.spring.io/spring-cloud-bus/reference/html) for more details
+### Additional Features
 
-##### Spring Cloud Bus (Kafka)
+#### Push notifications with Spring Cloud Bus
+
+Spring Cloud Bus links the nodes of a distributed system with a lightweight message broker.  It allows clusters of 
+applications configured with **RefreshScope** to automatically reload configuration without restarting.
+
+[See the Spring Cloud Conifg](https://docs.spring.io/spring-cloud-config/docs/2.2.5.RELEASE/reference/html/#_push_notifications_and_spring_cloud_bus) and 
+[Spring Cloud Bus](https://cloud.spring.io/spring-cloud-bus/reference/html) documentation for more details
+    
+#### Supported Message Brokers
+##### Kafka
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=cloud-bus-kafka \
@@ -152,7 +159,7 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ```
 
-##### Spring Cloud Bus (RabbitMQ)
+##### RabbitMQ
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=cloud-bus-rabbit \
@@ -161,10 +168,10 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ```
 
-[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
-
 ### Actuator
-The [Spring Boot actuator](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready) is enabled by default.  [Spring Boot provides configuration options](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator-properties) for managing its configuration.  The actuator can be disabled entirely by including the `no-actuator` profile
+The [Spring Boot actuator](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready) is 
+enabled by default.  [See the Spring Boot documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator-properties) 
+for configuration options.  The actuator can be disabled entirely by including the `no-actuator` profile
 
 ### Security
 Spring Security can be enabled through the `security` profile.
