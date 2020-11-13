@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.springframework.boot.gradle.tasks.bundling.BootJar
-
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -8,18 +5,30 @@ plugins {
     kotlin("plugin.spring")
 }
 
-tasks.getByName<BootJar>("bootJar") {
-    layered()
-    manifest {
-        attributes(
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to properties["springCloudConfigVersion"]
-        )
-    }
-}
+group = "org.freshlegacycode"
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+tasks {
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "1.8"
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    bootJar {
+        layered()
+        manifest {
+            attributes(
+                    "Implementation-Title" to project.name,
+                    "Implementation-Version" to project.property("springCloudConfigVersion")
+            )
+        }
+    }
 }
 
 repositories {
@@ -53,14 +62,4 @@ dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["springCloudVersion"]}")
     }
-}
-
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
 }
