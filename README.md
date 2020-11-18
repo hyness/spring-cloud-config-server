@@ -183,3 +183,11 @@ docker run -it -p 8888:8888 \
       -e SPRING_SECURITY_USER_NAME=myuser -e SPRING_SECURITY_USER_PASSWORD=mypassword \
       hyness/spring-cloud-config-server
 ```
+### Thank You
+
+##### Project Contributors
+Thank you to all of the contributors who have helped make this project better through code contributions and bug reports.
+
+##### Project Supporters
+This project is developed using the outstanding IntelliJ IDE, thanks to support from JetBrains
+[![JetBrains](src/main/images/jetbrains-variant-4.png)](https://www.jetbrains.com/?from=spring-cloud-config-server)

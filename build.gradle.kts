@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -5,14 +7,11 @@ plugins {
     kotlin("plugin.spring")
 }
 
-group = "org.freshlegacycode"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-
 tasks {
-    compileKotlin {
+    withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "1.8"
+            jvmTarget = project.properties["kotlinJvmTarget"] as String
         }
     }
 
@@ -25,7 +24,7 @@ tasks {
         manifest {
             attributes(
                     "Implementation-Title" to project.name,
-                    "Implementation-Version" to project.property("springCloudConfigVersion")
+                    "Implementation-Version" to project.dependencyManagement.importedProperties["spring-cloud-config.version"]
             )
         }
     }
