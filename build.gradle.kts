@@ -20,7 +20,6 @@ tasks {
     }
 
     bootJar {
-        layered()
         manifest {
             attributes(
                     "Implementation-Title" to project.name,
@@ -43,10 +42,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework:spring-jdbc")
-    implementation("org.springframework.vault:spring-vault-core")
+    implementation("org.springframework.vault:spring-vault-core:${properties["spring-vault.version"]}")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.amazonaws:aws-java-sdk-s3")
+    implementation("com.amazonaws:aws-java-sdk-s3:${properties["s3.version"]}")
     runtimeOnly("com.zaxxer:HikariCP")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")

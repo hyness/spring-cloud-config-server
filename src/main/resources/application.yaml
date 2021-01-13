@@ -2,10 +2,14 @@ spring:
   cloud:
     stream:
       defaultBinder: rabbit
-  profiles: cloud-bus-rabbit
+  config:
+    activate:
+      on-profile: cloud-bus-rabbit
 ---
 spring:
   cloud:
     stream:
       defaultBinder: kafka
-  profiles: cloud-bus-kafka
+  config:
+    activate:
+      on-profile: cloud-bus-kafka
