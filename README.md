@@ -1,18 +1,16 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/2.2.6.RELEASE/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/2.2.7.RELEASE/reference/html/).
 
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server?style=flat-square)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
-[![Docker Automated build](https://img.shields.io/docker/automated/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/builds/)
-![Docker Build Status](https://img.shields.io/docker/build/hyness/spring-cloud-config-server?style=flat-square)
 [![Image Size](https://images.microbadger.com/badges/image/hyness/spring-cloud-config-server.svg)](https://microbadger.com/images/hyness/spring-cloud-config-server)
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Supported tags
-* `2.2.6.RELEASE-jdk8`, `2.2-jdk8`, `jdk8`, `2.2.6.RELEASE`, `2.2`, `latest`
-* `2.2.6.RELEASE-jdk11`, `2.2-jdk11`, `jdk11`
-* `2.2.6.RELEASE-jdk14`, `2.2-jdk14`, `jdk14`
+* `2.2.7.RELEASE-jdk8`, `2.2-jdk8`, `2.2.7.RELEASE`, `2.2`
+* `2.2.7.RELEASE-jdk11`, `2.2-jdk11`
+* `2.2.7.RELEASE-jdk14`, `2.2-jdk14`
 
 ## Usage
 ```
@@ -146,7 +144,7 @@ docker run -it -p 8888:8888 \
 Spring Cloud Bus links the nodes of a distributed system with a lightweight message broker.  It allows clusters of 
 applications configured with **RefreshScope** to automatically reload configuration without restarting.
 
-[See the Spring Cloud Conifg](https://docs.spring.io/spring-cloud-config/docs/2.2.6.RELEASE/reference/html/#_push_notifications_and_spring_cloud_bus) and 
+[See the Spring Cloud Conifg](https://docs.spring.io/spring-cloud-config/docs/2.2.7.RELEASE/reference/html/#_push_notifications_and_spring_cloud_bus) and 
 [Spring Cloud Bus](https://cloud.spring.io/spring-cloud-bus/reference/html) documentation for more details
     
 #### Supported Message Brokers

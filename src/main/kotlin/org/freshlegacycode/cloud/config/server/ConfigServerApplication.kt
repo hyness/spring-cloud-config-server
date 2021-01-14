@@ -3,6 +3,7 @@ package org.freshlegacycode.cloud.config.server
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
@@ -17,7 +18,6 @@ import org.springframework.cloud.config.server.EnableConfigServer
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
-import org.springframework.context.annotation.PropertySource
 import org.springframework.cloud.stream.binder.kafka.config.ExtendedBindingHandlerMappingsProviderConfiguration as KafkaBinderAutoConfiguration
 import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHandlerMappingsProviderConfiguration as RabbitBinderAutoConfiguration
 
@@ -28,6 +28,7 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     ManagementContextAutoConfiguration::class,
     ManagementWebSecurityAutoConfiguration::class,
     SecurityAutoConfiguration::class,
+    RabbitAutoConfiguration::class,
     RabbitBinderAutoConfiguration::class,
     KafkaBinderAutoConfiguration::class,
     BusAutoConfiguration::class,
@@ -56,7 +57,7 @@ internal class CloudBusKafkaConfiguration : CloudBusConfiguration()
 
 @Profile("cloud-bus-rabbit")
 @Configuration
-@Import(RabbitBinderAutoConfiguration::class)
+@Import(RabbitAutoConfiguration::class, RabbitBinderAutoConfiguration::class)
 internal class CloudBusRabbitConfiguration : CloudBusConfiguration()
 
 @Import(BusAutoConfiguration::class,

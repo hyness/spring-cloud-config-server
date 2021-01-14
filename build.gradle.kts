@@ -24,7 +24,8 @@ tasks {
         manifest {
             attributes(
                     "Implementation-Title" to project.name,
-                    "Implementation-Version" to project.dependencyManagement.importedProperties["spring-cloud-config.version"]
+                    "Implementation-Version" to (project.properties["spring-cloud-config.version"] as String? ?:
+                        project.dependencyManagement.importedProperties["spring-cloud-config.version"])
             )
         }
     }
@@ -38,8 +39,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-config-server")
     implementation("org.springframework.cloud:spring-cloud-config-monitor")
     implementation("org.springframework.cloud:spring-cloud-bus")
-    implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
-    implementation("org.springframework.cloud:spring-cloud-stream-binder-rabbit")
+    implementation("org.springframework.cloud:spring-cloud-starter-bus-kafka")
+    implementation("org.springframework.cloud:spring-cloud-starter-bus-amqp")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework:spring-jdbc")

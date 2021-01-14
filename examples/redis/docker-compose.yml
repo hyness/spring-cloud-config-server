@@ -8,7 +8,7 @@ services:
     depends_on:
       - redis
     container_name: config-server-env
-    image: hyness/spring-cloud-config-server
+    image: hyness/spring-cloud-config-server:2.2
     ports:
       - "8881:8888"
     environment:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - redis
     container_name: config-server-dir
-    image: hyness/spring-cloud-config-server
+    image: hyness/spring-cloud-config-server:2.2
     ports:
       - "8882:8888"
     volumes:
@@ -31,7 +31,7 @@ services:
     depends_on:
       - redis
     container_name: config-server-props
-    image: hyness/spring-cloud-config-server
+    image: hyness/spring-cloud-config-server:2.2
     ports:
       - "8883:8888"
     environment:

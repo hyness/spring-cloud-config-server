@@ -1,3 +1,5 @@
+rootProject.name = "spring-cloud-config-server"
+
 pluginManagement {
     val kotlinVersion: String by settings
     val springBootVersion: String by settings

@@ -7,7 +7,7 @@ services:
     depends_on:
       - localstack
     container_name: config-server
-    image: hyness/spring-cloud-config-server
+    image: hyness/spring-cloud-config-server:2.2
     ports:
       - "8888:8888"
     environment:
