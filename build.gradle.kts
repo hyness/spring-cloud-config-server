@@ -11,7 +11,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = project.properties["kotlinJvmTarget"] as String
+            jvmTarget = System.getProperty("jvmTarget") ?: project.properties["kotlinJvmTarget"] as String
         }
     }
 
@@ -44,7 +44,7 @@ dependencies {
     implementation("org.springframework:spring-jdbc")
     implementation("org.springframework.vault:spring-vault-core:${properties["spring-vault.version"]}")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("com.amazonaws:aws-java-sdk-s3:${properties["s3.version"]}")
     runtimeOnly("com.zaxxer:HikariCP")
     runtimeOnly("org.postgresql:postgresql")
