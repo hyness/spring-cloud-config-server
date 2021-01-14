@@ -1,7 +1,7 @@
 # Spring Cloud Config Server
 A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.1/reference/html/).
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server?style=flat-square)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/hyness/spring-cloud-config-server/CI/master)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
