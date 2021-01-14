@@ -23,7 +23,8 @@ tasks {
         manifest {
             attributes(
                     "Implementation-Title" to project.name,
-                    "Implementation-Version" to project.dependencyManagement.importedProperties["spring-cloud-config.version"]
+                    "Implementation-Version" to (project.properties["spring-cloud-config.version"] as String? ?:
+                        project.dependencyManagement.importedProperties["spring-cloud-config.version"])
             )
         }
     }
@@ -42,7 +43,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework:spring-jdbc")
-    implementation("org.springframework.vault:spring-vault-core:${properties["spring-vault.version"]}")
+    implementation("org.springframework.vault:spring-vault-core")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("com.amazonaws:aws-java-sdk-s3:${properties["s3.version"]}")

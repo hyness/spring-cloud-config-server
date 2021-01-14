@@ -1,7 +1,8 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.0/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.1/reference/html/).
 
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server?style=flat-square)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/hyness/spring-cloud-config-server/CI/master)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
 [![Docker Automated build](https://img.shields.io/docker/automated/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/builds/)
@@ -10,9 +11,9 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Supported tags
-* `3.0.0-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.0`, `3.0`, `latest`
-* `3.0.0-jdk11`, `3.0-jdk11`, `jdk11`
-* `3.0.0-jdk15`, `3.0-jdk15`, `jdk15`
+* `3.0.1-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.1`, `3.0`, `latest`
+* `3.0.1-jdk11`, `3.0-jdk11`, `jdk11`
+* `3.0.1-jdk15`, `3.0-jdk15`, `jdk15`
 
 ## Usage
 ```
