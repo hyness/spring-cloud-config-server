@@ -1,12 +1,10 @@
 # Spring Cloud Config Server
 A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.1/reference/html/).
 
-![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hyness/spring-cloud-config-server?style=flat-square)
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/hyness/spring-cloud-config-server/CI/master)
-[![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
-[![Docker Automated build](https://img.shields.io/docker/automated/hyness/spring-cloud-config-server.svg?style=flat-square)](https://hub.docker.com/r/hyness/spring-cloud-config-server/builds/)
-![Docker Build Status](https://img.shields.io/docker/build/hyness/spring-cloud-config-server?style=flat-square)
+![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=master)
+![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
+[![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
 [![Image Size](https://images.microbadger.com/badges/image/hyness/spring-cloud-config-server.svg)](https://microbadger.com/images/hyness/spring-cloud-config-server)
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
