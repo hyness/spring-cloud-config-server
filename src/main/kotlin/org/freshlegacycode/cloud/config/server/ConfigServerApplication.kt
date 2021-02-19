@@ -67,7 +67,8 @@ internal class CloudBusRabbitConfiguration : CloudBusConfiguration()
         BusRefreshAutoConfiguration::class,
         BusStreamAutoConfiguration::class,
         BusJacksonAutoConfiguration::class,
-        PathServiceMatcherAutoConfiguration::class)
+        PathServiceMatcherAutoConfiguration::class,
+        EnvironmentMonitorAutoConfiguration::class)
 internal abstract class CloudBusConfiguration
 
 @Profile("redis")
