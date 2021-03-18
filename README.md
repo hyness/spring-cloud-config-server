@@ -1,7 +1,7 @@
 # Spring Cloud Config Server
 A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.2/reference/html/).
 
-![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=master)
+![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
@@ -136,7 +136,7 @@ docker run -it -p 8888:8888 \
 * MS-SQL
 * Postgres
 
-[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/master/examples) for more details
+[See the docker-compose examples](https://github.com/hyness/spring-cloud-config-server/tree/main/examples) for more details
 
 ### Additional Features
 
@@ -181,6 +181,14 @@ docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=security \
       -e SPRING_SECURITY_USER_NAME=myuser -e SPRING_SECURITY_USER_PASSWORD=mypassword \
       hyness/spring-cloud-config-server
+```
+
+### Master branch to main renaming
+If you have checked out the project prior to the renaming, run the following command to fix your local copy
+```
+git branch -m master main
+git fetch origin
+git branch -u origin/main main
 ```
 ### Thank You
 
