@@ -13,6 +13,8 @@ COPY --from=builder /build/spring-boot-loader/ ./
 COPY --from=builder /build/application/ ./
 COPY entrypoint.sh ./
 
+ENV BOOT_LAUNCHER=org.springframework.boot.loader.JarLauncher
+
 WORKDIR /
 EXPOSE 8888
 VOLUME /config
