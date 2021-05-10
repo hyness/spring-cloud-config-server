@@ -3,6 +3,7 @@ name: dockerhub deploy
 on:
   workflow_run:
     workflows: ["CI"]
+    branches: [2.2]
     types:
       - completed
 
