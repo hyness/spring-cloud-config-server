@@ -1,12 +1,17 @@
-FROM adoptopenjdk/openjdk8:alpine-slim as builder
+ARG JVM_TARGET
+ARG JVM_FROM=adoptopenjdk/openjdk$JVM_TARGET:alpine-slim
+FROM $JVM_FROM as builder
+
+ARG JVM_TARGET
+ARG JVM_FROM
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 WORKDIR /build
 
 COPY . ./
-RUN sh gradlew -DjvmTarget=1.8 -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
+RUN sh gradlew -DjvmTarget=$(if [ $JVM_TARGET -eq 8 ]; then echo '1.8'; else echo $JVM_TARGET; fi) -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* .
 RUN java -Djarmode=layertools -jar spring-cloud-config-server.jar extract
 
-FROM adoptopenjdk/openjdk8:alpine-slim
+FROM $JVM_FROM
 WORKDIR /opt/spring-cloud-config-server
 COPY --from=builder /build/dependencies/ ./
 COPY --from=builder /build/spring-boot-loader/ ./

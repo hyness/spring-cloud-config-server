@@ -19,7 +19,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: Build docker image
         run: |
-          docker build -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME . --build-arg JVM_TARGET=8
           docker tag $IMAGE_NAME ${{ github.repository }}
       - name: Test with remote git repo
         run: |
