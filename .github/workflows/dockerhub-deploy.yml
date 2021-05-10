@@ -34,7 +34,7 @@ jobs:
       - name: Set cloud config versions in github env
         run: |
           SEMVER=$(./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-)
-          SEMVER_MINOR=$(echo "${SEMVER%.*}")
+          SEMVER_MINOR=$(echo $SEMVER | cut -d. -f1,2)
           echo "CLOUD_CONFIG_VERSION=$SEMVER" >> $GITHUB_ENV
           echo "CLOUD_CONFIG_VERSION_SHORT=$SEMVER_MINOR" >> $GITHUB_ENV
 
