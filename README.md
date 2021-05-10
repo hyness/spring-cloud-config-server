@@ -53,6 +53,7 @@ docker run -it -p 8888:8888 \
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL=main \
       hyness/spring-cloud-config-server
 ```
 ##### Configure through system properties without a configuration file
@@ -66,6 +67,7 @@ docker run -it -p 8888:8888 \
 docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server \
       --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+      --spring.cloud.config.server.git.default-label=main
 ```
 ##### Verify Samples Above
 ```
