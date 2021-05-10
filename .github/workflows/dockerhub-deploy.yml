@@ -1,6 +1,7 @@
 name: dockerhub deploy
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["CI"]
     branches: [main]
@@ -43,12 +44,18 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ github.repository }}:latest
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}
-            ${{ github.repository }}:jdk8
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk8
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
+
+      - name: Tag and push java 8 default image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }} ${{ github.repository }}
+          docker tag ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }} ${{ github.repository }}:jdk8
+          docker push ${{ github.repository }}
+          docker push ${{ github.repository }}:jdk8
 
       - name: Build and push java 11
         uses: docker/build-push-action@v2
@@ -57,9 +64,14 @@ jobs:
           file: ./jdk11.Dockerfile
           push: true
           tags: |
-            ${{ github.repository }}:jdk11
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk11
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk11
+
+      - name: Tag and push java 11 default image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }} ${{ github.repository }}:jdk11
+          docker push ${{ github.repository }}:jdk11
 
       - name: Build and push java 15
         uses: docker/build-push-action@v2
@@ -68,6 +80,11 @@ jobs:
           file: ./jdk15.Dockerfile
           push: true
           tags: |
-            ${{ github.repository }}:jdk15
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk15
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk15
+
+      - name: Tag and push java 15 default image
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker tag ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }} ${{ github.repository }}:jdk15
+          docker push ${{ github.repository }}:jdk15
