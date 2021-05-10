@@ -41,6 +41,8 @@ jobs:
       - name: Build and push java 8
         uses: docker/build-push-action@v2
         with:
+          build-args: |
+            JVM_TARGET=8
           context: .
           push: true
           tags: |
@@ -50,9 +52,11 @@ jobs:
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
 
       - name: Tag and push java 8 default image
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
+          build-args: |
+            JVM_TARGET=8
           context: .
           push: true
           tags: |
@@ -62,19 +66,21 @@ jobs:
       - name: Build and push java 11
         uses: docker/build-push-action@v2
         with:
+          build-args: |
+            JVM_TARGET=11
           context: .
-          file: ./jdk11.Dockerfile
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk11
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk11
 
       - name: Tag and push java 11 default image
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
+          build-args: |
+            JVM_TARGET=11
           context: .
-          file: ./jdk11.Dockerfile
           push: true
           tags: |
             ${{ github.repository }}:jdk11
@@ -83,18 +89,20 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./jdk15.Dockerfile
+          build-args: |
+            JVM_TARGET=15
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk15
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk15
 
       - name: Tag and push java 15 default image
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./jdk15.Dockerfile
+          build-args: |
+            JVM_TARGET=15
           push: true
           tags: |
             ${{ github.repository }}:jdk15
