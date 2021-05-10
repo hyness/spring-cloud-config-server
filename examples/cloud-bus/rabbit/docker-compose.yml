@@ -14,6 +14,7 @@ services:
     environment:
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
       - SPRING_PROFILES_ACTIVE=cloud-bus-rabbit
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL=main
       - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo
       - SPRING_RABBITMQ_HOST=rabbitmq
 
@@ -37,7 +38,7 @@ services:
     ports:
       - "8883:8888"
     environment:
-      JAVA_OPTS: -Dmanagement.endpoints.web.exposure.include=* -Dspring.profiles.active=cloud-bus-rabbit -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo -Dspring.rabbitmq.host=rabbitmq
+      JAVA_OPTS: -Dmanagement.endpoints.web.exposure.include=* -Dspring.profiles.active=cloud-bus-rabbit -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo -Dspring.cloud.config.server.git.default-label=main -Dspring.rabbitmq.host=rabbitmq
 
   rabbitmq:
     image: rabbitmq

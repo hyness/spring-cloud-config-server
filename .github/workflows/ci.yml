@@ -19,7 +19,7 @@ jobs:
       - name: Build docker image
         run: |
           docker build -t $IMAGE_NAME .
-          docker tag $IMAGE_NAME ${{ github.repository }}
+          docker tag $IMAGE_NAME ${{ github.repository }}:2.2
       - name: Test with remote git repo
         run: |
           docker-compose -f examples/git/docker-compose.yml up -d
