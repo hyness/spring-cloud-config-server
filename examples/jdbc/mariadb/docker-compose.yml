@@ -8,7 +8,7 @@ services:
     depends_on:
       - mariadb
     container_name: config-server-env
-    image: hyness/spring-cloud-config-server
+    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
     ports:
       - "8881:8888"
     environment:
@@ -22,7 +22,7 @@ services:
     depends_on:
       - mariadb
     container_name: config-server-dir
-    image: hyness/spring-cloud-config-server
+    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
     ports:
       - "8882:8888"
     volumes:
@@ -33,7 +33,7 @@ services:
     depends_on:
       - mariadb
     container_name: config-server-props
-    image: hyness/spring-cloud-config-server
+    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
     entrypoint: ["sh", "/opt/spring-cloud-config-server/entrypoint.sh", "--spring.profiles.active=jdbc", "---spring.cloud.config.server.jdbc.sql=SELECT `KEY`, VALUE from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?", "--spring.datasource.url=jdbc:mariadb://mariadb:3306/cloud_config", "--spring.datasource.username=root"]
     ports:
       - "8883:8888"
