@@ -10,7 +10,7 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 ## Supported tags
 * `2.2.7.RELEASE-jdk8`, `2.2-jdk8`, `2.2.7.RELEASE`, `2.2`
 * `2.2.7.RELEASE-jdk11`, `2.2-jdk11`
-* `2.2.7.RELEASE-jdk14`, `2.2-jdk14`
+* `2.2.7.RELEASE-jdk15`, `2.2-jdk15`
 
 ## Usage
 ```
