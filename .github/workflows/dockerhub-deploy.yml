@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
