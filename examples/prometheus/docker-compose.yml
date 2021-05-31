@@ -1,0 +1,34 @@
+version: '2'
+
+# Docker Compose example for testing a remote git repo
+
+services:
+  # Configured through environment variables
+  config-server-env:
+    container_name: config-server-env
+    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    ports:
+      - "8881:8888"
+    environment:
+      MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED: "true"
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/spring-cloud-samples/config-repo
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL: main
+
+  # Configured through mounted config volume
+  config-server-dir:
+    container_name: config-server-dir
+    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    ports:
+      - "8882:8888"
+    volumes:
+      - ./config:/config
+
+  # Configured through system properties
+  config-server-props:
+    container_name: config-server-props
+    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    ports:
+      - "8883:8888"
+    environment:
+      JAVA_OPTS: -Dmanagement.endpoint.prometheus.enabled=true -Dmanagement.endpoints.web.exposure.include=* -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo -Dspring.cloud.config.server.git.default-label=main
