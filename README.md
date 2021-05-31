@@ -174,6 +174,18 @@ The [Spring Boot actuator](https://docs.spring.io/spring-boot/docs/current/refer
 enabled by default.  [See the Spring Boot documentation](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator-properties) 
 for configuration options.  The actuator can be disabled entirely by including the `no-actuator` profile
 
+#### Prometheus Metrics
+To enable support for an additional prometheus metrics endpoint, enable the `prometheus` endpoint, as well as [ensuring the 
+endpoint is exposed](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator.endpoints.exposing).
+````
+docker run -it -p 8888:8888 \
+      -v /path/to/config/files/dir:/config \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
+      -e MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true \
+      -e MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=* \
+      hyness/spring-cloud-config-server
+````
+
 ### Security
 Spring Security can be enabled through the `security` profile.
 

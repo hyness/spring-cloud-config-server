@@ -1,0 +1,15 @@
+management:
+  endpoint:
+    prometheus:
+      enabled: "true"
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          default-label: main
+          uri: https://github.com/spring-cloud-samples/config-repo

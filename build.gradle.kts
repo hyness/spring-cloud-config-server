@@ -52,9 +52,8 @@ dependencies {
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
     runtimeOnly("org.firebirdsql.jdbc:jaybird-jdk18")
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-    }
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 dependencyManagement {
