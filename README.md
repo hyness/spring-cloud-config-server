@@ -1,17 +1,16 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.4/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.5/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
-[![Image Size](https://images.microbadger.com/badges/image/hyness/spring-cloud-config-server.svg)](https://microbadger.com/images/hyness/spring-cloud-config-server)
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Supported tags
-* `3.0.4-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.4`, `3.0`, `latest`
-* `3.0.4-jdk11`, `3.0-jdk11`, `jdk11`
-* `3.0.4-jdk15`, `3.0-jdk15`, `jdk15`
+* `3.0.5-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.5`, `3.0`, `latest`
+* `3.0.5-jdk11`, `3.0-jdk11`, `jdk11`
+* `3.0.5-jdk15`, `3.0-jdk15`, `jdk15`
 
 ## Usage
 ```
@@ -20,7 +19,7 @@ docker run -it --name=spring-cloud-config-server \
       -v </path/to/config>:/config \
       hyness/spring-cloud-config-server
 ```
-
+    
 #### Parameters
 * `-p 8888` Server port
 * `-v /config` Mounted configuration
