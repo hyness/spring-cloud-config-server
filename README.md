@@ -1,17 +1,20 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.5/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.1.0/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
+[![Image Size](https://img.shields.io/docker/image-size/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Supported tags
-* `3.0.5-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.5`, `3.0`, `latest`
-* `3.0.5-jdk11`, `3.0-jdk11`, `jdk11`
-* `3.0.5-jdk15`, `3.0-jdk15`, `jdk15`
+* `3.1.0-jdk8`, `3.1-jdk8`, `jdk8`
+* `3.1.0-jdk11`, `3.1-jdk11`, `jdk11`, `3.1.0`, `3.1`, `latest`
+* `3.1.0-jdk17`, `3.1-jdk17`, `jdk17`
 
+*Beginning with 3.1.x, Java 8 support is deprecated.  Default image is based on Java 11.  Java 8 will be removed in a 
+future release*
 ## Usage
 ```
 docker run -it --name=spring-cloud-config-server \
@@ -53,7 +56,6 @@ docker run -it -p 8888:8888 \
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
-      -e SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL=main \
       hyness/spring-cloud-config-server
 ```
 ##### Configure through system properties without a configuration file
@@ -67,7 +69,6 @@ docker run -it -p 8888:8888 \
 docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server \
       --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
-      --spring.cloud.config.server.git.default-label=main
 ```
 ##### Verify Samples Above
 ```
@@ -196,13 +197,6 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ```
 
-### Master branch to main renaming
-If you have checked out the project prior to the renaming, run the following command to fix your local copy
-```
-git branch -m master main
-git fetch origin
-git branch -u origin/main main
-```
 ### Thank You
 
 ##### Project Contributors

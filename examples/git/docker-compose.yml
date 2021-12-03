@@ -11,7 +11,6 @@ services:
       - "8881:8888"
     environment:
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/spring-cloud-samples/config-repo
-      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL: main
 
   # Configured through mounted config volume
   config-server-dir:
@@ -29,4 +28,4 @@ services:
     ports:
       - "8883:8888"
     environment:
-      JAVA_OPTS: -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo -Dspring.cloud.config.server.git.default-label=main
+      JAVA_OPTS: -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo

@@ -11,11 +11,11 @@ services:
     ports:
       - "8888:8888"
     environment:
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
-      - SPRING_PROFILES_ACTIVE=awss3
-      - SPRING_AWSS3_ENDPOINT=http://localstack:4572
-      - SPRING_CLOUD_CONFIG_SERVER_AWSS3_REGION=us-east-1
-      - SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=bucket1
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      SPRING_PROFILES_ACTIVE: awss3
+      SPRING_AWSS3_ENDPOINT: http://localstack:4572
+      SPRING_CLOUD_CONFIG_SERVER_AWSS3_REGION: us-east-1
+      SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET: bucket1
   localstack:
     image: localstack/localstack:latest
     container_name: localstack

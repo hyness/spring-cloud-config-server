@@ -37,26 +37,28 @@ jobs:
           SEMVER_MINOR=$(echo $SEMVER | cut -d. -f1,2)
           echo "CLOUD_CONFIG_VERSION=$SEMVER" >> $GITHUB_ENV
           echo "CLOUD_CONFIG_VERSION_SHORT=$SEMVER_MINOR" >> $GITHUB_ENV
+          echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
 
       - name: Build and push java 8
         uses: docker/build-push-action@v2
         with:
           build-args: |
-            JVM_TARGET=8
+            JVM_TARGET=1.8
+            JVM_FROM=adoptopenjdk/openjdk8:alpine
           context: .
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${{ SHORT_SHA }}-jdk8
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-jdk8
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}-jdk8
 
-      - name: Tag and push java 8 default image
+      - name: Tag and push java 8 image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
           build-args: |
-            JVM_TARGET=8
+            JVM_TARGET=1.8
+            JVM_FROM=adoptopenjdk/openjdk8:alpine
           context: .
           push: true
           tags: |
@@ -71,8 +73,11 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk11
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${{ SHORT_SHA }}-jdk11
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-jdk11
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}-jdk11
 
       - name: Tag and push java 11 default image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
@@ -83,26 +88,28 @@ jobs:
           context: .
           push: true
           tags: |
+            ${{ github.repository }}:latest
             ${{ github.repository }}:jdk11
 
-      - name: Build and push java 15
+      - name: Build and push java 17
         uses: docker/build-push-action@v2
         with:
           context: .
           build-args: |
-            JVM_TARGET=15
+            JVM_TARGET=17
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk15
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk15
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${SHORT_SHA}-jdk17
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-jdk17
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}-jdk17
 
-      - name: Tag and push java 15 default image
+      - name: Tag and push java 17 default image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
           context: .
           build-args: |
-            JVM_TARGET=15
+            JVM_TARGET=17
           push: true
           tags: |
-            ${{ github.repository }}:jdk15
+            ${{ github.repository }}:jdk17

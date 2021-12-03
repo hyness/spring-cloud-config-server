@@ -18,7 +18,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: Build docker image
         run: |
-          docker build -t ${{ github.repository }}:$TAG . --build-arg JVM_TARGET=8
+          docker build -t ${{ github.repository }}:$TAG . --build-arg JVM_TARGET=11
       - name: Test with remote git repo
         run: |
           docker-compose -f examples/git/docker-compose.yml up -d
