@@ -48,7 +48,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${{ SHORT_SHA }}-jdk8
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${SHORT_SHA}-jdk8
             ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-jdk8
             ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}-jdk8
 
@@ -75,7 +75,7 @@ jobs:
           tags: |
             ${{ github.repository }}:${CLOUD_CONFIG_VERSION}
             ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}
-            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${{ SHORT_SHA }}-jdk11
+            ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-${SHORT_SHA}-jdk11
             ${{ github.repository }}:${CLOUD_CONFIG_VERSION}-jdk11
             ${{ github.repository }}:${CLOUD_CONFIG_VERSION_SHORT}-jdk11
 
