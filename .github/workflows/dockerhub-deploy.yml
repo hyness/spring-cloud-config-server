@@ -44,8 +44,10 @@ jobs:
         with:
           build-args: |
             JVM_TARGET=1.8
-            JVM_FROM=adoptopenjdk/openjdk8:alpine
+            JVM_TAG=8-focal
           context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
+          load: true
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk8
@@ -53,13 +55,13 @@ jobs:
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
 
       - name: Tag and push java 8 image
-        if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
           build-args: |
             JVM_TARGET=1.8
-            JVM_FROM=adoptopenjdk/openjdk8:alpine
+            JVM_TAG=8-focal
           context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
           push: true
           tags: |
             ${{ github.repository }}:latest
@@ -71,6 +73,8 @@ jobs:
           build-args: |
             JVM_TARGET=11
           context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          load: true
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
@@ -86,6 +90,7 @@ jobs:
           build-args: |
             JVM_TARGET=11
           context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           push: true
           tags: |
             ${{ github.repository }}:latest
@@ -95,8 +100,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           build-args: |
             JVM_TARGET=17
+          load: true
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk17
@@ -108,6 +115,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           build-args: |
             JVM_TARGET=17
           push: true

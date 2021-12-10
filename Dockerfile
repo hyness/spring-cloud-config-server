@@ -1,9 +1,8 @@
-ARG JVM_TARGET
-ARG JVM_FROM=eclipse-temurin:$JVM_TARGET-alpine
-FROM $JVM_FROM as builder
-
-ARG JVM_TARGET
-ARG JVM_FROM
+ARG JVM_TARGET=11
+ARG JVM_TAG=$JVM_TARGET-focal
+ARG JVM_FROM=eclipse-temurin:$JVM_TAG
+ARG TARGETPLATFORM
+FROM --platform=$BUILDPLATFORM $JVM_FROM as builder
 LABEL maintainer="hyness <hyness@freshlegacycode.org>"
 WORKDIR /build
 
