@@ -3,7 +3,7 @@ name: dockerhub deploy
 on:
   workflow_run:
     workflows: ['CI']
-    branches: [main, '[2-9].[0-9]']
+    branches: ['wip-issue-65', 'main', '[2-9].[0-9]']
     types:
       - completed
 
@@ -47,25 +47,12 @@ jobs:
             JVM_TAG=8-focal
           context: .
           platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
+          no-cache: true
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jre8
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jre8
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jre8
-
-      - name: Build and push java 8 JDK
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            JVM_TARGET=1.8
-            JVM_TAG=8-jdk-focal
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
-          push: true
-          tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
 
       - name: Tag and push java 8 JRE default image
         uses: docker/build-push-action@v2
@@ -78,6 +65,21 @@ jobs:
           push: true
           tags: |
             ${{ github.repository }}:jre8
+
+      - name: Build and push java 8 JDK
+        uses: docker/build-push-action@v2
+        with:
+          build-args: |
+            JVM_TARGET=1.8
+            JVM_TAG=8-jdk-focal
+          context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
+          no-cache: true
+          push: true
+          tags: |
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk8
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk8
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
 
       - name: Tag and push java 8 JDK default image
         uses: docker/build-push-action@v2
@@ -98,6 +100,7 @@ jobs:
             JVM_TARGET=11
           context: .
           platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          no-cache: true
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
@@ -105,22 +108,6 @@ jobs:
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jre11
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jre11
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jre11
-
-      - name: Build and push java 11 JDK
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            JVM_TARGET=11
-            JVM_TAG=11-jdk-focal
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          push: true
-          tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk11
 
       - name: Tag and push java 11 JRE default images
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
@@ -134,6 +121,23 @@ jobs:
           tags: |
             ${{ github.repository }}:latest
             ${{ github.repository }}:jre11
+
+      - name: Build and push java 11 JDK
+        uses: docker/build-push-action@v2
+        with:
+          build-args: |
+            JVM_TARGET=11
+            JVM_TAG=11-jdk-focal
+          context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          no-cache: true
+          push: true
+          tags: |
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk11
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk11
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk11
 
       - name: Tag and push java 11 JDK default image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
@@ -155,25 +159,12 @@ jobs:
           platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
           build-args: |
             JVM_TARGET=17
+          no-cache: true
           push: true
           tags: |
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jre17
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jre17
             ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jre17
-
-      - name: Build and push java 17 JDK
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          build-args: |
-            JVM_TARGET=17
-            JVM_TAG=17-jdk-focal
-          push: true
-          tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk17
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk17
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk17
 
       - name: Tag and push java 17 JRE default image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
@@ -186,6 +177,21 @@ jobs:
           push: true
           tags: |
             ${{ github.repository }}:jre17
+
+      - name: Build and push java 17 JDK
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          build-args: |
+            JVM_TARGET=17
+            JVM_TAG=17-jdk-focal
+          no-cache: true
+          push: true
+          tags: |
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk17
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk17
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk17
 
       - name: Tag and push java 17 JDK default image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
