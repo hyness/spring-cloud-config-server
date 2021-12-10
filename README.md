@@ -8,14 +8,20 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![Image Size](https://img.shields.io/docker/image-size/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-## Supported tags
+### Supported tags
+* `3.1.0-jre8`, `3.1-jre8`, `jre8`
 * `3.1.0-jdk8`, `3.1-jdk8`, `jdk8`
-* `3.1.0-jdk11`, `3.1-jdk11`, `jdk11`, `3.1.0`, `3.1`, `latest`
+* `3.1.0-jre11`, `3.1-jre11`, `jre11`, `3.1.0`, `3.1`, `latest`
+* `3.1.0-jdk11`, `3.1-jdk11`, `jdk11`
+* `3.1.0-jre17`, `3.1-jre17`, `jre17`
 * `3.1.0-jdk17`, `3.1-jdk17`, `jdk17`
 
-*Beginning with 3.1.x, Java 8 support is deprecated.  Default image is based on Java 11.  Java 8 will be removed in a 
-future release*
-## Usage
+##### Build updates for 3.1+
+* *Default image is based on Java 11.*
+* *Java 8 support is deprecated, and will be removed in a future release*
+* *JRE builds are now available and the default for latest, 3.1, 3.1.0*
+
+### Usage
 ```
 docker run -it --name=spring-cloud-config-server \
       -p 8888:8888 \
@@ -39,38 +45,38 @@ for further information on how to use and configure Spring Boot.
 
 #### Configuration examples
 
-##### Using a mounted config directory
+#### Using a mounted config directory
 ```
 docker run -it -p 8888:8888 \
       -v /path/to/config/dir:/config \
       hyness/spring-cloud-config-server
 ```
 
-##### Using a mounted application.yml
+#### Using a mounted application.yml
 ```
 docker run -it -p 8888:8888 \
       -v /path/to/application.yml:/config/application.yml \
       hyness/spring-cloud-config-server
 ```
-##### Configure through environment variables without a configuration file
+#### Configure through environment variables without a configuration file
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
 ```
-##### Configure through system properties without a configuration file
+#### Configure through system properties without a configuration file
 ```
 docker run -it -p 8888:8888 \
       -e JAVA_OPTS=-Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
 ```
-##### Configure through command line arguments without a configuration file
+#### Configure through command line arguments without a configuration file
 ```
 docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server \
       --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
 ```
-##### Verify Samples Above
+#### Verify Samples Above
 ```
 $ curl http://localhost:8888/foo/development
 ```
@@ -79,27 +85,27 @@ $ curl http://localhost:8888/foo/development
 Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 6 backends to choose from...
 
 #### Git
-##### Remote git repo example
+#### Remote git repo example
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
 ```
-##### Local git repo example
+#### Local git repo example
 ```
 docker run -it -p 8888:8888 \
       -v /path/to/config/files/dir:/config \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
       hyness/spring-cloud-config-server
 ```
-##### Filesystem
+#### Filesystem
 ```
 docker run -it -p 8888:8888 \
       -v /path/to/config/files/dir:/config \
       -e SPRING_PROFILES_ACTIVE=native \
       hyness/spring-cloud-config-server
 ```
-##### Vault
+#### Vault
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=vault \
@@ -107,7 +113,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN=00000000-0000-0000-0000-000000000000 \
       hyness/spring-cloud-config-server
 ```
-##### AWS S3
+#### AWS S3
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=awss3 \
@@ -115,7 +121,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=bucket \
       hyness/spring-cloud-config-server
 ```
-##### Redis
+#### Redis
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=redis \
@@ -123,7 +129,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_REDIS_PORT=6379
       hyness/spring-cloud-config-server
 ```
-##### JDBC
+#### JDBC
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=jdbc \
@@ -132,7 +138,7 @@ docker run -it -p 8888:8888 \
       -e SPRING_DATASOURCE_PASSWORD=mypassword \
       hyness/spring-cloud-config-server
 ```
-##### Supported Databases
+#### Supported Databases
 * Firebird
 * MariaDB
 * MS-SQL
@@ -151,7 +157,7 @@ applications configured with **RefreshScope** to automatically reload configurat
 [Spring Cloud Bus](https://cloud.spring.io/spring-cloud-bus/reference/html) documentation for more details
     
 #### Supported Message Brokers
-##### Kafka
+#### Kafka
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=cloud-bus-kafka \
@@ -160,7 +166,7 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ```
 
-##### RabbitMQ
+#### RabbitMQ
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=cloud-bus-rabbit \
@@ -189,7 +195,7 @@ docker run -it -p 8888:8888 \
 ### Security
 Spring Security can be enabled through the `security` profile.
 
-##### Basic Security
+#### Basic Security
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=security \
@@ -199,9 +205,9 @@ docker run -it -p 8888:8888 \
 
 ### Thank You
 
-##### Project Contributors
+#### Project Contributors
 Thank you to all of the contributors who have helped make this project better through code contributions and bug reports.
 
-##### Project Supporters
+#### Project Supporters
 This project is developed using the outstanding IntelliJ IDE, thanks to support from JetBrains
 [![JetBrains](src/main/images/jetbrains-variant-4.png)](https://www.jetbrains.com/?from=spring-cloud-config-server)
