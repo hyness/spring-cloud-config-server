@@ -7,11 +7,15 @@ plugins {
     kotlin("plugin.spring")
 }
 
+val jvmType: String? by project
+val jvmVersion: String by project
+val springCloudConfigVersion: String? by project
+
 tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = System.getProperty("jvmTarget") ?: project.properties["kotlinJvmTarget"] as String
+            jvmTarget = if (jvmVersion == "8") "1.8" else jvmVersion
         }
     }
 
@@ -20,11 +24,13 @@ tasks {
     }
 
     bootJar {
+        val version = springCloudConfigVersion ?:
+            project.dependencyManagement.importedProperties["spring-cloud-config.version"] as String
+
         manifest {
             attributes(
-                    "Implementation-Title" to project.name,
-                    "Implementation-Version" to (project.properties["spring-cloud-config.version"] as String? ?:
-                        project.dependencyManagement.importedProperties["spring-cloud-config.version"])
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to version
             )
         }
     }
