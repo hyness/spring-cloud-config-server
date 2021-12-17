@@ -7,7 +7,7 @@ services:
     depends_on:
       - localstack
     container_name: config-server
-    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8888:8888"
     environment:
