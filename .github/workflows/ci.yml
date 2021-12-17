@@ -6,105 +6,131 @@ on:
     branches: [main, '[2-9].[0-9]']
 
 env:
-  TAG: test
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker-build:
+  create-short-sha:
+    name: Create short commit sha
     runs-on: ubuntu-latest
-
+    outputs:
+      short-sha: ${{ steps.short-sha-output.outputs.short-sha }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-      - name: Build docker image
+      - name: Create short commit sha output
+        id: short-sha-output
+        run: echo "::set-output name=short-sha::`echo $GITHUB_SHA | cut -c1-8`"
+
+  build-and-deploy:
+    name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image to registry
+    needs: create-short-sha
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.create-short-sha.outputs.short-sha }}-${{ matrix.jvmType }}${{ matrix.jvmVersion }}
+    strategy:
+      matrix:
+        jvmType: [jre]
+        jvmVersion: [11]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and deploy docker image
         uses: docker/build-push-action@v2
         with:
           build-args: |
             JVM_TARGET=11
           context: .
-          load: true
-          tags: ${{ github.repository }}:test
-      - name: Test with remote git repo
+          push: true
+          tags: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.TAG}}
+
+  integration-test:
+    name: Verify Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image with ${{ matrix.verify.label }}
+    needs:
+      - create-short-sha
+      - build-and-deploy
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.create-short-sha.outputs.short-sha }}-${{ matrix.jvmType }}${{ matrix.jvmVersion }}
+    strategy:
+      fail-fast: false
+      matrix:
+        jvmType: [jre]
+        jvmVersion: [11]
+        verify:
+          - label: remote git repo
+            path: git
+            uri: /foo/development
+            init: ""
+            query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
+            timeout: 30
+          - label: native file repo
+            path: native
+            uri: /foo/development
+            init: ""
+            query: jq -e '.propertySources[0].name == "file:config/foo-development.properties"'
+            timeout: 30
+          - label: redis repo
+            path: redis
+            uri: /redis-app/development
+            init: docker-compose -f examples/redis/docker-compose.yml exec -T redis sh populate-redis.sh
+            query: jq -e '.propertySources[0].source."server.port" == "8100"'
+            timeout: 30
+          - label: vault repo
+            path: vault
+            uri: /myapp/default
+            init: docker-compose -f examples/vault/docker-compose.yml exec -T vault sh populate-vault.sh
+            query: jq -e '.propertySources[0].source.foo == "myappsbar"'
+            timeout: 30
+          - label: jdbc repo
+            path: jdbc/postgres
+            uri: /jdbc-app/dev/latest
+            init: ""
+            query: jq -e '.propertySources[0].source."sample key" == "a value"'
+            timeout: 30
+          - label: remote repo and cloud bus kafka
+            path: cloud-bus/kafka
+            uri: /foo/development
+            init: ""
+            query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
+            timeout: 180
+          - label: remote repo and cloud bus rabbit
+            path: cloud-bus/rabbit
+            uri: /foo/development
+            init: ""
+            query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
+            timeout: 90
+          - label: prometheus endpoint
+            path: prometheus
+            uri: /actuator/prometheus
+            init: ""
+            query: grep '# HELP application_started_time_seconds Time taken (ms) to start the application'
+            timeout: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test with ${{ matrix.verify.label }}
         run: |
-          docker-compose -f examples/git/docker-compose.yml up -d
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
-          curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          docker-compose -f examples/git/docker-compose.yml down
-      - name: Test with native file repo
-        run: |
-          docker-compose -f examples/native/docker-compose.yml up -d
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
-          curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "file:config/foo-development.properties"})'
-          curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "file:config/foo-development.properties"})'
-          curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "file:config/foo-development.properties"})'
-          docker-compose -f examples/native/docker-compose.yml down
-      - name: Test with redis repo
-        run: |
-          docker-compose -f examples/redis/docker-compose.yml up -d
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
-          docker-compose -f examples/redis/docker-compose.yml exec -T redis sh populate-redis.sh
-          curl localhost:8881/redis-app/development | jq '.propertySources[0].source' | jq 'contains({"server.port": "8100"})'
-          curl localhost:8882/redis-app/development | jq '.propertySources[0].source' | jq 'contains({"server.port": "8100"})'
-          curl localhost:8883/redis-app/development | jq '.propertySources[0].source' | jq 'contains({"server.port": "8100"})'
-          docker-compose -f examples/redis/docker-compose.yml down
-      - name: Test with vault repo
-        run: |
-          docker-compose -f examples/vault/docker-compose.yml up -d
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/myapp/default; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/myapp/default; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/myapp/default; do printf '.' && sleep 1; done"
-          docker-compose -f examples/vault/docker-compose.yml exec -T vault sh populate-vault.sh
-          curl localhost:8881/myapp/default | jq '.propertySources[0].source' | jq 'contains({"foo": "myappsbar"})'
-          curl localhost:8882/myapp/default | jq '.propertySources[0].source' | jq 'contains({"foo": "myappsbar"})'
-          curl localhost:8883/myapp/default | jq '.propertySources[0].source' | jq 'contains({"foo": "myappsbar"})'
-          docker-compose -f examples/vault/docker-compose.yml down
-      - name: Test with jdbc repo
-        run: |
-          docker-compose -f examples/jdbc/postgres/docker-compose.yml up -d
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8881/jdbc-app/dev/latest; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8882/jdbc-app/dev/latest; do printf '.' && sleep 1; done"
-          timeout 30 sh -c "until curl -o /dev/null -Isf localhost:8883/jdbc-app/dev/latest; do printf '.' && sleep 1; done"
-          curl localhost:8881/jdbc-app/dev/latest | jq '.propertySources[0].source' | jq 'contains({"sample key": "a value"})'
-          curl localhost:8882/jdbc-app/dev/latest | jq '.propertySources[0].source' | jq 'contains({"sample key": "a value"})'
-          curl localhost:8883/jdbc-app/dev/latest | jq '.propertySources[0].source' | jq 'contains({"sample key": "a value"})'
-          docker-compose -f examples/jdbc/postgres/docker-compose.yml down
-      - name: Test with remote repo and cloud bus kafka
-        run: |
-          docker-compose -f examples/cloud-bus/kafka/docker-compose.yml up -d
-          timeout 180 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
-          timeout 180 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
-          timeout 180 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
-          curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          docker-compose -f examples/cloud-bus/kafka/docker-compose.yml down
-      - name: Test with remote repo and cloud bus rabbit
-        run: |
-          docker-compose -f examples/cloud-bus/rabbit/docker-compose.yml up -d
-          timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
-          timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
-          timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
-          curl localhost:8881/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          curl localhost:8882/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          curl localhost:8883/foo/development | jq '.propertySources[0]' | jq 'contains({name: "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"})'
-          docker-compose -f examples/cloud-bus/rabbit/docker-compose.yml down
-      - name: Test prometheus endpoint
-        run: |
-          docker-compose -f examples/prometheus/docker-compose.yml up -d
-          timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8881/foo/development; do printf '.' && sleep 1; done"
-          timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8882/foo/development; do printf '.' && sleep 1; done"
-          timeout 90 sh -c "until curl -o /dev/null -Isf localhost:8883/foo/development; do printf '.' && sleep 1; done"
-          [[ $(curl -f localhost:8881/actuator/prometheus | wc -l) -gt 0 ]]
-          [[ $(curl -f localhost:8882/actuator/prometheus | wc -l) -gt 0 ]]
-          [[ $(curl -f localhost:8883/actuator/prometheus | wc -l) -gt 0 ]]
-          docker-compose -f examples/prometheus/docker-compose.yml down
+          docker-compose -f examples/${{ matrix.verify.path }}/docker-compose.yml up -d
+          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8881${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
+          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8882${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
+          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8883${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
+          ${{ matrix.verify.init }}
+          curl -s localhost:8881${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
+          curl -s localhost:8882${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
+          curl -s localhost:8883${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
+          docker-compose -f examples/${{ matrix.verify.path }}/docker-compose.yml down

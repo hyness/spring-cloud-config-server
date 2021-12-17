@@ -1,4 +1,4 @@
-name: dockerhub deploy
+name: Deploy artifacts to Dockerhub
 
 on:
   workflow_run:
@@ -7,197 +7,104 @@ on:
     types:
       - completed
 
-jobs:
-  push-to-dockerhub:
-    runs-on: ubuntu-latest
-    name: Push verified image to dockerhub
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository }}
+  PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
 
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+jobs:
+  create-variables:
+    name: Create build variables
+    runs-on: ubuntu-latest
+    outputs:
+      cloud-config-version: ${{ steps.create-variables-output.outputs.cloud-config-version }}
+      cloud-config-version-short: ${{ steps.create-variables-output.outputs.cloud-config-version-short }}
+      short-sha: ${{ steps.create-variables-output.outputs.short-sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
+      - name: Create semver
+        run: |
+          echo "SEMVER=$(./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-)" >> $GITHUB_ENV
+      - name: Create outputs
+        id: create-variables-output
+        run: |
+          echo "::set-output name=cloud-config-version::$SEMVER"
+          echo "::set-output name=cloud-config-version-short::`echo $SEMVER | cut -d. -f1,2`"
+          echo "::set-output name=short-sha::`echo $GITHUB_SHA | cut -c1-8`"
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
+  build-and-deploy-to-dockerhub:
+    if: github.event.workflow_run.conclusion == 'success'
+    name: Push verified image to dockerhub
+    needs: create-variables
+    runs-on: ubuntu-latest
+    env:
+      CLOUD_CONFIG_VERSION: ${{ needs.create-variables.outputs.cloud-config-version }}
+      CLOUD_CONFIG_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-version-short }}
+      JAVA: ${{ matrix.jvmType }}${{ matrix.jvmVersion }}
+      JVM_TYPE: ${{ matrix.jvmVersion }}
+      JVM_VERSION: ${{ matrix.jvmVersion }}
+      SHORT_SHA: ${{ needs.create-variables.outputs.short-sha }}
+    strategy:
+      matrix:
+        jvmType: [jre, jdk]
+        jvmVersion: [8, 11, 17]
+        exclude:
+          - jvmVersion: 17
+            jvmType: jre
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Set cloud config versions in github env
-        run: |
-          SEMVER=$(./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-)
-          SEMVER_MINOR=$(echo $SEMVER | cut -d. -f1,2)
-          echo "CLOUD_CONFIG_VERSION=$SEMVER" >> $GITHUB_ENV
-          echo "CLOUD_CONFIG_VERSION_SHORT=$SEMVER_MINOR" >> $GITHUB_ENV
-          echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
-
-      - name: Build and push java 8 JRE
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and push java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} docker image
         uses: docker/build-push-action@v2
         with:
           build-args: |
-            JVM_VERSION=8
-            JVM_TARGET=1.8
-            RUN_TYPE=jre
+            JVM_VERSION=${{ matrix.jvmVersion }}
+            JVM_TYPE=${{ matrix.jvmType }}
           context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
+          platforms: ${{ env.PLATFORMS }}
           no-cache: true
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jre8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jre8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jre8
-
-      - name: Tag and push java 8 JRE default image
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-${{ env.JAVA }},
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.JAVA }},
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-${{ env.JAVA }},
+      - name: Build and push java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} default docker image
+        if: github.event.workflow_run.head_branch == 'main' && matrix.jvmVersion == '11'
         uses: docker/build-push-action@v2
         with:
           build-args: |
-            JVM_VERSION=8
-            JVM_TARGET=1.8
-            RUN_TYPE=jre
+            JVM_VERSION=${{ matrix.jvmVersion }}
+            JVM_TYPE=${{ matrix.jvmType }}
           context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
-          push: true
-          tags: |
-            ${{ github.repository }}:jre8
-
-      - name: Build and push java 8 JDK
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            JVM_VERSION=8
-            JVM_TARGET=1.8
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
+          platforms: ${{ env.PLATFORMS }}
           no-cache: true
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk8
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk8
-
-      - name: Tag and push java 8 JDK default image
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.JAVA }}
+      - name: Build and push latest docker image
+        if: github.event.workflow_run.head_branch == 'main' && matrix.jvmVersion == '11' && matrix.jvmType == 'jre'
         uses: docker/build-push-action@v2
         with:
           build-args: |
-            JVM_VERSION=8
-            JVM_TARGET=1.8
+            JVM_VERSION=${{ matrix.jvmVersion }}
+            JVM_TYPE=${{ matrix.jvmType }}
           context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
-          push: true
-          tags: |
-            ${{ github.repository }}:jdk8
-
-      - name: Build and push java 11 JRE
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            RUN_TYPE=jre
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
+          platforms: ${{ env.PLATFORMS }}
           no-cache: true
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jre11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jre11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jre11
-
-      - name: Tag and push java 11 JRE default images
-        if: ${{ github.event.workflow_run.head_branch == 'main' }}
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            RUN_TYPE=jre
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          push: true
-          tags: |
-            ${{ github.repository }}:latest
-            ${{ github.repository }}:jre11
-
-      - name: Build and push java 11 JDK
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          no-cache: true
-          push: true
-          tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk11
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk11
-
-      - name: Tag and push java 11 JDK default image
-        if: ${{ github.event.workflow_run.head_branch == 'main' }}
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          push: true
-          tags: |
-            ${{ github.repository }}:jdk11
-
-      - name: Build and push java 17 JRE
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          build-args: |
-            RUN_TYPE=jre
-            JVM_VERSION=17
-          no-cache: true
-          push: true
-          tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jre17
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jre17
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jre17
-
-      - name: Tag and push java 17 JRE default image
-        if: ${{ github.event.workflow_run.head_branch == 'main' }}
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          build-args: |
-            RUN_TYPE=jre
-            JVM_VERSION=17
-          push: true
-          tags: |
-            ${{ github.repository }}:jre17
-
-      - name: Build and push java 17 JDK
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          build-args: |
-            JVM_VERSION=17
-          no-cache: true
-          push: true
-          tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-jdk17
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk17
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk17
-
-      - name: Tag and push java 17 JDK default image
-        if: ${{ github.event.workflow_run.head_branch == 'main' }}
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le,linux/s390x
-          build-args: |
-            JVM_VERSION=17
-          push: true
-          tags: |
-            ${{ github.repository }}:jdk17
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest

@@ -6,7 +6,7 @@ services:
   # Configured through environment variables
   config-server-env:
     container_name: config-server-env
-    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8881:8888"
     environment:
@@ -17,7 +17,7 @@ services:
   # Configured through mounted config file
   config-server-dir:
     container_name: config-server-dir
-    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8882:8888"
     volumes:
@@ -27,7 +27,7 @@ services:
   # Configured through system properties
   config-server-props:
     container_name: config-server-props
-    image: "hyness/spring-cloud-config-server:${TAG:-latest}"
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8883:8888"
     environment:
