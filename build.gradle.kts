@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring")
 }
 
-val jvmType: String? by project
+val jvmType: String by project
 val jvmVersion: String by project
 val springCloudConfigVersion: String? by project
 
@@ -24,13 +24,12 @@ tasks {
     }
 
     bootJar {
-        val version = springCloudConfigVersion ?:
-            project.dependencyManagement.importedProperties["spring-cloud-config.version"] as String
+        project.version = springCloudConfigVersion ?: project.dependencyManagement.importedProperties["spring-cloud-config.version"] as String
 
         manifest {
             attributes(
-                "Implementation-Title" to project.name,
-                "Implementation-Version" to version
+                    "Implementation-Title" to project.name,
+                    "Implementation-Version" to project.version
             )
         }
     }

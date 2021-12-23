@@ -1,0 +1,7 @@
+[[build.env]]
+NAME="BPE_DELIM_JAVA_TOOL_OPTIONS"
+VALUE=" "
+
+[[build.env]]
+NAME="BPE_PREPEND_JAVA_TOOL_OPTIONS"
+VALUE="-Dserver.port=8888 -Dspring.config.name=application -Dspring.config.additional-location=optional:file:/config/ -Dspring.cloud.config.server.native.searchLocations=classpath:/,classpath:/config,file:./,file:./config,file:/config"
