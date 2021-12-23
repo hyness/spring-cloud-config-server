@@ -12,11 +12,11 @@ services:
     ports:
       - "8881:8888"
     environment:
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
-      - SPRING_PROFILES_ACTIVE=cloud-bus-kafka
-      - SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT-LABEL=main
-      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo
-      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:9092
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
+      SPRING_PROFILES_ACTIVE: cloud-bus-kafka
+      SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULTLABEL: main
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/spring-cloud-samples/config-repo
+      SPRING_KAFKA_BOOTSTRAP-SERVERS: kafka:9092
 
   # Configured through mounted config volume
   config-server-dir:
