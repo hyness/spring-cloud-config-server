@@ -16,8 +16,8 @@ on:
 
 env:
   REGISTRY: docker.io
-  IMAGE_NAME: ${{ github.repository }}
-  PLATFORMS: linux/amd64,linux/arm/v7,linux/arm64/v8,linux/ppc64le
+  DEFAULT_JAVA_VERSION: 11
+  DEFAULT_JAVA_TYPE: jre
 
 jobs:
   create-variables:
@@ -25,8 +25,10 @@ jobs:
     name: Create build variables
     runs-on: ubuntu-latest
     outputs:
-      cloud-config-version: ${{ steps.create-variables-output.outputs.cloud-config-version }}
-      cloud-config-version-short: ${{ steps.create-variables-output.outputs.cloud-config-version-short }}
+      cloud-config-build-version: ${{ steps.create-variables-output.outputs.cloud-config-build-version }}
+      cloud-config-build-version-short: ${{ steps.create-variables-output.outputs.cloud-config-build-version-short }}
+      cloud-config-latest-version: ${{ steps.create-variables-output.outputs.cloud-config-latest-version }}
+      cloud-config-latest-version-short: ${{ steps.create-variables-output.outputs.cloud-config-latest-version-short }}
       registry: ${{ steps.create-variables-output.outputs.registry }}
       short-sha: ${{ steps.create-variables-output.outputs.short-sha }}
     steps:
@@ -37,29 +39,36 @@ jobs:
       - name: Update the registry
         if: github.event.inputs.registry != null
         run: echo "REGISTRY=${{ github.event.inputs.registry }}" >> $GITHUB_ENV
-      - name: Create semver
-        run: |
-          echo "SEMVER=$(./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-)" >> $GITHUB_ENV
+      - name: Update the registry
+        if: github.event.inputs.registry != null
+        run: echo "REGISTRY=${{ github.event.inputs.registry }}" >> $GITHUB_ENV
+      - name: Set latest cloud config version
+        run: echo "CLOUD_CONFIG_LATEST_VERSION=`curl -s https://search.maven.org/solrsearch/select\?q\=g:%22org.springframework.cloud%22%20AND%20a:%22spring-cloud-config-server%22 | jq -r '.response.docs[0].latestVersion'`" >> $GITHUB_ENV
+      - name: Set build cloud config version
+        run: echo "CLOUD_CONFIG_BUILD_VERSION=`./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-`" >> $GITHUB_ENV
       - name: Create outputs
         id: create-variables-output
         run: |
-          echo "::set-output name=cloud-config-version::$SEMVER"
-          echo "::set-output name=cloud-config-version-short::`echo $SEMVER | cut -d. -f1,2`"
+          echo "::set-output name=cloud-config-build-version::`echo $CLOUD_CONFIG_BUILD_VERSION`"
+          echo "::set-output name=cloud-config-build-version-short::`echo $CLOUD_CONFIG_BUILD_VERSION | cut -d. -f1,2`"
+          echo "::set-output name=cloud-config-latest-version::`echo $CLOUD_CONFIG_LATEST_VERSION`"
+          echo "::set-output name=cloud-config-latest-version-short::`echo $CLOUD_CONFIG_LATEST_VERSION | cut -d. -f1,2`"
           echo "::set-output name=registry::`echo $REGISTRY`"
           echo "::set-output name=short-sha::`echo $GITHUB_SHA | cut -c1-8`"
 
   build-and-deploy-to-dockerhub:
     if: github.event.workflow_run.conclusion == 'success' || github.event.inputs.triggered == 'true'
-    name: Push verified Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image to ${{ needs.create-variables.outputs.registry }}
+    name: Push verified Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image to ${{ needs.create-variables.outputs.registry }}
     needs: create-variables
     runs-on: ubuntu-latest
     env:
-      CLOUD_CONFIG_VERSION: ${{ needs.create-variables.outputs.cloud-config-version }}
-      CLOUD_CONFIG_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-version-short }}
+      CLOUD_CONFIG_BUILD_VERSION: ${{ needs.create-variables.outputs.cloud-config-build-version }}
+      CLOUD_CONFIG_BUILD_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-build-version-short }}
+      CLOUD_CONFIG_LATEST_VERSION: ${{ needs.create-variables.outputs.cloud-config-latest-version }}
+      CLOUD_CONFIG_LATEST_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-latest-version-short }}
       JAVA: ${{ matrix.jvmType }}${{ matrix.jvmVersion }}
       JVM_TYPE: ${{ matrix.jvmVersion }}
       JVM_VERSION: ${{ matrix.jvmVersion }}
-      REGISTRY: ${{ needs.create-variables.outputs.registry }}
       SHORT_SHA: ${{ needs.create-variables.outputs.short-sha }}
     strategy:
       matrix:
@@ -71,6 +80,7 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
       - name: Login to GitHub Container Registry
+        if: env.REGISTRY == 'ghcr.io'
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
@@ -82,47 +92,27 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Build and push java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} docker image
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            JVM_VERSION=${{ matrix.jvmVersion }}
-            JVM_TYPE=${{ matrix.jvmType }}
-          context: .
-          platforms: ${{ env.PLATFORMS }}
-          no-cache: true
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.SHORT_SHA }}-${{ env.JAVA }},
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CLOUD_CONFIG_VERSION }}-${{ env.JAVA }},
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-${{ env.JAVA }},
-      - name: Build and push java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} default docker image
-        if: github.event.workflow_run.head_branch == 'main' && matrix.jvmVersion == '11'
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            JVM_VERSION=${{ matrix.jvmVersion }}
-            JVM_TYPE=${{ matrix.jvmType }}
-          context: .
-          platforms: ${{ env.PLATFORMS }}
-          no-cache: true
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.JAVA }}
-      - name: Build and push latest docker image
-        if: github.event.workflow_run.head_branch == 'main' && matrix.jvmVersion == '11' && matrix.jvmType == 'jre'
-        uses: docker/build-push-action@v2
-        with:
-          build-args: |
-            JVM_VERSION=${{ matrix.jvmVersion }}
-            JVM_TYPE=${{ matrix.jvmType }}
-          context: .
-          platforms: ${{ env.PLATFORMS }}
-          no-cache: true
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      - name: Create the IMAGE environment variable
+        run: echo "IMAGE=$REGISTRY/$GITHUB_REPOSITORY" >> $GITHUB_ENV
+      - name: Create OCI image tags
+        run: echo "DOCKER_TAGS=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$JAVA,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT-$JAVA" >> $GITHUB_ENV
+      - name: Add version default OCI image tag
+        if: matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
+        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT" >> $GITHUB_ENV
+      - name: Add ${{ env.JAVA }} default OCI image tag
+        if: env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT
+        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:$JAVA" >> $GITHUB_ENV
+      - name: Add latest OCI image tag
+        if: (env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT) && matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
+        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:latest" >> $GITHUB_ENV
+      - name: Setup pack
+        uses: buildpacks/github-actions/setup-pack@v4.5.1
+      - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
+        run: >
+          pack -v build $IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA --workspace /opt/spring-cloud-config-server
+          -B paketobuildpacks/builder:base
+          -e BP_JVM_TYPE=${{ matrix.jvmType }}
+          -e BP_JVM_VERSION=${{ matrix.jvmVersion }}
+          -e BP_GRADLE_BUILD_ARGUMENTS="-PjvmVersion=${{ matrix.jvmVersion }} -PjvmType=${{ matrix.jvmType }} --no-daemon assemble"
+          -t $DOCKER_TAGS
+          --publish
