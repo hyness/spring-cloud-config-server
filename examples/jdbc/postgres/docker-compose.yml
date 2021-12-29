@@ -19,6 +19,8 @@ services:
 
   # Configured through mounted config volume
   config-server-dir:
+    depends_on:
+      - postgres
     container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
@@ -28,16 +30,32 @@ services:
 
   # Configured through system properties
   config-server-props:
+    depends_on:
+      - postgres
     container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8883:8888"
     environment:
-      JAVA_OPTS: |
+      JAVA_OPTS: >
         -Dspring.profiles.active=jdbc
         -Dspring.datasource.url=jdbc:postgresql://postgres:5432/cloud_config
         -Dspring.datasource.username=root
         -Dspring.datasource.password=password
+
+  # Configured through command line arguments
+  config-server-args:
+    depends_on:
+      - postgres
+    container_name: config-server-args
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    command:
+      - --spring.profiles.active=jdbc
+      - --spring.datasource.url=jdbc:postgresql://postgres:5432/cloud_config
+      - --spring.datasource.username=root
+      - --spring.datasource.password=password
+    ports:
+      - "8884:8888"
 
   postgres:
     container_name: postgres

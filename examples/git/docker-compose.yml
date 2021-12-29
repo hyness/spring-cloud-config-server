@@ -29,3 +29,11 @@ services:
       - "8883:8888"
     environment:
       JAVA_OPTS: -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+
+  # Configured through command line arguments
+  config-server-args:
+    container_name: config-server-args
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    command: --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+    ports:
+      - "8884:8888"

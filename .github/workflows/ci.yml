@@ -4,6 +4,7 @@ on:
   pull_request:
   push:
     branches: [main, '[2-9].[0-9]']
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -67,51 +68,51 @@ jobs:
           - label: remote git repo
             path: git
             uri: /foo/development
-            init: ""
             query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
-            timeout: 30
+            timeout: 60
           - label: native file repo
             path: native
             uri: /foo/development
-            init: ""
             query: jq -e '.propertySources[0].name == "file:config/foo-development.properties"'
-            timeout: 30
+            timeout: 60
           - label: redis repo
             path: redis
             uri: /redis-app/development
             init: docker-compose -f examples/redis/docker-compose.yml exec -T redis sh populate-redis.sh
             query: jq -e '.propertySources[0].source."server.port" == "8100"'
-            timeout: 30
+            timeout: 60
           - label: vault repo
             path: vault
             uri: /myapp/default
             init: docker-compose -f examples/vault/docker-compose.yml exec -T vault sh populate-vault.sh
             query: jq -e '.propertySources[0].source.foo == "myappsbar"'
-            timeout: 30
-          - label: jdbc repo
+            timeout: 60
+          - label: jdbc postgres repo
             path: jdbc/postgres
             uri: /jdbc-app/dev/latest
-            init: ""
             query: jq -e '.propertySources[0].source."sample key" == "a value"'
-            timeout: 30
+            timeout: 60
           - label: remote repo and cloud bus kafka
             path: cloud-bus/kafka
             uri: /foo/development
-            init: ""
             query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
             timeout: 180
           - label: remote repo and cloud bus rabbit
             path: cloud-bus/rabbit
             uri: /foo/development
-            init: ""
             query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
             timeout: 90
+          - label: aws s3 repo
+            path: awss3
+            uri: /foo/development
+            init: docker-compose -f examples/awss3/docker-compose.yml exec -T localstack sh /data/populate-s3.sh
+            query: jq -e '.propertySources[0].name == "s3:foo-development"'
+            timeout: 60
           - label: prometheus endpoint
             path: prometheus
             uri: /actuator/prometheus
-            init: ""
             query: grep '# HELP application_started_time_seconds Time taken (ms) to start the application'
-            timeout: 30
+            timeout: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -133,4 +134,5 @@ jobs:
           curl -s localhost:8881${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
           curl -s localhost:8882${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
           curl -s localhost:8883${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
+          curl -s localhost:8884${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
           docker-compose -f examples/${{ matrix.verify.path }}/docker-compose.yml down

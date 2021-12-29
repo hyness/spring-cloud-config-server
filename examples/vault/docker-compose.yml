@@ -37,9 +37,25 @@ services:
     ports:
       - "8883:8888"
     environment:
-      JAVA_OPTS: |
-        -Dspring.profiles.active=vault -Dspring.cloud.config.server.vault.token=00000000-0000-0000-0000-000000000000
-        -Dspring.cloud.config.server.vault.host=vault -Dspring.cloud.config.server.vault.kv-version=2
+      JAVA_OPTS: >
+        -Dspring.profiles.active=vault
+        -Dspring.cloud.config.server.vault.token=00000000-0000-0000-0000-000000000000
+        -Dspring.cloud.config.server.vault.host=vault
+        -Dspring.cloud.config.server.vault.kv-version=2
+
+  # Configured through command line arguments
+  config-server-args:
+    depends_on:
+      - vault
+    container_name: config-server-args
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8884:8888"
+    command:
+      - --spring.profiles.active=vault
+      - --spring.cloud.config.server.vault.token=00000000-0000-0000-0000-000000000000
+      - --spring.cloud.config.server.vault.host=vault
+      - --spring.cloud.config.server.vault.kv-version=2
 
   vault:
     privileged: true

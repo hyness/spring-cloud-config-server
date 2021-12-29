@@ -37,7 +37,25 @@ services:
     ports:
       - "8883:8888"
     environment:
-      JAVA_OPTS: -Dmanagement.endpoints.web.exposure.include=* -Dspring.profiles.active=cloud-bus-rabbit -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo -Dspring.rabbitmq.host=rabbitmq
+      JAVA_OPTS: >
+        -Dmanagement.endpoints.web.exposure.include=*
+        -Dspring.profiles.active=cloud-bus-rabbit
+        -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+        -Dspring.rabbitmq.host=rabbitmq
+
+  # Configured through command line arguments
+  config-server-args:
+    depends_on:
+      - rabbitmq
+    container_name: config-server-args
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    command:
+      - --management.endpoints.web.exposure.include=*
+      - --spring.profiles.active=cloud-bus-rabbit
+      - --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+      - --spring.rabbitmq.host=rabbitmq
+    ports:
+      - "8884:8888"
 
   rabbitmq:
     image: rabbitmq

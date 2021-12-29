@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      server:
+        awss3:
+          endpoint: localhost.localstack.cloud:4566
+          region: us-east-1
+          bucket: sample-bucket
+  profiles:
+    active: awss3

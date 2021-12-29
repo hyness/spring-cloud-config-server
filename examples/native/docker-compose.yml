@@ -34,3 +34,13 @@ services:
       JAVA_OPTS: -Dspring.profiles.active=native
     volumes:
       - ./config:/config
+
+  # Configured through command line arguments
+  config-server-args:
+    container_name: config-server-args
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8884:8888"
+    command: --spring.profiles.active=native
+    volumes:
+      - ./config:/config

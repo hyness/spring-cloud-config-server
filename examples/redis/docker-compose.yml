@@ -35,7 +35,21 @@ services:
     ports:
       - "8883:8888"
     environment:
-      JAVA_OPTS: -Dspring.profiles.active=redis -Dspring.redis.host=redis
+      JAVA_OPTS: >
+        -Dspring.profiles.active=redis
+        -Dspring.redis.host=redis
+
+  # Configured through command line arguments
+  config-server-args:
+    depends_on:
+      - redis
+    container_name: config-server-args
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8884:8888"
+    command:
+      - --spring.profiles.active=redis
+      - --spring.redis.host=redis
 
   redis:
     container_name: redis
