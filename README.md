@@ -113,12 +113,19 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN=00000000-0000-0000-0000-000000000000 \
       hyness/spring-cloud-config-server
 ```
+#### AWS Parameter Store
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=awsparamstore \
+      -e SPRING_CLOUD_CONFIG_SERVER_AWSPARAMSTORE_REGION=us-east-1 \
+      hyness/spring-cloud-config-server
+```
 #### AWS S3
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=awss3 \
       -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_REGION=us-east-1 \
-      -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=bucket \
+      -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=sample-bucket \
       hyness/spring-cloud-config-server
 ```
 #### Redis
