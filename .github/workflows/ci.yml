@@ -103,10 +103,16 @@ jobs:
             query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
             timeout: 90
           - label: aws s3 repo
-            path: awss3
+            path: aws/s3
             uri: /foo/development
-            init: docker-compose -f examples/awss3/docker-compose.yml exec -T localstack sh /data/populate-s3.sh
+            init: docker-compose -f examples/aws/s3/docker-compose.yml exec -T localstack sh /data/populate-s3.sh
             query: jq -e '.propertySources[0].name == "s3:foo-development"'
+            timeout: 60
+          - label: aws parameter store repo
+            path: aws/paramstore
+            uri: /foo/development
+            init: docker-compose -f examples/aws/paramstore/docker-compose.yml exec -T localstack sh /data/populate-paramstore.sh
+            query: jq -e '.propertySources[0].name == "aws:ssm:parameter:/config/foo-development/"'
             timeout: 60
           - label: prometheus endpoint
             path: prometheus
