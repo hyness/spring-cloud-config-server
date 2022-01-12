@@ -55,6 +55,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
     implementation("com.amazonaws:aws-java-sdk-s3:${properties["aws.version"]}")
     implementation("com.amazonaws:aws-java-sdk-ssm:${properties["aws.version"]}")
+    implementation("com.amazonaws:aws-java-sdk-secretsmanager:${properties["aws.version"]}")
     runtimeOnly("com.zaxxer:HikariCP")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")

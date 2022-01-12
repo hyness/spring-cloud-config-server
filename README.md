@@ -128,6 +128,13 @@ docker run -it -p 8888:8888 \
       -e SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET=sample-bucket \
       hyness/spring-cloud-config-server
 ```
+#### AWS Secrets Manager
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=awssecretsmanager \
+      -e SPRING_CLOUD_CONFIG_SERVER_AWSSECRETSMANAGER_REGION=us-east-1 \
+      hyness/spring-cloud-config-server
+```
 #### Redis
 ```
 docker run -it -p 8888:8888 \

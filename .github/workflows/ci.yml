@@ -114,6 +114,12 @@ jobs:
             init: docker-compose -f examples/aws/paramstore/docker-compose.yml exec -T localstack sh /data/populate-paramstore.sh
             query: jq -e '.propertySources[0].name == "aws:ssm:parameter:/config/foo-development/"'
             timeout: 60
+          - label: aws secrets manager repo
+            path: aws/secretsmanager
+            uri: /foo/development
+            init: docker-compose -f examples/aws/secretsmanager/docker-compose.yml exec -T localstack sh /data/populate-secretsmanager.sh
+            query: jq -e '.propertySources[0].name == "aws:secrets:/secret/foo-development/"'
+            timeout: 60
           - label: prometheus endpoint
             path: prometheus
             uri: /actuator/prometheus
