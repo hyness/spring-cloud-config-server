@@ -110,7 +110,7 @@ jobs:
       - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
         run: >
           pack -v build $IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA --workspace /opt/spring-cloud-config-server
-          -B paketobuildpacks/builder:base
+          -B paketobuildpacks/builder:0.1.148-tiny
           -e BP_JVM_TYPE=${{ matrix.jvmType }}
           -e BP_JVM_VERSION=${{ matrix.jvmVersion }}
           -e BP_GRADLE_BUILD_ARGUMENTS="-PjvmVersion=${{ matrix.jvmVersion }} -PjvmType=${{ matrix.jvmType }} --no-daemon assemble"
