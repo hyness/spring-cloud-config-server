@@ -13,6 +13,7 @@ services:
       - "8881:8888"
     environment:
       SPRING_PROFILES_ACTIVE: jdbc
+      SPRING_CLOUD_CONFIG_SERVER_JDBC_SQL: "SELECT key, value from PROPERTIES where application=? and profile=? and label=?"
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cloud_config
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: password
@@ -39,6 +40,7 @@ services:
     environment:
       JAVA_OPTS: >
         -Dspring.profiles.active=jdbc
+        -Dspring.cloud.config.server.jdbc.sql="SELECT key, value from PROPERTIES where application=? and profile=? and label=?"
         -Dspring.datasource.url=jdbc:postgresql://postgres:5432/cloud_config
         -Dspring.datasource.username=root
         -Dspring.datasource.password=password
@@ -54,6 +56,7 @@ services:
       - --spring.datasource.url=jdbc:postgresql://postgres:5432/cloud_config
       - --spring.datasource.username=root
       - --spring.datasource.password=password
+      - --spring.cloud.config.server.jdbc.sql=SELECT key, value from PROPERTIES where application=? and profile=? and label=?
     ports:
       - "8884:8888"
 
