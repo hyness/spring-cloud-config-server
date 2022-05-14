@@ -211,15 +211,16 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ````
 
-### Security
-Spring Security can be enabled through the `security` profile.
+### Spring Security
+Spring Security can be enabled through the `security` profile for use with any backend of your choosing.
 
-#### Basic Security
+#### Basic / Form Security (with remote git backend)
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=security \
       -e SPRING_SECURITY_USER_NAME=myuser \
       -e SPRING_SECURITY_USER_PASSWORD=mypassword \
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/spring-cloud-samples/config-repo \
       hyness/spring-cloud-config-server
 ```
 

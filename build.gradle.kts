@@ -11,6 +11,10 @@ val jvmType: String by project
 val dockerUsername: String by project
 val dockerPassword: String by project
 val dockerTags: String? by project
+val imageRegistry: String? by project
+val imageName: String? by project
+val imageTag: String? by project
+val testFilter: String? by project
 
 kotlin {
     jvmToolchain(jdkVersion.toInt())
@@ -26,7 +30,12 @@ tasks {
     }
 
     test {
-        useJUnitPlatform()
+        systemProperties["registry"] = imageRegistry
+        systemProperties["name"] = imageName
+        systemProperties["tag"] = imageTag
+        useJUnitPlatform {
+            testFilter?.let { includeTags(it) }
+        }
     }
 
     bootJar {
@@ -69,4 +78,8 @@ dependencies {
     runtimeOnly(libs.bundles.jdbc.drivers)
     runtimeOnly(libs.micrometer.prometheus)
     testImplementation(libs.spring.boot.test)
+    testImplementation(libs.spring.boot.testcontainers)
+    testImplementation(libs.testcontainers.junit5)
+    testImplementation(libs.kotlin.logging)
+    testImplementation(libs.awaitility.kotlin)
 }

@@ -5,10 +5,9 @@ version: '2'
 services:
   # Configured through environment variables
   config-server-env:
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/spring-cloud-samples/config-repo
     volumes:
@@ -16,26 +15,23 @@ services:
 
   # Configured through mounted config volume
   config-server-dir:
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8882:8888"
+      - "8888"
     volumes:
       - ./config:/config
 
   # Configured through system properties
   config-server-props:
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       JAVA_OPTS: -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
 
   # Configured through command line arguments
   config-server-args:
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     command: --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
     ports:
-      - "8884:8888"
+      - "8888"

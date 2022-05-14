@@ -7,10 +7,9 @@ services:
   config-server-env:
     depends_on:
       - postgres
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       SPRING_PROFILES_ACTIVE: jdbc
       SPRING_CLOUD_CONFIG_SERVER_JDBC_SQL: "SELECT key, value from PROPERTIES where application=? and profile=? and label=?"
@@ -22,10 +21,9 @@ services:
   config-server-dir:
     depends_on:
       - postgres
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8882:8888"
+      - "8888"
     volumes:
       - ./config:/config
 
@@ -33,10 +31,9 @@ services:
   config-server-props:
     depends_on:
       - postgres
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       JAVA_OPTS: >
         -Dspring.profiles.active=jdbc
@@ -49,7 +46,6 @@ services:
   config-server-args:
     depends_on:
       - postgres
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     command:
       - --spring.profiles.active=jdbc
@@ -58,10 +54,9 @@ services:
       - --spring.datasource.password=password
       - --spring.cloud.config.server.jdbc.sql=SELECT key, value from PROPERTIES where application=? and profile=? and label=?
     ports:
-      - "8884:8888"
+      - "8888"
 
   postgres:
-    container_name: postgres
     image: postgres
     ports:
       - "5432:5432"

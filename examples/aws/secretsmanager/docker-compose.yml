@@ -10,27 +10,25 @@ services:
   config-server-env:
     depends_on:
       - localstack
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
       - aws
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       SPRING_PROFILES_ACTIVE: awssecretsmanager
-      SPRING_CLOUD_CONFIG_SERVER_AWSSECRETSMANAGER_ENDPOINT: https://localhost.localstack.cloud:4566
+      SPRING_CLOUD_CONFIG_SERVER_AWSSECRETSMANAGER_ENDPOINT: http://localhost.localstack.cloud:4566
       SPRING_CLOUD_CONFIG_SERVER_AWSSECRETSMANAGER_REGION: us-east-1
 
   # Configured through mounted config file
   config-server-dir:
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
       - aws
     ports:
-      - "8882:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -39,39 +37,36 @@ services:
 
   # Configured through system properties
   config-server-props:
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
       - aws
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       JAVA_OPTS: >
         -Dspring.profiles.active=awssecretsmanager
-        -Dspring.cloud.config.server.aws-secretsmanager.endpoint=https://localhost.localstack.cloud:4566
+        -Dspring.cloud.config.server.aws-secretsmanager.endpoint=http://localhost.localstack.cloud:4566
         -Dspring.cloud.config.server.aws-secretsmanager.region=us-east-1
 
 
   # Configured through command line arguments
   config-server-args:
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
         - aws
     ports:
-        - "8884:8888"
+        - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
     command:
         - --spring.profiles.active=awssecretsmanager
-        - --spring.cloud.config.server.aws-secretsmanager.endpoint=https://localhost.localstack.cloud:4566
+        - --spring.cloud.config.server.aws-secretsmanager.endpoint=http://localhost.localstack.cloud:4566
         - --spring.cloud.config.server.aws-secretsmanager.region=us-east-1
 
   localstack:
-    container_name: localstack
     image: localstack/localstack:latest
     networks:
       aws:

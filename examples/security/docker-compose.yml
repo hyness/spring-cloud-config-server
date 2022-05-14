@@ -1,25 +1,24 @@
-version: '3.8'
+version: '2'
 
-# Docker Compose example for testing Spring Cloud Bus Kafka
+# Docker Compose example for testing security with a remote git repo
 
 services:
   # Configured through environment variables
   config-server-env:
-    depends_on:
-      - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8888"
     environment:
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
-      SPRING_PROFILES_ACTIVE: cloud-bus-rabbit
+      ENCRYPT_KEY: vprxxl5blpycu3kt8602
       SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/spring-cloud-samples/config-repo
-      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_PROFILES_ACTIVE: git,security
+      SPRING_SECURITY_USER_NAME: user
+      SPRING_SECURITY_USER_PASSWORD: password
+    volumes:
+      - ./config:/config
 
   # Configured through mounted config volume
   config-server-dir:
-    depends_on:
-      - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8888"
@@ -28,32 +27,25 @@ services:
 
   # Configured through system properties
   config-server-props:
-    depends_on:
-      - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8888"
     environment:
       JAVA_OPTS: >
-        -Dmanagement.endpoints.web.exposure.include=*
-        -Dspring.profiles.active=cloud-bus-rabbit
+        -Dencrypt.key=vprxxl5blpycu3kt8602
         -Dspring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
-        -Dspring.rabbitmq.host=rabbitmq
+        -Dspring.profiles.active=git,security
+        -Dspring_security.user.name=user
+        -Dspring.security.user.password=password
 
   # Configured through command line arguments
   config-server-args:
-    depends_on:
-      - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
-    command:
-      - --management.endpoints.web.exposure.include=*
-      - --spring.profiles.active=cloud-bus-rabbit
-      - --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
-      - --spring.rabbitmq.host=rabbitmq
     ports:
       - "8888"
-
-  rabbitmq:
-    image: rabbitmq
-    ports:
-      - "5672"
+    command:
+      - --encrypt.key=vprxxl5blpycu3kt8602
+      - --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
+      - --spring.profiles.active=git,security
+      - --spring_security.user.name=user
+      - --spring.security.user.password=password
