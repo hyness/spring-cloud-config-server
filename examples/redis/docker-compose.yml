@@ -7,7 +7,6 @@ services:
   config-server-env:
     depends_on:
       - redis
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8881:8888"
@@ -19,7 +18,6 @@ services:
   config-server-dir:
     depends_on:
       - redis
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8882:8888"
@@ -30,7 +28,6 @@ services:
   config-server-props:
     depends_on:
       - redis
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8883:8888"
@@ -43,7 +40,6 @@ services:
   config-server-args:
     depends_on:
       - redis
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8884:8888"
@@ -52,7 +48,6 @@ services:
       - --spring.data.redis.host=redis
 
   redis:
-    container_name: redis
     image: redis:alpine
     ports:
       - "6379:6379"

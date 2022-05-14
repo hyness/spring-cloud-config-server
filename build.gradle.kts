@@ -70,4 +70,7 @@ dependencies {
     runtimeOnly(libs.bundles.jdbc.drivers)
     runtimeOnly(libs.micrometer.prometheus)
     testImplementation(libs.spring.boot.test)
+    testImplementation(libs.spring.boot.testcontainers)
+    testImplementation(libs.testcontainers.junit5)
+    testImplementation(libs.kotlin.logging)
 }

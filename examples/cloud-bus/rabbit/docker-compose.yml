@@ -7,7 +7,6 @@ services:
   config-server-env:
     depends_on:
       - rabbitmq
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8881:8888"
@@ -21,7 +20,6 @@ services:
   config-server-dir:
     depends_on:
       - rabbitmq
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8882:8888"
@@ -32,7 +30,6 @@ services:
   config-server-props:
     depends_on:
       - rabbitmq
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8883:8888"
@@ -47,7 +44,6 @@ services:
   config-server-args:
     depends_on:
       - rabbitmq
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     command:
       - --management.endpoints.web.exposure.include=*
@@ -59,6 +55,5 @@ services:
 
   rabbitmq:
     image: rabbitmq
-    container_name: rabbitmq
     ports:
       - "5672:5672"

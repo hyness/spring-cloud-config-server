@@ -88,12 +88,12 @@ jobs:
           - label: jdbc postgres repo
             path: jdbc/postgres
             uri: /jdbc-app/dev/latest
-            query: jq -e '.propertySources[0].source."sample key" == "a value"'
+            query: jq -e '.propertySources[0].source.sample_key == "a value"'
             timeout: 60
           - label: jdbc mariadb repo
             path: jdbc/mariadb
             uri: /jdbc-app/dev/latest
-            query: jq -e '.propertySources[0].source."sample key" == "a value"'
+            query: jq -e '.propertySources[0].source.sample_key == "a value"'
             timeout: 60
           - label: remote repo and cloud bus kafka
             path: cloud-bus/kafka

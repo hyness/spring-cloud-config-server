@@ -7,7 +7,6 @@ services:
   config-server-env:
     depends_on:
       - postgres
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8881:8888"
@@ -22,7 +21,6 @@ services:
   config-server-dir:
     depends_on:
       - postgres
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8882:8888"
@@ -33,7 +31,6 @@ services:
   config-server-props:
     depends_on:
       - postgres
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
       - "8883:8888"
@@ -49,7 +46,6 @@ services:
   config-server-args:
     depends_on:
       - postgres
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     command:
       - --spring.profiles.active=jdbc
@@ -61,7 +57,6 @@ services:
       - "8884:8888"
 
   postgres:
-    container_name: postgres
     image: postgres
     ports:
       - "5432:5432"

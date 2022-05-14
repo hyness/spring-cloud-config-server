@@ -3,7 +3,7 @@ spring:
     config:
       server:
         awss3:
-          endpoint: https://localhost.localstack.cloud:4566
+          endpoint: http://localhost.localstack.cloud:4566
           region: us-east-1
           bucket: sample-bucket
   profiles:

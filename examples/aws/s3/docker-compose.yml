@@ -10,7 +10,6 @@ services:
   config-server-env:
     depends_on:
       - localstack
-    container_name: config-server-env
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
       - aws
@@ -26,7 +25,6 @@ services:
 
   # Configured through mounted config file
   config-server-dir:
-    container_name: config-server-dir
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
       - aws
@@ -40,7 +38,6 @@ services:
 
   # Configured through system properties
   config-server-props:
-    container_name: config-server-props
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
       - aws
@@ -58,7 +55,6 @@ services:
 
   # Configured through command line arguments
   config-server-args:
-    container_name: config-server-args
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     networks:
         - aws
@@ -74,7 +70,6 @@ services:
         - --spring.cloud.config.server.awss3.bucket=sample-bucket
 
   localstack:
-    container_name: localstack
     image: localstack/localstack:latest
     networks:
       aws:
