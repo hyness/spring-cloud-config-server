@@ -1,4 +1,4 @@
-name: dockerhub deploy
+name: Deploy artifacts to Dockerhub
 
 on:
   workflow_dispatch:
