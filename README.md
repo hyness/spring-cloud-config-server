@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.5/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.0.7/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
@@ -8,9 +8,9 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ## Supported tags
-* `3.0.5-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.5`, `3.0`, `latest`
-* `3.0.5-jdk11`, `3.0-jdk11`, `jdk11`
-* `3.0.5-jdk15`, `3.0-jdk15`, `jdk15`
+* `3.0.7-jdk8`, `3.0-jdk8`, `jdk8`, `3.0.7`, `3.0`, `latest`
+* `3.0.7-jdk11`, `3.0-jdk11`, `jdk11`
+* `3.0.7-jdk15`, `3.0-jdk15`, `jdk15`
 
 ## Usage
 ```

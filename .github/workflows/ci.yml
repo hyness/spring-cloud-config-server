@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, '[2-9].[0-9]']
+    branches: ['3.0']
 
 env:
   TAG: test
