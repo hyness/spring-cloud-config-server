@@ -1,5 +1,5 @@
 ARG JVM_TARGET
-ARG JVM_FROM=adoptopenjdk/openjdk$JVM_TARGET:alpine-slim
+ARG JVM_FROM=eclipse-temurin:$JVM_TARGET-focal
 FROM $JVM_FROM as builder
 
 ARG JVM_TARGET

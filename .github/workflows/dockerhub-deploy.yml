@@ -84,24 +84,24 @@ jobs:
           tags: |
             ${{ github.repository }}:jdk11
 
-      - name: Build and push java 15
+      - name: Build and push java 17
         uses: docker/build-push-action@v2
         with:
           context: .
           build-args: |
-            JVM_TARGET=15
+            JVM_TARGET=17
           push: true
           tags: |
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk15
-            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk15
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION }}-jdk17
+            ${{ github.repository }}:${{ env.CLOUD_CONFIG_VERSION_SHORT }}-jdk17
 
-      - name: Tag and push java 15 default image
+      - name: Tag and push java 17 default image
         if: ${{ github.event.workflow_run.head_branch == 'main' }}
         uses: docker/build-push-action@v2
         with:
           context: .
           build-args: |
-            JVM_TARGET=15
+            JVM_TARGET=17
           push: true
           tags: |
-            ${{ github.repository }}:jdk15
+            ${{ github.repository }}:jdk17
