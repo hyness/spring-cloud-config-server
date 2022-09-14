@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.1.3/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.1.4/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
@@ -9,17 +9,17 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `3.1.3-jre8`, `3.1-jre8`, `jre8`
-* `3.1.3-jdk8`, `3.1-jdk8`, `jdk8`
-* `3.1.3-jre11`, `3.1-jre11`, `jre11`, `3.1.3`, `3.1`, `latest`
-* `3.1.3-jdk11`, `3.1-jdk11`, `jdk11`
-* `3.1.3-jre17`, `3.1-jre17`, `jre17`
-* `3.1.3-jdk17`, `3.1-jdk17`, `jdk17`
+* `3.1.4-jre8`, `3.1-jre8`, `jre8`
+* `3.1.4-jdk8`, `3.1-jdk8`, `jdk8`
+* `3.1.4-jre11`, `3.1-jre11`, `jre11`, `3.1.4`, `3.1`, `latest`
+* `3.1.4-jdk11`, `3.1-jdk11`, `jdk11`
+* `3.1.4-jre17`, `3.1-jre17`, `jre17`
+* `3.1.4-jdk17`, `3.1-jdk17`, `jdk17`
 
 ##### Build updates for 3.1+
 * *Default image is based on Java 11.*
 * *Java 8 support is deprecated, and will be removed in a future release*
-* *JRE builds are now available and the default for latest, 3.1, 3.1.3*
+* *JRE builds are now available and the default for latest, 3.1, 3.1.4*
 
 ### Usage
 ```
@@ -221,7 +221,3 @@ docker run -it -p 8888:8888 \
 
 #### Project Contributors
 Thank you to all of the contributors who have helped make this project better through code contributions and bug reports.
-
-#### Project Supporters
-This project is developed using the outstanding IntelliJ IDE, thanks to support from JetBrains
-[![JetBrains](src/main/images/jetbrains-variant-4.png)](https://www.jetbrains.com/?from=spring-cloud-config-server)
