@@ -1,5 +1,6 @@
 spring:
-  redis:
-    host: redis
+  data:
+    redis:
+      host: redis
   profiles:
     active: redis

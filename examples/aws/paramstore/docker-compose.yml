@@ -20,7 +20,7 @@ services:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       SPRING_PROFILES_ACTIVE: awsparamstore
-      SPRING_CLOUD_CONFIG_SERVER_AWSPARAMSTORE_ENDPOINT: localhost.localstack.cloud:4566
+      SPRING_CLOUD_CONFIG_SERVER_AWSPARAMSTORE_ENDPOINT: https://localhost.localstack.cloud:4566
       SPRING_CLOUD_CONFIG_SERVER_AWSPARAMSTORE_REGION: us-east-1
 
   # Configured through mounted config file
@@ -50,7 +50,7 @@ services:
       AWS_SECRET_ACCESS_KEY: test
       JAVA_OPTS: >
         -Dspring.profiles.active=awsparamstore
-        -Dspring.cloud.config.server.awsparamstore.endpoint=localhost.localstack.cloud:4566
+        -Dspring.cloud.config.server.awsparamstore.endpoint=https://localhost.localstack.cloud:4566
         -Dspring.cloud.config.server.awsparamstore.region=us-east-1
 
 
@@ -67,7 +67,7 @@ services:
       AWS_SECRET_ACCESS_KEY: test
     command:
       - --spring.profiles.active=awsparamstore
-      - --spring.cloud.config.server.awsparamstore.endpoint=localhost.localstack.cloud:4566
+      - --spring.cloud.config.server.awsparamstore.endpoint=https://localhost.localstack.cloud:4566
       - --spring.cloud.config.server.awsparamstore.region=us-east-1
 
   localstack:
