@@ -3,7 +3,7 @@ spring:
     config:
       server:
         awsparamstore:
-          endpoint: localhost.localstack.cloud:4566
+          endpoint: https://localhost.localstack.cloud:4566
           region: us-east-1
   profiles:
     active: awsparamstore

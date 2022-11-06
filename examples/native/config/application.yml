@@ -10,7 +10,9 @@ foo: baz
 
 ---
 spring:
-  profiles: cloud
+  config:
+    activate-on:
+      profile: cloud
   cloud:
     config:
       uri: ${vcap.services.${PREFIX:}configserver.credentials.uri:http://user:password@${PREFIX:}configserver.${application.domain:cfapps.io}}
@@ -42,7 +44,9 @@ ribbon:
 
 ---
 spring:
-  profiles: docker
+  config:
+    activate-on:
+      profile: docker
   cloud:
     config:
       uri: http://${CONFIGSERVER_1_PORT_8888_TCP_ADDR:localhost}:8888

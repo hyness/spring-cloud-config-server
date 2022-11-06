@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Create short commit sha output
         id: short-sha-output
-        run: echo "::set-output name=short-sha::`echo $GITHUB_SHA | cut -c1-8`"
+        run: echo "short-sha=`echo $GITHUB_SHA | cut -c1-8`" >> $GITHUB_OUTPUT
 
   build-and-deploy:
     name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image to registry
@@ -29,14 +29,14 @@ jobs:
     strategy:
       matrix:
         jvmType: [jre]
-        jvmVersion: [11]
+        jvmVersion: [17]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -63,7 +63,7 @@ jobs:
       fail-fast: false
       matrix:
         jvmType: [jre]
-        jvmVersion: [11]
+        jvmVersion: [17]
         verify:
           - label: remote git repo
             path: git
@@ -80,7 +80,7 @@ jobs:
             uri: /redis-app/development
             init: docker-compose -f examples/redis/docker-compose.yml exec -T redis sh populate-redis.sh
             query: jq -e '.propertySources[0].source."server.port" == "8100"'
-            timeout: 60
+            timeout: 90
           - label: vault repo
             path: vault
             uri: /myapp/default
@@ -132,11 +132,11 @@ jobs:
             timeout: 60
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}

@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/3.1.4/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/4.0.0/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
@@ -9,17 +9,16 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `3.1.4-jre8`, `3.1-jre8`, `jre8`
-* `3.1.4-jdk8`, `3.1-jdk8`, `jdk8`
-* `3.1.4-jre11`, `3.1-jre11`, `jre11`, `3.1.4`, `3.1`, `latest`
-* `3.1.4-jdk11`, `3.1-jdk11`, `jdk11`
-* `3.1.4-jre17`, `3.1-jre17`, `jre17`
-* `3.1.4-jdk17`, `3.1-jdk17`, `jdk17`
+* `4.0.0-jre17`, `4.0-jre17`, `jre17`, `4.0.0`, `4.0`, `latest`
+* `4.0.0-jdk17`, `4.0-jdk17`, `jdk17`
+* `4.0.0-jre18`, `4.0-jre18`, `jre18`
+* `4.0.0-jdk19`, `4.0-jdk19`, `jdk19`
 
-##### Build updates for 3.1+
-* *Default image is based on Java 11.*
-* *Java 8 support is deprecated, and will be removed in a future release*
-* *JRE builds are now available and the default for latest, 3.1, 3.1.4*
+##### Build updates for 4.0+
+* *Based on Spring Cloud Config Server 4.0 & Spring Boot 3.0 which is based on Java 17 baseline*
+* *Some configuration has changed since 3.x, [see the updated examples](https://github.com/hyness/spring-cloud-config-server/tree/main/examples)*
+* *Default image is based on Java 17.*
+* *JRE builds are now available and the default for latest, 4.0, 4.0.0*
 
 ### Usage
 ```
@@ -139,8 +138,8 @@ docker run -it -p 8888:8888 \
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=redis \
-      -e SPRING_REDIS_HOST=localhost
-      -e SPRING_REDIS_PORT=6379
+      -e SPRING_DATA_REDIS_HOST=localhost
+      -e SPRING_DATA_REDIS_PORT=6379
       hyness/spring-cloud-config-server
 ```
 #### JDBC
@@ -213,11 +212,12 @@ Spring Security can be enabled through the `security` profile.
 ```
 docker run -it -p 8888:8888 \
       -e SPRING_PROFILES_ACTIVE=security \
-      -e SPRING_SECURITY_USER_NAME=myuser -e SPRING_SECURITY_USER_PASSWORD=mypassword \
+      -e SPRING_SECURITY_USER_NAME=myuser \
+      -e SPRING_SECURITY_USER_PASSWORD=mypassword \
       hyness/spring-cloud-config-server
 ```
 
 ### Thank You
 
 #### Project Contributors
-Thank you to all of the contributors who have helped make this project better through code contributions and bug reports.
+Thank you to all the contributors who have helped make this project better through code contributions and bug reports.

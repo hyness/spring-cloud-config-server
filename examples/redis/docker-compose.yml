@@ -13,7 +13,7 @@ services:
       - "8881:8888"
     environment:
       SPRING_PROFILES_ACTIVE: redis
-      SPRING_REDIS_HOST: redis
+      SPRING_DATA_REDIS_HOST: redis
 
   # Configured through mounted config volume
   config-server-dir:
@@ -37,7 +37,7 @@ services:
     environment:
       JAVA_OPTS: >
         -Dspring.profiles.active=redis
-        -Dspring.redis.host=redis
+        -Dspring.data.redis.host=redis
 
   # Configured through command line arguments
   config-server-args:
@@ -49,11 +49,11 @@ services:
       - "8884:8888"
     command:
       - --spring.profiles.active=redis
-      - --spring.redis.host=redis
+      - --spring.data.redis.host=redis
 
   redis:
     container_name: redis
-    image: redis
+    image: redis:alpine
     ports:
       - "6379:6379"
     volumes:
