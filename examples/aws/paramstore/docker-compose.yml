@@ -72,7 +72,7 @@ services:
 
   localstack:
     container_name: localstack
-    image: localstack/localstack:latest
+    image: localstack/localstack:1.3
     networks:
       aws:
         aliases:
