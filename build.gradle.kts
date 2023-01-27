@@ -15,7 +15,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = if (jvmVersion == "8") "1.8" else jvmVersion
+            jvmTarget = jvmVersion
         }
     }
 
