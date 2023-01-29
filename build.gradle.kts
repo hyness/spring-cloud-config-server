@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -7,15 +5,18 @@ plugins {
     kotlin("plugin.spring")
 }
 
-val jvmType: String by project
-val jvmVersion: String by project
+val awsVersion: String by project
+val dockerGroup: String by project
+val dockerRegistry: String by project
+val jdkVersion: String by project
 val springCloudConfigVersion: String? by project
+val springCloudVersion: String by project
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = jvmVersion
+    kotlin {
+        compileKotlin {
+            jvmToolchain(jdkVersion.toInt())
+            kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
         }
     }
 
@@ -24,14 +25,19 @@ tasks {
     }
 
     bootJar {
-        project.version = springCloudConfigVersion ?: project.dependencyManagement.importedProperties["spring-cloud-config.version"] as String
+        project.version = springCloudConfigVersion
+            ?: project.dependencyManagement.importedProperties["spring-cloud-config.version"]!!
 
         manifest {
             attributes(
-                    "Implementation-Title" to project.name,
-                    "Implementation-Version" to project.version
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version
             )
         }
+    }
+
+    bootBuildImage {
+        imageName.set("$dockerRegistry/$dockerGroup/${project.name}:${project.version}")
     }
 }
 
@@ -52,10 +58,10 @@ dependencies {
     implementation("org.springframework.vault:spring-vault-core")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("software.amazon.awssdk:s3:${properties["aws.version"]}")
-    implementation("software.amazon.awssdk:ssm:${properties["aws.version"]}")
-    implementation("software.amazon.awssdk:sts:${properties["aws.version"]}")
-    implementation("software.amazon.awssdk:secretsmanager:${properties["aws.version"]}")
+    implementation("software.amazon.awssdk:s3:$awsVersion")
+    implementation("software.amazon.awssdk:ssm:$awsVersion")
+    implementation("software.amazon.awssdk:sts:$awsVersion")
+    implementation("software.amazon.awssdk:secretsmanager:$awsVersion")
     runtimeOnly("com.zaxxer:HikariCP")
     runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
@@ -67,6 +73,6 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["springCloudVersion"]}")
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
     }
 }
