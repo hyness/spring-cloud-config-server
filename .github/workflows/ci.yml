@@ -43,7 +43,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - id: setup-pack
-        uses: buildpacks/github-actions/setup-pack@v4.5.1
+        uses: buildpacks/github-actions/setup-pack@v5.0.0
       - name: Build and deploy OCI image
         run: >
           pack -v build $REGISTRY/$GITHUB_REPOSITORY:$TAG --clear-cache --workspace /opt/spring-cloud-config-server

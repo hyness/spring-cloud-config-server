@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/4.0.2/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/4.0.3/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
@@ -9,15 +9,15 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `4.0.2-jre17`, `4.0-jre17`, `jre17`, `4.0.2`, `4.0`, `latest`
-* `4.0.2-jdk17`, `4.0-jdk17`, `jdk17`
-* `4.0.2-jdk19`, `4.0-jdk19`, `jdk19`
+* `4.0.3-jre17`, `4.0-jre17`, `jre17`, `4.0.3`, `4.0`, `latest`
+* `4.0.3-jdk17`, `4.0-jdk17`, `jdk17`
+* `4.0.3-jdk20`, `4.0-jdk20`, `jdk20`
 
 ##### Build updates for 4.0+
 * *Based on Spring Cloud Config Server 4.0 & Spring Boot 3.0 which is based on Java 17 baseline*
 * *Some configuration has changed since 3.x, [see the updated examples](https://github.com/hyness/spring-cloud-config-server/tree/main/examples)*
 * *Default image is based on Java 17.*
-* *JRE builds are now available and the default for latest, 4.0, 4.0.2*
+* *JRE builds are now available and the default for latest, 4.0, 4.0.3*
 
 ### Usage
 ```
@@ -80,7 +80,7 @@ $ curl http://localhost:8888/foo/development
 ```
 
 ### Required Backend Configuration
-Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files.  There are currently 6 backends to choose from...
+Spring Cloud Config Server **requires** that you configure a backend to serve your configuration files
 
 #### Git
 #### Remote https git repo example

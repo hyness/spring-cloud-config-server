@@ -79,7 +79,7 @@ jobs:
     strategy:
       matrix:
         jvmType: [jre, jdk]
-        jvmVersion: [17, 19]
+        jvmVersion: [17, 20]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -112,7 +112,7 @@ jobs:
         if: (env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT) && matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
         run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:latest" >> $GITHUB_ENV
       - name: Setup pack
-        uses: buildpacks/github-actions/setup-pack@v4.5.1
+        uses: buildpacks/github-actions/setup-pack@v5.0.0
       - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
         run: >
           pack -v build $IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA --workspace /opt/spring-cloud-config-server
