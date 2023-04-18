@@ -8,7 +8,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BUILDER_TAG: 0.1.303-tiny
 
 jobs:
   create-short-sha:
@@ -29,29 +28,27 @@ jobs:
       TAG: ${{ needs.create-short-sha.outputs.short-sha }}-${{ matrix.jvmType }}${{ matrix.jvmVersion }}
     strategy:
       matrix:
-        jvmType: [jre]
-        jvmVersion: [17]
+        jvmType: [jre, jdk]
+        jvmVersion: [17, 20]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: Set up JDK ${{ matrix.jvmVersion }}
+        uses: actions/setup-java@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - id: setup-pack
-        uses: buildpacks/github-actions/setup-pack@v4.5.1
+          java-version: ${{ matrix.jvmVersion }}
+          distribution: 'temurin'
       - name: Build and deploy OCI image
         run: >
-          pack -v build $REGISTRY/$GITHUB_REPOSITORY:$TAG --clear-cache --workspace /opt/spring-cloud-config-server
-          -B paketobuildpacks/builder:$BUILDER_TAG
-          -e BP_JVM_TYPE=${{ matrix.jvmType }}
-          -e BP_JVM_VERSION=${{ matrix.jvmVersion }}
-          -e BP_GRADLE_BUILD_ARGUMENTS="-PjvmVersion=${{ matrix.jvmVersion }} -PjvmType=${{ matrix.jvmType }} --no-daemon assemble"
-          --publish
+          ./gradlew bootBuildImage
+          -PjvmType=${{ matrix.jvmType }}
+          -PjdkVersion=${{ matrix.jvmVersion }}
+          -PdockerUsername=${{ github.actor }}
+          -PdockerPassword=${{ secrets.GITHUB_TOKEN }}
+          --imageName=$REGISTRY/$GITHUB_REPOSITORY:$TAG 
+          --publishImage
   integration-test:
     name: Verify Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image with ${{ matrix.verify.label }}
     needs:
@@ -74,7 +71,7 @@ jobs:
           - label: native file repo
             path: native
             uri: /foo/development
-            query: jq -e '.propertySources[0].name == "file:/config/foo-development.properties"'
+            query: jq -e '.propertySources[0].name == "file:/native-files/foo-development.properties"'
             timeout: 60
           - label: redis repo
             path: redis

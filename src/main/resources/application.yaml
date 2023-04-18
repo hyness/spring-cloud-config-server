@@ -1,3 +1,6 @@
+server:
+  port: 8888
+---
 spring:
   cloud:
     stream:

@@ -1,0 +1,44 @@
+[versions]
+aws = "2.17.195"
+kotlin = "1.7.22"
+spring-boot = "3.1.0"
+spring-cloud = "2022.0.3"
+spring-cloud-config = "4.0.3"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-plugin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+
+[bundles]
+aws = ["aws-s3", "aws-secretsmanager", "aws-ssm", "aws-sts"]
+jdbc-drivers = ["jdbc-driver-firebird", "jdbc-driver-hikari", "jdbc-driver-mariadb", "jdbc-driver-mssql", "jdbc-driver-postgres"]
+kotlin = ["kotlin-reflect", "kotlin-stdlib"]
+spring-cloud-bus = ["spring-cloud-bus", "spring-cloud-bus-kafka", "spring-cloud-bus-amqp"]
+spring-cloud-config = ["spring-cloud-config-server", "spring-cloud-config-monitor"]
+
+[libraries]
+aws-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
+aws-secretsmanager = { module = "software.amazon.awssdk:secretsmanager", version.ref = "aws" }
+aws-ssm = { module = "software.amazon.awssdk:ssm", version.ref = "aws" }
+aws-sts = { module = "software.amazon.awssdk:sts", version.ref = "aws" }
+jdbc-driver-firebird = { module = "org.firebirdsql.jdbc:jaybird" }
+jdbc-driver-hikari = { module = "com.zaxxer:HikariCP" }
+jdbc-driver-mariadb = { module = "org.mariadb.jdbc:mariadb-java-client" }
+jdbc-driver-mssql = { module = "com.microsoft.sqlserver:mssql-jdbc" }
+jdbc-driver-postgres = { module = "org.postgresql:postgresql" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
+micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
+spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-cloud = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring-cloud" }
+spring-cloud-bus = { module = "org.springframework.cloud:spring-cloud-bus" }
+spring-cloud-bus-amqp = { module = "org.springframework.cloud:spring-cloud-starter-bus-amqp" }
+spring-cloud-bus-kafka = { module = "org.springframework.cloud:spring-cloud-starter-bus-kafka" }
+spring-cloud-config-monitor = { module = "org.springframework.cloud:spring-cloud-config-monitor" }
+spring-cloud-config-server = { module = "org.springframework.cloud:spring-cloud-config-server" }
+spring-jdbc = { module = "org.springframework:spring-jdbc" }
+spring-vault = { module = "org.springframework.vault:spring-vault-core" }

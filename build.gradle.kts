@@ -1,22 +1,25 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES as SPRING_BOOT_BOM
 
 plugins {
-    id("org.springframework.boot")
-    id("io.spring.dependency-management")
-    kotlin("jvm")
-    kotlin("plugin.spring")
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.plugin.spring)
 }
 
+val jdkVersion: String by project
 val jvmType: String by project
-val jvmVersion: String by project
-val springCloudConfigVersion: String? by project
+val dockerUsername: String by project
+val dockerPassword: String by project
+val dockerTags: String? by project
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = jvmVersion
-        }
+    version = versionCatalogs.firstNotNullOf {
+        it.findVersion("spring.cloud.config").orElse(null)
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
     }
 
     test {
@@ -24,15 +27,28 @@ tasks {
     }
 
     bootJar {
-        project.version = springCloudConfigVersion ?: project.dependencyManagement.importedProperties["spring-cloud-config.version"] as String
-
-        manifest {
-            attributes(
-                    "Implementation-Title" to project.name,
-                    "Implementation-Version" to project.version
-            )
-        }
+        manifest.attributes(
+            "Implementation-Title" to project.name,
+            "Implementation-Version" to project.version
+        )
     }
+
+    bootBuildImage {
+        applicationDirectory.set("/opt/spring-cloud-config-server")
+        builder.set("paketobuildpacks/builder:tiny")
+        docker.publishRegistry.username.set(dockerUsername)
+        docker.publishRegistry.password.set(dockerPassword)
+        environment.put("BP_JVM_TYPE", jvmType)
+        environment.put("BP_JVM_VERSION", jdkVersion)
+        environment.put("BPE_DELIM_JAVA_TOOL_OPTIONS", " ")
+        environment.put("BPE_APPEND_JAVA_TOOL_OPTIONS", "-Dspring.config.additional-location=optional:file:/config/")
+        imageName.set("hyness/spring-cloud-config-server")
+        tags.set(dockerTags?.split(',') ?: listOf())
+    }
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(jdkVersion))
 }
 
 repositories {
@@ -40,33 +56,18 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.cloud:spring-cloud-config-server")
-    implementation("org.springframework.cloud:spring-cloud-config-monitor")
-    implementation("org.springframework.cloud:spring-cloud-bus")
-    implementation("org.springframework.cloud:spring-cloud-starter-bus-kafka")
-    implementation("org.springframework.cloud:spring-cloud-starter-bus-amqp")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework:spring-jdbc")
-    implementation("org.springframework.vault:spring-vault-core")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("software.amazon.awssdk:s3:${properties["aws.version"]}")
-    implementation("software.amazon.awssdk:ssm:${properties["aws.version"]}")
-    implementation("software.amazon.awssdk:sts:${properties["aws.version"]}")
-    implementation("software.amazon.awssdk:secretsmanager:${properties["aws.version"]}")
-    runtimeOnly("com.zaxxer:HikariCP")
-    runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-    runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
-    runtimeOnly("org.firebirdsql.jdbc:jaybird")
-    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${properties["springCloudVersion"]}")
-    }
+    implementation(platform(SPRING_BOOT_BOM))
+    implementation(platform(libs.spring.cloud))
+    implementation(libs.bundles.spring.cloud.config)
+    implementation(libs.bundles.spring.cloud.bus)
+    implementation(libs.spring.boot.actuator)
+    implementation(libs.spring.data.redis)
+    implementation(libs.spring.boot.security)
+    implementation(libs.spring.jdbc)
+    implementation(libs.spring.vault)
+    implementation(libs.bundles.kotlin)
+    implementation(libs.bundles.aws)
+    runtimeOnly(libs.bundles.jdbc.drivers)
+    runtimeOnly(libs.micrometer.prometheus)
+    testImplementation(libs.spring.boot.test)
 }

@@ -18,7 +18,7 @@ env:
   REGISTRY: docker.io
   DEFAULT_JAVA_VERSION: 17
   DEFAULT_JAVA_TYPE: jre
-  BUILDER_TAG: 0.1.303-tiny
+  BUILDER_TAG: tiny
 
 jobs:
   create-variables:
@@ -37,9 +37,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Update the registry
-        if: github.event.inputs.registry != null
-        run: echo "REGISTRY=${{ github.event.inputs.registry }}" >> $GITHUB_ENV
       - name: Update the registry
         if: github.event.inputs.registry != null
         run: echo "REGISTRY=${{ github.event.inputs.registry }}" >> $GITHUB_ENV
@@ -72,32 +69,18 @@ jobs:
       CLOUD_CONFIG_BUILD_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-build-version-short }}
       CLOUD_CONFIG_LATEST_VERSION: ${{ needs.create-variables.outputs.cloud-config-latest-version }}
       CLOUD_CONFIG_LATEST_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-latest-version-short }}
+      REGISTRY: ${{ needs.create-variables.outputs.registry }}
       JAVA: ${{ matrix.jvmType }}${{ matrix.jvmVersion }}
-      JVM_TYPE: ${{ matrix.jvmVersion }}
-      JVM_VERSION: ${{ matrix.jvmVersion }}
       SHORT_SHA: ${{ needs.create-variables.outputs.short-sha }}
     strategy:
       matrix:
         jvmType: [jre, jdk]
-        jvmVersion: [17, 19]
+        jvmVersion: [17, 20]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Login to GitHub Container Registry
-        if: env.REGISTRY == 'ghcr.io'
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Login to DockerHub
-        if: env.REGISTRY == 'docker.io'
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Create the IMAGE environment variable
         run: echo "IMAGE=$REGISTRY/$GITHUB_REPOSITORY" >> $GITHUB_ENV
       - name: Create OCI image tags
@@ -111,14 +94,28 @@ jobs:
       - name: Add latest OCI image tag
         if: (env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT) && matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
         run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:latest" >> $GITHUB_ENV
-      - name: Setup pack
-        uses: buildpacks/github-actions/setup-pack@v4.5.1
+      - name: Setup GitHub Container Registry credentials
+        if: env.REGISTRY == 'ghcr.io'
+        run: |
+          echo "DOCKER_USERNAME=${{ github.actor }}" >> $GITHUB_ENV
+          echo "DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+      - name: Setup Docker Hub credentials
+        if: env.REGISTRY == 'docker.io'
+        run: |
+          echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
+          echo "DOCKER_PASSWORD=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
+      - name: Set up JDK ${{ matrix.jvmVersion }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.jvmVersion }}
+          distribution: 'temurin'
       - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
         run: >
-          pack -v build $IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA --workspace /opt/spring-cloud-config-server
-          -B paketobuildpacks/builder:$BUILDER_TAG
-          -e BP_JVM_TYPE=${{ matrix.jvmType }}
-          -e BP_JVM_VERSION=${{ matrix.jvmVersion }}
-          -e BP_GRADLE_BUILD_ARGUMENTS="-PjvmVersion=${{ matrix.jvmVersion }} -PjvmType=${{ matrix.jvmType }} --no-daemon assemble"
-          -t $DOCKER_TAGS
-          --publish
+          ./gradlew bootBuildImage
+          -PjvmType=${{ matrix.jvmType }}
+          -PjdkVersion=${{ matrix.jvmVersion }}
+          -PdockerUsername=$DOCKER_USERNAME
+          -PdockerPassword=$DOCKER_PASSWORD
+          -PdockerTags=$DOCKER_TAGS
+          --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
+          --publishImage
