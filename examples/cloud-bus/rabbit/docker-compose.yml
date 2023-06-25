@@ -9,7 +9,7 @@ services:
       - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
       SPRING_PROFILES_ACTIVE: cloud-bus-rabbit
@@ -22,7 +22,7 @@ services:
       - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8882:8888"
+      - "8888"
     volumes:
       - ./config:/config
 
@@ -32,7 +32,7 @@ services:
       - rabbitmq
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       JAVA_OPTS: >
         -Dmanagement.endpoints.web.exposure.include=*
@@ -51,9 +51,9 @@ services:
       - --spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo
       - --spring.rabbitmq.host=rabbitmq
     ports:
-      - "8884:8888"
+      - "8888"
 
   rabbitmq:
     image: rabbitmq
     ports:
-      - "5672:5672"
+      - "5672"

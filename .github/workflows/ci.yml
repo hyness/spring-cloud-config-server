@@ -61,93 +61,36 @@ jobs:
       fail-fast: false
       matrix:
         jvmType: [jre]
-        jvmVersion: [17]
-        verify:
-          - label: remote git repo
-            path: git
-            uri: /foo/development
-            query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
-            timeout: 60
-          - label: native file repo
-            path: native
-            uri: /foo/development
-            query: jq -e '.propertySources[0].name == "file:/native-files/foo-development.properties"'
-            timeout: 60
-          - label: redis repo
-            path: redis
-            uri: /redis-app/development
-            init: docker-compose -f examples/redis/docker-compose.yml exec -T redis sh populate-redis.sh
-            query: jq -e '.propertySources[0].source."server.port" == "8100"'
-            timeout: 90
-          - label: vault repo
-            path: vault
-            uri: /myapp/default
-            init: docker-compose -f examples/vault/docker-compose.yml exec -T vault sh populate-vault.sh
-            query: jq -e '.propertySources[0].source.foo == "myappsbar"'
-            timeout: 60
-          - label: jdbc postgres repo
-            path: jdbc/postgres
-            uri: /jdbc-app/dev/latest
-            query: jq -e '.propertySources[0].source.sample_key == "a value"'
-            timeout: 60
-          - label: jdbc mariadb repo
-            path: jdbc/mariadb
-            uri: /jdbc-app/dev/latest
-            query: jq -e '.propertySources[0].source.sample_key == "a value"'
-            timeout: 60
-          - label: remote repo and cloud bus kafka
-            path: cloud-bus/kafka
-            uri: /foo/development
-            query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
-            timeout: 180
-          - label: remote repo and cloud bus rabbit
-            path: cloud-bus/rabbit
-            uri: /foo/development
-            query: jq -e '.propertySources[0].name == "https://github.com/spring-cloud-samples/config-repo/foo-development.properties"'
-            timeout: 90
-          - label: aws s3 repo
-            path: aws/s3
-            uri: /foo/development
-            init: docker-compose -f examples/aws/s3/docker-compose.yml exec -T localstack sh /data/populate-s3.sh
-            query: jq -e '.propertySources[0].name == "s3:foo-development"'
-            timeout: 60
-          - label: aws parameter store repo
-            path: aws/paramstore
-            uri: /foo/development
-            init: docker-compose -f examples/aws/paramstore/docker-compose.yml exec -T localstack sh /data/populate-paramstore.sh
-            query: jq -e '.propertySources[0].name == "aws:ssm:parameter:/config/foo-development/"'
-            timeout: 60
-          - label: aws secrets manager repo
-            path: aws/secretsmanager
-            uri: /foo/development
-            init: docker-compose -f examples/aws/secretsmanager/docker-compose.yml exec -T localstack sh /data/populate-secretsmanager.sh
-            query: jq -e '.propertySources[0].name == "aws:secrets:/secret/foo-development/"'
-            timeout: 60
-          - label: prometheus endpoint
-            path: prometheus
-            uri: /actuator/prometheus
-            query: grep '# HELP application_started_time_seconds Time taken (ms) to start the application'
-            timeout: 60
+        jvmVersion: [17, 20]
+        backend: [
+          "aws-param-store",
+          "aws-s3",
+          "aws-secrets-manager",
+          "cloud-bus-kafka",
+          "cloud-bus-rabbitmq",
+          "native",
+          "mariadb",
+          "postgres",
+          "prometheus",
+          "redis",
+          "git",
+          "vault"
+        ]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: Set up JDK ${{ matrix.jvmVersion }}
+        uses: actions/setup-java@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Test with ${{ matrix.verify.label }}
-        run: |
-          docker-compose -f examples/${{ matrix.verify.path }}/docker-compose.yml up -d
-          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8881${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
-          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8882${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
-          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8883${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
-          ${{ matrix.verify.init }}
-          curl -s localhost:8881${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
-          curl -s localhost:8882${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
-          curl -s localhost:8883${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
-          curl -s localhost:8884${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
-          docker-compose -f examples/${{ matrix.verify.path }}/docker-compose.yml down
+          java-version: ${{ matrix.jvmVersion }}
+          distribution: 'temurin'
+      - name: Test with ${{ matrix.backend }}
+        run: >
+          ./gradlew test
+          -PtestFilter=${{ matrix.backend }}
+          -PimageRegistry=$REGISTRY
+          -PimageName=$GITHUB_REPOSITORY
+          -PimageTag=$TAG
+          -PjdkVersion=${{ matrix.jvmVersion }}

@@ -1,3 +1,4 @@
+import org.gradle.api.JavaVersion.VERSION_17
 import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES as SPRING_BOOT_BOM
 
 plugins {
@@ -11,6 +12,11 @@ val jvmType: String by project
 val dockerUsername: String by project
 val dockerPassword: String by project
 val dockerTags: String? by project
+val imageRegistry: String? by project
+val imageName: String? by project
+val imageTag: String? by project
+val testFilter: String? by project
+val jvmTarget = VERSION_17
 
 tasks {
     version = versionCatalogs.firstNotNullOf {
@@ -18,12 +24,17 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
+        kotlinOptions.jvmTarget = jvmTarget.majorVersion
         kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
     }
 
     test {
-        useJUnitPlatform()
+        systemProperties["registry"] = imageRegistry
+        systemProperties["name"] = imageName
+        systemProperties["tag"] = imageTag
+        useJUnitPlatform {
+            testFilter?.let { includeTags(it) }
+        }
     }
 
     bootJar {
@@ -48,7 +59,9 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+    toolchain {
+        targetCompatibility = jvmTarget
+    }
 }
 
 repositories {
@@ -73,4 +86,5 @@ dependencies {
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.testcontainers.junit5)
     testImplementation(libs.kotlin.logging)
+    testImplementation(libs.awaitility.kotlin)
 }
