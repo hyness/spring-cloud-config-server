@@ -14,12 +14,12 @@ services:
     networks:
       - aws
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       SPRING_PROFILES_ACTIVE: awss3
-      SPRING_CLOUD_CONFIG_SERVER_AWSS3_ENDPOINT: https://localhost.localstack.cloud:4566
+      SPRING_CLOUD_CONFIG_SERVER_AWSS3_ENDPOINT: http://localhost.localstack.cloud:4566
       SPRING_CLOUD_CONFIG_SERVER_AWSS3_REGION: us-east-1
       SPRING_CLOUD_CONFIG_SERVER_AWSS3_BUCKET: sample-bucket
 
@@ -29,7 +29,7 @@ services:
     networks:
       - aws
     ports:
-      - "8882:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -42,13 +42,13 @@ services:
     networks:
       - aws
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
       JAVA_OPTS: >
         -Dspring.profiles.active=awss3
-        -Dspring.cloud.config.server.awss3.endpoint=https://localhost.localstack.cloud:4566
+        -Dspring.cloud.config.server.awss3.endpoint=http://localhost.localstack.cloud:4566
         -Dspring.cloud.config.server.awss3.region=us-east-1
         -Dspring.cloud.config.server.awss3.bucket=sample-bucket
 
@@ -59,13 +59,13 @@ services:
     networks:
         - aws
     ports:
-        - "8884:8888"
+        - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
     command:
         - --spring.profiles.active=awss3
-        - --spring.cloud.config.server.awss3.endpoint=https://localhost.localstack.cloud:4566
+        - --spring.cloud.config.server.awss3.endpoint=http://localhost.localstack.cloud:4566
         - --spring.cloud.config.server.awss3.region=us-east-1
         - --spring.cloud.config.server.awss3.bucket=sample-bucket
 

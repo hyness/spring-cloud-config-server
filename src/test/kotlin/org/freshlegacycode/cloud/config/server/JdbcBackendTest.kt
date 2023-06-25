@@ -1,6 +1,8 @@
 package org.freshlegacycode.cloud.config.server
 
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logger
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -10,12 +12,13 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.Duration
 
 @Testcontainers
+@Tags(Tag("integration"), Tag("jdbc"))
 abstract class JdbcBackendTest {
     abstract fun getContainer(): DockerComposeContainer<*>
 
     @EnumSource
     @ParameterizedTest
-    internal fun `given a config server, when configured with jdbc backend, is valid`(type: ContainerType) {
+    internal fun `given a config server, when configured with jdbc backend, is valid`(type: ContainerConfigurationType) {
         logger.info{ "Verifying ${type.label}" }
         val webClient = WebTestClient.bindToServer()
             .baseUrl(getContainer().getUrl(type))

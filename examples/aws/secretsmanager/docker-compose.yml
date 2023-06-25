@@ -14,7 +14,7 @@ services:
     networks:
       - aws
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -28,7 +28,7 @@ services:
     networks:
       - aws
     ports:
-      - "8882:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -41,7 +41,7 @@ services:
     networks:
       - aws
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test
@@ -57,7 +57,7 @@ services:
     networks:
         - aws
     ports:
-        - "8884:8888"
+        - "8888"
     environment:
       AWS_ACCESS_KEY_ID: test
       AWS_SECRET_ACCESS_KEY: test

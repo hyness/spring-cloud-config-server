@@ -7,7 +7,7 @@ services:
   config-server-env:
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       SPRING_PROFILES_ACTIVE: native
       SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCHLOCATIONS: /native-files
@@ -18,7 +18,7 @@ services:
   config-server-dir:
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8882:8888"
+      - "8888"
     volumes:
       - ./config:/config
       - ./native-files:/native-files
@@ -27,7 +27,7 @@ services:
   config-server-props:
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       JAVA_OPTS: -Dspring.profiles.active=native -Dspring.cloud.config.server.native.searchLocations=/native-files
     volumes:
@@ -37,7 +37,7 @@ services:
   config-server-args:
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8884:8888"
+      - "8888"
     command: --spring.profiles.active=native --spring.cloud.config.server.native.searchLocations=/native-files
     volumes:
       - ./native-files:/native-files

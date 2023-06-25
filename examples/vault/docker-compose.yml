@@ -9,7 +9,7 @@ services:
       - vault
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8881:8888"
+      - "8888"
     environment:
       SPRING_PROFILES_ACTIVE: vault
       SPRING_CLOUD_CONFIG_SERVER_VAULT_TOKEN: 00000000-0000-0000-0000-000000000000
@@ -22,7 +22,7 @@ services:
       - vault
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8882:8888"
+      - "8888"
     volumes:
       - ./config:/config
 
@@ -32,7 +32,7 @@ services:
       - vault
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8883:8888"
+      - "8888"
     environment:
       JAVA_OPTS: >
         -Dspring.profiles.active=vault
@@ -46,7 +46,7 @@ services:
       - vault
     image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
     ports:
-      - "8884:8888"
+      - "8888"
     command:
       - --spring.profiles.active=vault
       - --spring.cloud.config.server.vault.token=00000000-0000-0000-0000-000000000000
@@ -55,7 +55,7 @@ services:
 
   vault:
     privileged: true
-    image: vault
+    image: hashicorp/vault
     ports:
       - "8200:8200"
     environment:
