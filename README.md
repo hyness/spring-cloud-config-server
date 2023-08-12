@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/4.0.3/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/4.0.4/reference/html/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
@@ -9,16 +9,16 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `4.0.3-jre17`, `4.0-jre17`, `jre17`, `4.0.3`, `4.0`, `latest`
-* `4.0.3-jdk17`, `4.0-jdk17`, `jdk17`
-* `4.0.3-jre20`, `4.0-jre20`, `jre20`
-* `4.0.3-jdk20`, `4.0-jdk20`, `jdk20`
+* `4.0.4-jre17`, `4.0-jre17`, `jre17`, `4.0.4`, `4.0`, `latest`
+* `4.0.4-jdk17`, `4.0-jdk17`, `jdk17`
+* `4.0.4-jre20`, `4.0-jre20`, `jre20`
+* `4.0.4-jdk20`, `4.0-jdk20`, `jdk20`
 
 ##### Build updates for 4.0+
 * *Based on Spring Cloud Config Server 4.0 & Spring Boot 3.0 which is based on Java 17 baseline*
 * *Some configuration has changed since 3.x, [see the updated examples](https://github.com/hyness/spring-cloud-config-server/tree/main/examples)*
 * *Default image is based on Java 17.*
-* *JRE builds are now available and the default for latest, 4.0, 4.0.3*
+* *JRE builds are now available and the default for latest, 4.0, 4.0.4*
 
 ### Usage
 ```

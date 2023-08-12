@@ -60,7 +60,7 @@ services:
   vault:
     privileged: true
     container_name: vault
-    image: vault
+    image: hashicorp/vault
     ports:
       - "8200:8200"
     environment:
