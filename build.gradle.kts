@@ -12,13 +12,16 @@ val dockerUsername: String by project
 val dockerPassword: String by project
 val dockerTags: String? by project
 
+kotlin {
+    jvmToolchain(jdkVersion.toInt())
+}
+
 tasks {
     version = versionCatalogs.firstNotNullOf {
         it.findVersion("spring.cloud.config").orElse(null)
     }
 
     compileKotlin {
-        kotlinOptions.jvmTarget = "17"
         kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
     }
 
@@ -45,10 +48,6 @@ tasks {
         imageName.set("hyness/spring-cloud-config-server")
         tags.set(dockerTags?.split(',') ?: listOf())
     }
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(jdkVersion))
 }
 
 repositories {
