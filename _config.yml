@@ -1,0 +1,4 @@
+title: "Spring Cloud Config Server"
+description: "A docker image of Spring Cloud Config Server"
+show_downloads: false
+remote_theme: pages-themes/modernist@v0.2.0
