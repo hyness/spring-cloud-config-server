@@ -4,8 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       registry:
+        description: Docker registry to use
         required: false
       triggered:
+        description: Whether build was manually triggered
         required: false
         default: 'true'
   workflow_run:
@@ -74,6 +76,7 @@ jobs:
       SHORT_SHA: ${{ needs.create-variables.outputs.short-sha }}
     strategy:
       matrix:
+        builder: ["paketobuildpacks/builder:tiny", "dashaun/builder-arm:tiny"]
         jvmType: [jre, jdk]
         jvmVersion: [17, 20]
     steps:
@@ -117,5 +120,6 @@ jobs:
           -PdockerUsername=$DOCKER_USERNAME
           -PdockerPassword=$DOCKER_PASSWORD
           -PdockerTags=$DOCKER_TAGS
+          --builder=${{ matrix.builder }}
           --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
           --publishImage
