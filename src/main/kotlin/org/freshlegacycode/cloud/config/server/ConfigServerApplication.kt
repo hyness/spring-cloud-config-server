@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.cloud.bus.BusAutoConfiguration
 import org.springframework.cloud.bus.BusRefreshAutoConfiguration
@@ -16,9 +18,12 @@ import org.springframework.cloud.bus.PathServiceMatcherAutoConfiguration
 import org.springframework.cloud.bus.jackson.BusJacksonAutoConfiguration
 import org.springframework.cloud.config.monitor.EnvironmentMonitorAutoConfiguration
 import org.springframework.cloud.config.server.EnableConfigServer
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
-import org.springframework.context.annotation.Profile
+import org.springframework.context.annotation.*
+import org.springframework.context.annotation.ComponentScan.Filter
+import org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.invoke
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.cloud.stream.binder.kafka.config.ExtendedBindingHandlerMappingsProviderConfiguration as KafkaBinderAutoConfiguration
 import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHandlerMappingsProviderConfiguration as RabbitBinderAutoConfiguration
 
@@ -41,6 +46,7 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     KafkaAutoConfiguration::class,
     RabbitAutoConfiguration::class,
 ])
+@ComponentScan(excludeFilters = [Filter(type = ASSIGNABLE_TYPE, classes = [ConfigServerSecurityConfiguration::class])])
 class ConfigServerApplication
 
 @Profile("!no-actuator")
@@ -78,9 +84,37 @@ internal class RedisBackendConfiguration
 
 @Profile("security")
 @Configuration
-@Import(ManagementWebSecurityAutoConfiguration::class, SecurityAutoConfiguration::class)
+@Import(ConfigServerSecurityConfiguration::class,
+        SecurityAutoConfiguration::class,
+        ManagementWebSecurityAutoConfiguration::class)
 internal class SecurityConfiguration
 
 fun main(args: Array<String>) {
     runApplication<ConfigServerApplication>(*args)
 }
+
+@Configuration
+@EnableConfigurationProperties(ConfigServerSecurityProperties::class)
+class ConfigServerSecurityConfiguration(val properties: ConfigServerSecurityProperties) {
+    @Bean
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http {
+            authorizeRequests {
+                properties.allowedPaths.forEach {
+                    authorize(it, permitAll)
+                }
+                authorize(anyRequest, authenticated)
+            }
+            formLogin {}
+            httpBasic {}
+            csrf {
+                disable()
+            }
+        }
+        return http.build()
+    }
+}
+
+@ConfigurationProperties("spring.cloud.config.security")
+data class ConfigServerSecurityProperties(val allowedPaths: List<String> = listOf())
+
