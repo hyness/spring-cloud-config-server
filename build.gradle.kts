@@ -37,16 +37,16 @@ tasks {
     }
 
     bootBuildImage {
-        applicationDirectory.set("/opt/spring-cloud-config-server")
-        builder.set("paketobuildpacks/builder:tiny")
-        docker.publishRegistry.username.set(dockerUsername)
-        docker.publishRegistry.password.set(dockerPassword)
+        applicationDirectory = "/opt/spring-cloud-config-server"
+        builder = "paketobuildpacks/builder:tiny"
+        docker.publishRegistry.username = dockerUsername
+        docker.publishRegistry.password = dockerPassword
         environment.put("BP_JVM_TYPE", jvmType)
         environment.put("BP_JVM_VERSION", jdkVersion)
         environment.put("BPE_DELIM_JAVA_TOOL_OPTIONS", " ")
         environment.put("BPE_APPEND_JAVA_TOOL_OPTIONS", "-Dspring.config.additional-location=optional:file:/config/")
-        imageName.set("hyness/spring-cloud-config-server")
-        tags.set(dockerTags?.split(',') ?: listOf())
+        imageName = "hyness/spring-cloud-config-server"
+        tags = dockerTags?.split(',') ?: listOf()
     }
 }
 
