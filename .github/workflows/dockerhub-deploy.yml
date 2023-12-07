@@ -4,8 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       registry:
+        description: Docker registry to use
         required: false
       triggered:
+        description: Whether build was manually triggered
         required: false
         default: 'true'
   workflow_run:
@@ -74,6 +76,7 @@ jobs:
       SHORT_SHA: ${{ needs.create-variables.outputs.short-sha }}
     strategy:
       matrix:
+        builder: ["paketobuildpacks/builder:tiny", "dashaun/builder-arm:tiny"]
         jvmType: [jre, jdk]
         jvmVersion: [17, 20]
     steps:
@@ -110,6 +113,7 @@ jobs:
           java-version: ${{ matrix.jvmVersion }}
           distribution: 'temurin'
       - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
+        if: ${{ matrix.builder == 'paketobuildpacks/builder:tiny' }}
         run: >
           ./gradlew bootBuildImage
           -PjvmType=${{ matrix.jvmType }}
@@ -117,5 +121,33 @@ jobs:
           -PdockerUsername=$DOCKER_USERNAME
           -PdockerPassword=$DOCKER_PASSWORD
           -PdockerTags=$DOCKER_TAGS
+          --builder=${{ matrix.builder }}
           --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
           --publishImage
+      - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI ARM image
+        if: ${{ matrix.builder == 'dashaun/builder-arm:tiny' }}
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: armv7
+          distro: alpine_latest
+          githubToken: ${{ github.token }}
+          env: | 
+            DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
+            DOCKER_PASSWORD: ${{ env.DOCKER_PASSWORD }}
+            JAVA_HOME: ${{ env.JAVA_HOME }}
+#            BUILDER: ${{ matrix.builder }}
+#            DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
+#            DOCKER_PASSWORD: ${{ env.DOCKER_PASSWORD }}
+#            IMAGE_NAME: ${{ env.IMAGE }}:${{ env.CLOUD_CONFIG_BUILD_VERSION }}-${{ env.SHORT_SHA }}-${{ env.JAVA }}
+#            JVM_TYPE=${{ matrix.jvmType }}
+#            JDK_VERSION=${{ matrix.jvmVersion }}
+          run: >
+            ./gradlew bootBuildImage
+            -PjvmType=jre
+            -PjdkVersion=17
+            -PdockerUsername=$DOCKER_USERNAME
+            -PdockerPassword=$DOCKER_PASSWORD
+            -PdockerTags=arm-test
+            --builder=dashaun/builder-arm:tiny
+            --imageName=ghcr.io/hyness/spring-cloud-config-server
+            --publishImage
