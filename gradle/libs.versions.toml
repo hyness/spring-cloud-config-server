@@ -1,9 +1,9 @@
 [versions]
 aws = "2.17.195"
-kotlin = "1.9.0"
-spring-boot = "3.1.2"
-spring-cloud = "2022.0.4"
-spring-cloud-config = "4.0.4"
+kotlin = "1.9.20"
+spring-boot = "3.2.0"
+spring-cloud = "2023.0.0"
+spring-cloud-config = "4.1.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -31,6 +31,7 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-properties-migrator = { module = "org.springframework.boot:spring-boot-properties-migrator" }
 spring-boot-security = { module = "org.springframework.boot:spring-boot-starter-security" }
 spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test" }
 spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }

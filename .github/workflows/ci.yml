@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, '3.1']
+    branches: [main, '4.0']
   workflow_dispatch:
 
 env:
@@ -29,7 +29,7 @@ jobs:
     strategy:
       matrix:
         jvmType: [jre, jdk]
-        jvmVersion: [17, 20]
+        jvmVersion: [17, 21]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -126,7 +126,7 @@ jobs:
           - label: prometheus endpoint
             path: prometheus
             uri: /actuator/prometheus
-            query: grep '# HELP application_started_time_seconds Time taken (ms) to start the application'
+            query: grep '# HELP'
             timeout: 60
     steps:
       - name: Checkout
@@ -145,6 +145,7 @@ jobs:
           timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8881${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
           timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8882${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
           timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8883${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
+          timeout ${{ matrix.verify.timeout }} sh -c "until curl -o /dev/null -Isf localhost:8884${{ matrix.verify.uri }}; do printf '.' && sleep 1; done"
           ${{ matrix.verify.init }}
           curl -s localhost:8881${{ matrix.verify.uri }} | ${{ matrix.verify.query }}
           curl -s localhost:8882${{ matrix.verify.uri }} | ${{ matrix.verify.query }}

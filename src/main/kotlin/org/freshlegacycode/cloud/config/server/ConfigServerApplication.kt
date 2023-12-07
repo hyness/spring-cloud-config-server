@@ -1,7 +1,9 @@
 package org.freshlegacycode.cloud.config.server
 
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
 import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration
+import org.springframework.boot.actuate.health.HealthEndpoint
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
@@ -18,9 +20,10 @@ import org.springframework.cloud.bus.PathServiceMatcherAutoConfiguration
 import org.springframework.cloud.bus.jackson.BusJacksonAutoConfiguration
 import org.springframework.cloud.config.monitor.EnvironmentMonitorAutoConfiguration
 import org.springframework.cloud.config.server.EnableConfigServer
-import org.springframework.context.annotation.*
-import org.springframework.context.annotation.ComponentScan.Filter
-import org.springframework.context.annotation.FilterType.ASSIGNABLE_TYPE
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.web.SecurityFilterChain
@@ -46,7 +49,6 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     KafkaAutoConfiguration::class,
     RabbitAutoConfiguration::class,
 ])
-@ComponentScan(excludeFilters = [Filter(type = ASSIGNABLE_TYPE, classes = [ConfigServerSecurityConfiguration::class])])
 class ConfigServerApplication
 
 @Profile("!no-actuator")
@@ -84,15 +86,10 @@ internal class RedisBackendConfiguration
 
 @Profile("security")
 @Configuration
-@Import(ConfigServerSecurityConfiguration::class,
-        SecurityAutoConfiguration::class,
-        ManagementWebSecurityAutoConfiguration::class)
+@Import(SecurityAutoConfiguration::class, ManagementWebSecurityAutoConfiguration::class)
 internal class SecurityConfiguration
 
-fun main(args: Array<String>) {
-    runApplication<ConfigServerApplication>(*args)
-}
-
+@Profile("security")
 @Configuration
 @EnableConfigurationProperties(ConfigServerSecurityProperties::class)
 class ConfigServerSecurityConfiguration(val properties: ConfigServerSecurityProperties) {
@@ -100,6 +97,7 @@ class ConfigServerSecurityConfiguration(val properties: ConfigServerSecurityProp
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             authorizeRequests {
+                authorize(EndpointRequest.to(HealthEndpoint::class.java), permitAll)
                 properties.allowedPaths.forEach {
                     authorize(it, permitAll)
                 }
@@ -118,3 +116,6 @@ class ConfigServerSecurityConfiguration(val properties: ConfigServerSecurityProp
 @ConfigurationProperties("spring.cloud.config.security")
 data class ConfigServerSecurityProperties(val allowedPaths: List<String> = listOf())
 
+fun main(args: Array<String>) {
+    runApplication<ConfigServerApplication>(*args)
+}

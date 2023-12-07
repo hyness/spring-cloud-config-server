@@ -1,4 +1,4 @@
-name: Deploy artifacts to Dockerhub
+name: Deploy artifacts to registry
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
         default: 'true'
   workflow_run:
     workflows: ['CI']
-    branches: [main, '3.1']
+    branches: [main, '4.0']
     types:
       - completed
 
@@ -75,7 +75,7 @@ jobs:
     strategy:
       matrix:
         jvmType: [jre, jdk]
-        jvmVersion: [17, 20]
+        jvmVersion: [17, 21]
     steps:
       - name: Checkout
         uses: actions/checkout@v3

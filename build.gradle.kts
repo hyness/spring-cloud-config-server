@@ -38,7 +38,7 @@ tasks {
 
     bootBuildImage {
         applicationDirectory.set("/opt/spring-cloud-config-server")
-        builder.set("paketobuildpacks/builder:tiny")
+        builder.set("paketobuildpacks/builder-jammy-tiny")
         docker.publishRegistry.username.set(dockerUsername)
         docker.publishRegistry.password.set(dockerPassword)
         environment.put("BP_JVM_TYPE", jvmType)

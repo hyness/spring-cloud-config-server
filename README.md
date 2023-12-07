@@ -1,5 +1,5 @@
 # Spring Cloud Config Server
-A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/docs/4.0.4/reference/html/).
+A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/reference/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
@@ -9,16 +9,15 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `4.0.4-jre17`, `4.0-jre17`, `jre17`, `4.0.4`, `4.0`, `latest`
-* `4.0.4-jdk17`, `4.0-jdk17`, `jdk17`
-* `4.0.4-jre20`, `4.0-jre20`, `jre20`
-* `4.0.4-jdk20`, `4.0-jdk20`, `jdk20`
+* `4.1.0-jre17`, `4.0-jre17`, `jre17`, `4.1.0`, `4.0`, `latest`
+* `4.1.0-jdk17`, `4.0-jdk17`, `jdk17`
+* `4.1.0-jdk21`, `4.0-jdk21`, `jdk21`
 
 ##### Build updates for 4.0+
-* *Based on Spring Cloud Config Server 4.0 & Spring Boot 3.0 which is based on Java 17 baseline*
+* *Based on Spring Cloud Config Server 4.x & Spring Boot 3.x which is based on Java 17 baseline*
 * *Some configuration has changed since 3.x, [see the updated examples](https://github.com/hyness/spring-cloud-config-server/tree/main/examples)*
 * *Default image is based on Java 17.*
-* *JRE builds are now available and the default for latest, 4.0, 4.0.4*
+* *JRE builds are now available and the default for latest, 4.1, 4.1.0*
 
 ### Usage
 ```
@@ -208,7 +207,7 @@ docker run -it -p 8888:8888 \
       -v /path/to/config/files/dir:/config \
       -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=file:/config/my-local-git-repo \
       -e MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true \
-      -e MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=* \
+      -e MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,prometheus \
       hyness/spring-cloud-config-server
 ````
 
