@@ -3,7 +3,7 @@ name: Deploy artifacts to registry
 on:
   release:
     types:
-      - published
+      - released
   workflow_dispatch:
     inputs:
       registry:
@@ -17,10 +17,10 @@ on:
   workflow_run:
     workflows:
       - CI
-    tags:
-      - "[0-9]+.[0-9]+.[0-9]+.*"
     types:
       - completed
+    tags:
+      - "v*.*.*"
 
 env:
   DEFAULT_JAVA_VERSION: 17
@@ -38,6 +38,7 @@ jobs:
       cloud-config-latest-version-short: ${{ steps.create-variables-output.outputs.cloud-config-latest-version-short }}
       registry: ${{ steps.create-variables-output.outputs.registry }}
       short-sha: ${{ steps.create-variables-output.outputs.short-sha }}
+      tag: ${{ steps.create-variables-output.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,7 +65,7 @@ jobs:
           echo "registry=`echo $REGISTRY`" >> $GITHUB_OUTPUT
           echo "short-sha=`echo $GITHUB_SHA | cut -c1-8`" >> $GITHUB_OUTPUT
 
-  build-and-deploy-to-registry:
+  deploy-to-registry:
     if: github.event.workflow_run.conclusion == 'success' || github.event.inputs.triggered == 'true'
     name: Push verified Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image to ${{ needs.create-variables.outputs.registry }}
     needs: create-variables
@@ -82,45 +83,27 @@ jobs:
         jvmType: [jre, jdk]
         jvmVersion: [17, 21]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
       - name: Create the IMAGE environment variable
         run: echo "IMAGE=$REGISTRY/$GITHUB_REPOSITORY" >> $GITHUB_ENV
       - name: Create OCI image tags
-        run: echo "DOCKER_TAGS=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$JAVA,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT-$JAVA" >> $GITHUB_ENV
+        run: echo "DOCKER_TAGS=--tag $IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$JAVA --tag $IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT-$JAVA " >> $GITHUB_ENV
       - name: Add version default OCI image tag
         if: matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
-        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT" >> $GITHUB_ENV
+        run: echo "DOCKER_TAGS=$DOCKER_TAGS --tag $IMAGE:$CLOUD_CONFIG_BUILD_VERSION --tag $IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT " >> $GITHUB_ENV
       - name: Add ${{ env.JAVA }} default OCI image tag
         if: env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT
-        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:$JAVA" >> $GITHUB_ENV
+        run: echo "DOCKER_TAGS=$DOCKER_TAGS --tag $IMAGE:$JAVA " >> $GITHUB_ENV
       - name: Add latest OCI image tag
         if: (env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT) && matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
-        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:latest" >> $GITHUB_ENV
+        run: echo "DOCKER_TAGS=$DOCKER_TAGS --tag $IMAGE:latest " >> $GITHUB_ENV
       - name: Setup GitHub Container Registry credentials
-        if: env.REGISTRY == 'ghcr.io'
         run: |
           echo "DOCKER_USERNAME=${{ github.actor }}" >> $GITHUB_ENV
           echo "DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
       - name: Setup Docker Hub credentials
-        if: env.REGISTRY == 'docker.io'
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
           echo "DOCKER_PASSWORD=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
-      - name: Set up JDK ${{ matrix.jvmVersion }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ matrix.jvmVersion }}
-          distribution: temurin
-      - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
+      - name: Push images to ${{ needs.create-variables.outputs.registry }}
         run: >
-          ./gradlew bootBuildImage
-          -PjvmType=${{ matrix.jvmType }}
-          -PjdkVersion=${{ matrix.jvmVersion }}
-          -PdockerUsername=$DOCKER_USERNAME
-          -PdockerPassword=$DOCKER_PASSWORD
-          -PdockerTags=$DOCKER_TAGS
-          --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
-          --publishImage
+          docker buildx imagetools create $DOCKER_TAGS $IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
