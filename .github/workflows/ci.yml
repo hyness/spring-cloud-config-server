@@ -26,8 +26,8 @@ jobs:
       TAG: ${{ needs.create-short-sha.outputs.short-sha }}-${{ matrix.jvmType }}${{ matrix.jvmVersion }}
     strategy:
       matrix:
-        jvmType: [jre]
-        jvmVersion: [17]
+        jvmType: [jre, jdk]
+        jvmVersion: [17, 21]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,6 +47,7 @@ jobs:
           -PdockerPassword=${{ secrets.GITHUB_TOKEN }}
           --imageName=$REGISTRY/$GITHUB_REPOSITORY:$TAG 
           --publishImage
+
   integration-test:
     name: Verify Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image with ${{ matrix.backend }}
     needs:
