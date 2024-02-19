@@ -225,6 +225,21 @@ docker run -it -p 8888:8888 \
       hyness/spring-cloud-config-server
 ```
 
+### Docker Healthcheck
+Starting with 4.1.x, this docker image includes an internal health checker for use with docker or docker compose
+using [Tiny Health Checker](https://github.com/dmikusa/tiny-health-checker).
+
+#### Example configuration
+```yaml
+    healthcheck:
+      test: ["CMD", "health-check"]
+      start_interval: 30s
+      interval: 5s
+      retries: 10
+```
+
+See [the full example](./examples/healthcheck/docker-compose.yml) for more details
+
 ### Thank You
 
 #### Project Contributors

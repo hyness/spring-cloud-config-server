@@ -16,10 +16,6 @@ val imageName: String? by project
 val imageTag: String? by project
 val testFilter: String? by project
 
-kotlin {
-    jvmToolchain(jdkVersion.toInt())
-}
-
 tasks {
     version = versionCatalogs.firstNotNullOf {
         it.findVersion("spring.cloud.config").orElse(null)
@@ -46,16 +42,33 @@ tasks {
     }
 
     bootBuildImage {
-        applicationDirectory.set("/opt/spring-cloud-config-server")
-        builder.set("paketobuildpacks/builder-jammy-tiny")
-        docker.publishRegistry.username.set(dockerUsername)
-        docker.publishRegistry.password.set(dockerPassword)
-        environment.put("BP_JVM_TYPE", jvmType)
-        environment.put("BP_JVM_VERSION", jdkVersion)
-        environment.put("BPE_DELIM_JAVA_TOOL_OPTIONS", " ")
-        environment.put("BPE_APPEND_JAVA_TOOL_OPTIONS", "-Dspring.config.additional-location=optional:file:/config/")
-        imageName.set("hyness/spring-cloud-config-server")
-        tags.set(dockerTags?.split(',') ?: listOf())
+        applicationDirectory = "/opt/spring-cloud-config-server"
+        builder = "paketobuildpacks/builder-jammy-tiny"
+        buildpacks = listOf(
+            "paketo-buildpacks/ca-certificates",
+            "paketo-buildpacks/bellsoft-liberica",
+            "paketo-buildpacks/syft",
+            "paketo-buildpacks/executable-jar",
+            "paketo-buildpacks/dist-zip",
+            "paketo-buildpacks/spring-boot",
+            "paketo-buildpacks/environment-variables",
+            "gcr.io/paketo-buildpacks/health-checker"
+        )
+        docker.publishRegistry {
+            username = dockerUsername
+            password = dockerPassword
+        }
+        environment = mapOf(
+            "BP_JVM_TYPE" to jvmType,
+            "BP_JVM_VERSION" to jdkVersion,
+            "BPE_DELIM_JAVA_TOOL_OPTIONS" to " ",
+            "BPE_APPEND_JAVA_TOOL_OPTIONS" to "-Dspring.config.additional-location=optional:file:/config/",
+            "BP_HEALTH_CHECKER_ENABLED" to "true",
+            "BPE_THC_PATH" to "/actuator/health",
+            "BPE_THC_PORT" to "8888"
+        )
+        imageName = "hyness/spring-cloud-config-server"
+        tags = dockerTags?.split(',')
     }
 }
 

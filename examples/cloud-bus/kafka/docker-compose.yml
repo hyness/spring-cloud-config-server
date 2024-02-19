@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Docker Compose example for testing Spring Cloud Bus Kafka
 
 services:

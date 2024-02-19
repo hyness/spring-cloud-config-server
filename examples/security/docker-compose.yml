@@ -1,5 +1,3 @@
-version: '2'
-
 # Docker Compose example for testing security with a remote git repo
 
 services:

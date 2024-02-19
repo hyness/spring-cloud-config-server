@@ -1,0 +1,17 @@
+# Docker Compose example for testing a remote git repo
+
+services:
+  # Configured through environment variables
+  config-server-env:
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8888"
+    environment:
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/spring-cloud-samples/config-repo
+    volumes:
+      - ./config:/config
+    healthcheck:
+      test: ["CMD", "health-check"]
+      start_interval: 30s
+      interval: 5s
+      retries: 10
