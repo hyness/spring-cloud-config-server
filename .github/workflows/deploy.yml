@@ -18,6 +18,7 @@ on:
 env:
   DEFAULT_JAVA_VERSION: 17
   DEFAULT_JAVA_TYPE: jre
+  REGISTRY: docker.io
 
 jobs:
   create-variables:
@@ -115,9 +116,16 @@ jobs:
           -PdockerTags=$DOCKER_TAGS
           --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
           --publishImage
-      - name: Update Docker Hub README
-        if: env.REGISTRY == 'docker.io'
-        uses: meeDamian/sync-readme@v1.0.6
+
+  update-docker-hub-description:
+    name: Update Docker Hub README
+    needs:
+      - create-variables
+      - build-and-deploy-to-registry
+    if: needs.create-variables.outputs.registry == 'docker.io'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: meeDamian/sync-readme@v1.0.6
         with:
           pass: ${{ secrets.DOCKER_PASS }}
           description: true
