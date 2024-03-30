@@ -1,10 +1,10 @@
 [versions]
 aws = "2.17.195"
-kotlin = "1.9.20"
-kotlin-logging = "3.0.5"
-spring-boot = "3.2.1"
-spring-cloud = "2023.0.0"
-spring-cloud-config = "4.1.0"
+kotlin = "1.9.23"
+kotlin-logging = "6.0.3"
+spring-boot = "3.2.4"
+spring-cloud = "2023.0.1"
+spring-cloud-config = "4.1.1"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -29,7 +29,7 @@ jdbc-driver-hikari = { module = "com.zaxxer:HikariCP" }
 jdbc-driver-mariadb = { module = "org.mariadb.jdbc:mariadb-java-client" }
 jdbc-driver-mssql = { module = "com.microsoft.sqlserver:mssql-jdbc" }
 jdbc-driver-postgres = { module = "org.postgresql:postgresql" }
-kotlin-logging = { module = "io.github.microutils:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }

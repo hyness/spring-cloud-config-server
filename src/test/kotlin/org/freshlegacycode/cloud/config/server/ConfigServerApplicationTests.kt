@@ -1,18 +1,20 @@
 package org.freshlegacycode.cloud.config.server
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.cloudConfigWait
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logConsumer
 import org.freshlegacycode.cloud.config.server.ContainerConfigurationType.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.slf4j.LoggerFactory
 import org.springframework.boot.test.context.SpringBootTest
 import org.testcontainers.containers.DockerComposeContainer
 import org.testcontainers.containers.output.Slf4jLogConsumer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.containers.wait.strategy.WaitStrategy
 import java.io.File
-import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
 @Tag("unit")
 @SpringBootTest(properties = ["spring.cloud.config.server.git.uri=https://github.com/spring-cloud-samples/config-repo"])
@@ -22,9 +24,10 @@ class ConfigServerApplicationTests {
 
     companion object {
         internal val logger = KotlinLogging.logger {}
-        internal val logConsumer: Slf4jLogConsumer = Slf4jLogConsumer(logger).withSeparateOutputStreams()
-        internal val cloudConfigWait: WaitStrategy = Wait.forHttp("/actuator/health")
-        internal val containerTimeout = Duration.ofSeconds(20)
+        internal val logConsumer =
+            ConfigServerApplicationTests::class.java.run(LoggerFactory::getLogger).run(::Slf4jLogConsumer)
+        internal val cloudConfigWait: WaitStrategy = "/actuator/health".run(Wait::forHttp)
+        internal val containerTimeout = 20.seconds.toJavaDuration()
     }
 }
 
