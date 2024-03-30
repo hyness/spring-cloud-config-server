@@ -14,13 +14,6 @@ on:
         description: Was the build triggered
         required: false
         default: true
-  workflow_run:
-    workflows:
-      - CI
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
-    types:
-      - completed
 
 env:
   DEFAULT_JAVA_VERSION: 17
@@ -124,3 +117,9 @@ jobs:
           -PdockerTags=$DOCKER_TAGS
           --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
           --publishImage
+      - name: Update Docker Hub README
+        if: env.REGISTRY == 'docker.io'
+        uses: meeDamian/sync-readme@v1.0.6
+        with:
+          pass: ${{ secrets.DOCKER_PASS }}
+          description: true
