@@ -17,6 +17,10 @@ on:
         description: The output image name
         type: string
         required: true
+      image-tags:
+        description: Additional tags to create from output image
+        type: string
+        required: false
       java-build-distribution:
         description: Java distribution to use for build
         type: string
@@ -42,6 +46,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Add tags
+        if: inputs.image-tags != ''
+        run: echo "TAGS=-PdockerTags=${{ inputs.image-tags }}" >> $GITHUB_ENV
       - name: Set up JDK ${{ inputs.java-build-version }}
         uses: actions/setup-java@v4
         with:
@@ -56,5 +63,5 @@ jobs:
           -PjdkVersion=${{ inputs.image-jvm-version }}
           -PdockerUsername=${{ secrets.dockerUsername }}
           -PdockerPassword=${{ secrets.dockerPassword }}
-          --imageName=${{ inputs.image-name }}
-          --publishImage
+          $TAGS 
+          --imageName=${{ inputs.image-name }} --publishImage

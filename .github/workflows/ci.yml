@@ -19,63 +19,65 @@ jobs:
       image-name: ${{ steps.build-vars.outputs.image-name }}
       jvm-type: ${{ steps.build-vars.outputs.jvm-type }}
       jvm-version: ${{ steps.build-vars.outputs.jvm-version }}
+      registry: ${{ steps.build-vars.outputs.registry }}
+      tag: ${{ steps.build-vars.outputs.tag }}
     steps:
       - id: build-vars
         name: Create build variables
         run: |
           echo "distribution=$DISTRIBUTION" >> $GITHUB_OUTPUT
-          echo "image-name=$REGISTRY/$GITHUB_REPOSITORY:`echo $GITHUB_SHA | cut -c1-8`-${JVM_TYPE}${JVM_VERSION}" >> $GITHUB_OUTPUT
+          echo "image-name=$REGISTRY/$GITHUB_REPOSITORY:$TAG" >> $GITHUB_OUTPUT
           echo "jvm-type=$JVM_TYPE" >> $GITHUB_OUTPUT
           echo "jvm-version=$JVM_VERSION" >> $GITHUB_OUTPUT
+          echo "registry=$REGISTRY" >> $GITHUB_OUTPUT
+          echo "tag=`echo $GITHUB_SHA | cut -c1-8`-${JVM_TYPE}${JVM_VERSION}" >> $GITHUB_OUTPUT
 
   build-and-deploy:
     uses: ./.github/workflows/boot-build-image-and-publish.yml
     name: Build and push Java ${{ needs.build-vars.outputs.jvm-version }} ${{ needs.build-vars.outputs.jvm-type }} OCI image to registry
     needs: build-vars
     with:
-      image-name: ${{ needs.build-vars.outputs.image-name }}
+      image-name: ${{ needs.build-vars.outputs.registry }}/${{ github.repository }}:${{ needs.build-vars.outputs.tag }}
     secrets:
       dockerUsername: ${{ github.actor }}
       dockerPassword: ${{ secrets.GITHUB_TOKEN }}
-#
-#  integration-test:
-#    name: Verify Java $JVM_VERSION $JVM_TYPE image with ${{ matrix.backend }}
-#    needs:
-#      - create-short-sha
-#      - build-and-deploy
-#    runs-on: ubuntu-latest
-#    env:
-#      TAG: ${{ needs.create-short-sha.outputs.short-sha }}-$JVM_TYPE$JVM_VERSION
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        backend: [
-#          aws-param-store,
-#          aws-s3,
-#          aws-secrets-manager,
-#          cloud-bus-kafka,
-#          cloud-bus-rabbitmq,
-#          git,
-#          mariadb,
-#          native,
-#          postgres,
-#          prometheus,
-#          redis,
-#          security,
-#          vault
-#        ]
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#      - name: Set up JDK ${{ env.JVM_VERSION }}
-#        uses: actions/setup-java@v4
-#        with:
-#          java-version: $JVM_VERSION
-#          distribution: $DISTRIBUTION
-#      - name: Test with ${{ matrix.backend }}
-#        run: >
-#          ./gradlew test -i
-#          -PtestFilter=${{ matrix.backend }}
-#          -PimageRegistry=$REGISTRY
-#          -PimageTag=$TAG
-#          -PjdkVersion=$JVM_VERSION
+
+  integration-test:
+    name: Verify Java ${{ needs.build-vars.outputs.jvm-version }} ${{ needs.build-vars.outputs.jvm-type }} image with ${{ matrix.backend }}
+    needs:
+      - build-vars
+      - build-and-deploy
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        backend: [
+          aws-param-store,
+          aws-s3,
+          aws-secrets-manager,
+          cloud-bus-kafka,
+          cloud-bus-rabbitmq,
+          git,
+          mariadb,
+          native,
+          postgres,
+          prometheus,
+          redis,
+          security,
+          vault
+        ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK ${{ env.JVM_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ env.DISTRIBUTION }}
+          java-version: ${{ env.JVM_VERSION }}
+      - name: Test with ${{ matrix.backend }}
+        run: >
+          ./gradlew test -i
+          -PtestFilter=${{ matrix.backend }}
+          -PimageRegistry=$REGISTRY
+          -PjdkVersion=$JVM_VERSION
+          -PimageTag=${{ needs.build-vars.outputs.tag }}
