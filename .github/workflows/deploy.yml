@@ -135,3 +135,25 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+#  docker:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#      - name: Create JVM version tag
+#        run: echo "JVM_VERSION=${DEFAULT_JAVA_TYPE}${DEFAULT_JAVA_VERSION}" >> $GITHUB_ENV
+#      - name: Docker meta
+#        id: meta
+#        uses: docker/metadata-action@v5
+#        with:
+#          images: ${{ github.repository }}
+#          flavor: latest=false
+#          sep-tags: ','
+#          tags: |
+#            type=raw,value=latest,enable=${{ env.REGISTRY == 'ghcr.io' }}
+#            type=raw,value=${{env.JVM_VERSION}}
+#            type=semver,pattern={{major}}.{{minor}},value=v4.1.1
+#            type=semver,pattern={{major}}.{{minor}},suffix=-${{env.JVM_VERSION}},value=v4.1.1
+#            type=semver,pattern={{version}},value=v4.1.1
+#            type=semver,pattern={{version}},suffix=-{{sha}}-${{env.JVM_VERSION}},value=v4.1.1

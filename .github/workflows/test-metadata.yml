@@ -1,0 +1,39 @@
+name: Test metadata
+
+on:
+  workflow_dispatch:
+    inputs:
+      value:
+        description: Raw value for testing
+        required: true
+        default: docker.io
+
+env:
+  DEFAULT_JAVA_VERSION: 17
+  DEFAULT_JAVA_TYPE: jre
+  DISTRIBUTION: temurin
+  REGISTRY: docker.io
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: name/app
+          tags: |
+            type=semver,pattern={{major}}.,value=v4.1.1
+            type=semver,pattern={{major}}.{{minor}}.,value=v4.1.1
+            type=semver,pattern={{version}},value=v4.1.1
+            type=semver,pattern={{version}},value=v4.1.1
+            type=semver,pattern={{version}}-{{sha}},suffix=-${DEFAULT_JAVA_VERSION}${DEFAULT_JAVA_TYPE},value=v4.1.1
+            type=sha,suffix=${DEFAULT_JAVA_VERSION}${DEFAULT_JAVA_TYPE}
+#            type=rawsha
+#            type=ref,event=branch
+#            type=ref,event=pr
+#            type=semver,pattern={{version}}
+#            type=semver,pattern={{major}}.{{minor}}
