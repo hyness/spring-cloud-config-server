@@ -1,0 +1,88 @@
+name: Generate release build tags
+
+on:
+  workflow_call:
+    inputs:
+      build-version:
+        description: Version of docker image
+        type: string
+        required: true
+      latest-version:
+        description: Latest version of docker image
+        type: string
+        required: true
+      image-name:
+        description: The output image name
+        type: string
+        default: ${{ inputs.registry }}/${{ github.repository }}
+      jvm-type:
+        description: JVM type for output image
+        type: string
+        default: ${{ inputs.jvm-type-default }}
+      jvm-type-default:
+        description: Default JVM type for output image
+        type: string
+        default: jre
+      jvm-version:
+        description: JVM version for output image
+        type: string
+        default: ${{ inputs.jvm-version-default }}
+      jvm-version-default:
+        description: Default JVM version for output image
+        type: string
+        default: 17
+      registry:
+        description: Docker registry to deploy image
+        type: string
+        default: ghcr.io
+    outputs:
+      tags:
+        description: A list of docker tags to create
+        value: ${{ jobs.docker-tags.outputs.tags }}
+
+jobs:
+  jvm-tag:
+    uses: ./.github/workflows/generate-jvm-tag.yml
+    with:
+      jvm-type: ${{ inputs.jvm-type }}
+      jvm-version: ${{ inputs.jvm-version }}
+
+  jvm-tag-default:
+    uses: ./.github/workflows/generate-jvm-tag.yml
+    with:
+      jvm-type: ${{ inputs.jvm-type-default }}
+      jvm-version: ${{ inputs.jvm-version-default }}
+
+  docker-tags:
+    name: Generate release build tags
+    needs:
+      - jvm-tag
+      - jvm-tag-default
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.write-tags.outputs.tags }}
+    env:
+      IS_JVM_DEFAULT: ${{ needs.jvm-tag.outputs.jvm-tag == needs.jvm-tag-default.outputs.jvm-tag }}
+      IS_LATEST_VERSION: ${{ inputs.build-version == inputs.latest-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create docker tags
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ inputs.image-name }}
+          flavor: latest=false
+          sep-tags: ','
+          tags: |
+            type=raw,value=latest,enable=${{ env.IS_LATEST_VERSION && env.IS_JVM_DEFAULT }}
+            type=semver,pattern={{version}},value=${{ inputs.build-version }},enable=${{ env.IS_JVM_DEFAULT }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.build-version }},enable=${{ env.IS_JVM_DEFAULT }}
+
+            type=raw,value=${{ needs.jvm-tag.outputs.jvm-tag }}
+            type=semver,pattern={{major}}.{{minor}},suffix=-${{ needs.jvm-tag.outputs.jvm-tag }},value=${{ inputs.build-version }}
+            type=semver,pattern={{version}},suffix=-{{sha}}-${{ needs.jvm-tag.outputs.jvm-tag }},value=${{ inputs.build-version }}
+
+      - name: Write output
+        id: write-tags
+        run: echo "tags=$DOCKER_METADATA_OUTPUT_TAGS" >> $GITHUB_OUTPUT

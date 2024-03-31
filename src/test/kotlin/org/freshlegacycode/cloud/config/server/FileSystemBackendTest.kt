@@ -35,6 +35,6 @@ class FileSystemBackendTest {
     }
     companion object {
         @Container
-        val cloudConfigContainer = "examples/native/docker-compose.yml".toComposeContainer()
+        val cloudConfigContainer = "examples/native/compose.yml".toComposeContainer()
     }
 }

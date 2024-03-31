@@ -38,7 +38,7 @@ class RedisBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/redis/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/redis/compose.yml".toComposeContainer().apply {
             withExposedService("redis", 6379, Wait.forListeningPort())
         }
 

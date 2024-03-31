@@ -238,7 +238,7 @@ using [Tiny Health Checker](https://github.com/dmikusa/tiny-health-checker).
       retries: 10
 ```
 
-See [the full example](./examples/healthcheck/docker-compose.yml) for more details
+See [the full example](./examples/healthcheck/compose.yml) for more details
 
 ### Thank You
 

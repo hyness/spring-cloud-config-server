@@ -39,7 +39,7 @@ class AwsSecretsManagerBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/aws/secretsmanager/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/aws/secretsmanager/compose.yml".toComposeContainer().apply {
             withExposedService("localstack", 4566, Wait.forListeningPort())
         }
 

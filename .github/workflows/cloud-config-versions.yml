@@ -1,0 +1,46 @@
+name: Find build and latest versions of cloud config
+
+on:
+  workflow_call:
+    inputs:
+      distribution:
+        description: JVM distribution to run
+        type: string
+        default: temurin
+      java-version:
+        description: JVM version to run
+        type: string
+        default: 17
+    outputs:
+      build:
+        description: Current build version of cloud config
+        value: ${{ jobs.cloud-config-versions.outputs.build }}
+      latest:
+        description: Latest version of cloud config
+        value:  ${{ jobs.cloud-config-versions.outputs.latest }}
+
+jobs:
+  cloud-config-versions:
+    name: Create Cloud Config Versions
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.vars.outputs.build }}
+      latest: ${{ steps.vars.outputs.latest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ inputs.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ inputs.distribution }}
+          java-version: ${{ inputs.java-version }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Set cloud config versions
+        id: vars
+        run: |
+          echo "latest=`curl -s https://search.maven.org/solrsearch/select\?q\=g:%22org.springframework.cloud%22%20AND%20a:%22spring-cloud-config-server%22 | jq -r '.response.docs[0].latestVersion'`" >> $GITHUB_OUTPUT
+          echo "build=`./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-`" >> $GITHUB_OUTPUT

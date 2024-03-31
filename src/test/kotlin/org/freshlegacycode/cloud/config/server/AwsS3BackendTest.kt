@@ -39,7 +39,7 @@ class AwsS3BackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/aws/s3/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/aws/s3/compose.yml".toComposeContainer().apply {
             withExposedService("localstack", 4566, Wait.forListeningPort())
         }
 

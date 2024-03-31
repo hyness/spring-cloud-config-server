@@ -40,7 +40,7 @@ class CloudBusKafkaRemoteGitBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/cloud-bus/kafka/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/cloud-bus/kafka/compose.yml".toComposeContainer().apply {
             withExposedService("kafka", 9092, Wait.forListeningPort())
         }
     }

@@ -12,7 +12,7 @@ class JdbcBackendPostgresTest : JdbcBackendTest() {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/jdbc/postgres/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/jdbc/postgres/compose.yml".toComposeContainer().apply {
             withExposedService("postgres", 5432, Wait.forListeningPort())
         }
     }

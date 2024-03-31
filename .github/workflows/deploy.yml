@@ -1,4 +1,4 @@
-name: Deploy artifacts to registry
+name: Build and deploy to registry
 
 on:
   release:
@@ -8,128 +8,54 @@ on:
     inputs:
       registry:
         description: Registry to deploy artifacts (docker.io, ghcr.io)
-        required: false
-        default: docker.io
-      triggered:
-        description: Was the build triggered
-        required: false
-        default: true
+        required: true
 
 env:
-  DEFAULT_JAVA_VERSION: 17
-  DEFAULT_JAVA_TYPE: jre
   REGISTRY: docker.io
 
 jobs:
-  create-variables:
+  build-vars:
     name: Create build variables
     runs-on: ubuntu-latest
     outputs:
-      cloud-config-build-version: ${{ steps.create-variables-output.outputs.cloud-config-build-version }}
-      cloud-config-build-version-short: ${{ steps.create-variables-output.outputs.cloud-config-build-version-short }}
-      cloud-config-latest-version: ${{ steps.create-variables-output.outputs.cloud-config-latest-version }}
-      cloud-config-latest-version-short: ${{ steps.create-variables-output.outputs.cloud-config-latest-version-short }}
-      registry: ${{ steps.create-variables-output.outputs.registry }}
-      short-sha: ${{ steps.create-variables-output.outputs.short-sha }}
+      registry: ${{ inputs.registry || steps.build-vars.outputs.registry }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Update the registry
-        if: ${{ github.event.inputs.registry != '' }}
-        run: echo "REGISTRY=${{ github.event.inputs.registry }}" >> $GITHUB_ENV
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Set latest cloud config version
-        run: echo "CLOUD_CONFIG_LATEST_VERSION=`curl -s https://search.maven.org/solrsearch/select\?q\=g:%22org.springframework.cloud%22%20AND%20a:%22spring-cloud-config-server%22 | jq -r '.response.docs[0].latestVersion'`" >> $GITHUB_ENV
-      - name: Set build cloud config version
-        run: echo "CLOUD_CONFIG_BUILD_VERSION=`./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-`" >> $GITHUB_ENV
-      - name: Create outputs
-        id: create-variables-output
-        run: |
-          echo "cloud-config-build-version=`echo $CLOUD_CONFIG_BUILD_VERSION`" >> $GITHUB_OUTPUT
-          echo "cloud-config-build-version-short=`echo $CLOUD_CONFIG_BUILD_VERSION | cut -d. -f1,2`" >> $GITHUB_OUTPUT
-          echo "cloud-config-latest-version=`echo $CLOUD_CONFIG_LATEST_VERSION`" >> $GITHUB_OUTPUT
-          echo "cloud-config-latest-version-short=`echo $CLOUD_CONFIG_LATEST_VERSION | cut -d. -f1,2`" >> $GITHUB_OUTPUT
-          echo "registry=`echo $REGISTRY`" >> $GITHUB_OUTPUT
-          echo "short-sha=`echo $GITHUB_SHA | cut -c1-8`" >> $GITHUB_OUTPUT
+      - id: build-vars
+        name: Create build variables
+        run: echo "registry=$REGISTRY" >> $GITHUB_OUTPUT
+
+  cloud-config-versions:
+    name: Find build and latest versions of cloud config
+    uses: ./.github/workflows/cloud-config-versions.yml
 
   build-and-deploy-to-registry:
-    name: Push verified Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image to ${{ needs.create-variables.outputs.registry }}
-    needs: create-variables
-    runs-on: ubuntu-latest
-    env:
-      CLOUD_CONFIG_BUILD_VERSION: ${{ needs.create-variables.outputs.cloud-config-build-version }}
-      CLOUD_CONFIG_BUILD_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-build-version-short }}
-      CLOUD_CONFIG_LATEST_VERSION: ${{ needs.create-variables.outputs.cloud-config-latest-version }}
-      CLOUD_CONFIG_LATEST_VERSION_SHORT: ${{ needs.create-variables.outputs.cloud-config-latest-version-short }}
-      REGISTRY: ${{ needs.create-variables.outputs.registry }}
-      JAVA: ${{ matrix.jvmType }}${{ matrix.jvmVersion }}
-      SHORT_SHA: ${{ needs.create-variables.outputs.short-sha }}
+    name: Create OCI images and deploy to ${{ inputs.registry }}
+    uses: ./.github/workflows/release.yml
+    needs:
+      - build-vars
+      - cloud-config-versions
     strategy:
       matrix:
         jvmType: [jre, jdk]
         jvmVersion: [17, 21]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Create the IMAGE environment variable
-        run: echo "IMAGE=$REGISTRY/$GITHUB_REPOSITORY" >> $GITHUB_ENV
-      - name: Create OCI image tags
-        run: echo "DOCKER_TAGS=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$JAVA,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT-$JAVA" >> $GITHUB_ENV
-      - name: Add version default OCI image tag
-        if: matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
-        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION,$IMAGE:$CLOUD_CONFIG_BUILD_VERSION_SHORT" >> $GITHUB_ENV
-      - name: Add ${{ env.JAVA }} default OCI image tag
-        if: env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT
-        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:$JAVA" >> $GITHUB_ENV
-      - name: Add latest OCI image tag
-        if: (env.CLOUD_CONFIG_BUILD_VERSION_SHORT == env.CLOUD_CONFIG_LATEST_VERSION_SHORT) && matrix.jvmVersion == env.DEFAULT_JAVA_VERSION && matrix.jvmType == env.DEFAULT_JAVA_TYPE
-        run: echo "DOCKER_TAGS=$DOCKER_TAGS,$IMAGE:latest" >> $GITHUB_ENV
-      - name: Setup GitHub Container Registry credentials
-        if: env.REGISTRY == 'ghcr.io'
-        run: |
-          echo "DOCKER_USERNAME=${{ github.actor }}" >> $GITHUB_ENV
-          echo "DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
-      - name: Setup Docker Hub credentials
-        if: env.REGISTRY == 'docker.io'
-        run: |
-          echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
-          echo "DOCKER_PASSWORD=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
-      - name: Set up JDK ${{ matrix.jvmVersion }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ matrix.jvmVersion }}
-          distribution: temurin
-      - name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} OCI image
-        run: >
-          ./gradlew bootBuildImage
-          -PjvmType=${{ matrix.jvmType }}
-          -PjdkVersion=${{ matrix.jvmVersion }}
-          -PdockerUsername=$DOCKER_USERNAME
-          -PdockerPassword=$DOCKER_PASSWORD
-          -PdockerTags=$DOCKER_TAGS
-          --imageName=$IMAGE:$CLOUD_CONFIG_BUILD_VERSION-$SHORT_SHA-$JAVA
-          --publishImage
+    with:
+      build-version: ${{ needs.cloud-config-versions.outputs.build }}
+      latest-version: ${{ needs.cloud-config-versions.outputs.latest }}
+      jvm-version: ${{ matrix.jvmVersion }}
+      jvm-type: ${{ matrix.jvmType }}
+      registry: ${{ needs.build-vars.outputs.registry }}
 
   update-docker-hub-description:
     name: Update Docker Hub README
     needs:
-      - create-variables
+      - build-vars
       - build-and-deploy-to-registry
-    if: needs.create-variables.outputs.registry == 'docker.io'
+    if: needs.build-vars.outputs.registry == 'docker.io'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
+
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v4
         with:

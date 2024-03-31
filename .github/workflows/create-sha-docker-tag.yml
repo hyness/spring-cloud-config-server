@@ -1,0 +1,35 @@
+name: Create sha docker tag
+
+on:
+  workflow_call:
+    inputs:
+      jvm-type:
+        description: JVM type for output image
+        type: string
+        default: jre
+      jvm-version:
+        description: JVM version for output image
+        type: string
+        default: 17
+    outputs:
+      tag:
+        description: Docker tag with sha of commit
+        value: ${{ jobs.create-sha-docker-tag.outputs.tag }}
+
+jobs:
+  jvm-tag:
+    uses: ./.github/workflows/generate-jvm-tag.yml
+    with:
+      jvm-type: ${{ inputs.jvm-type }}
+      jvm-version: ${{ inputs.jvm-version }}
+
+  create-sha-docker-tag:
+    name: Create sha docker tag
+    needs: jvm-tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - name: Build sha docker tag
+        id: vars
+        run: echo "tag=`echo $GITHUB_SHA | cut -c1-7`-${{ needs.jvm-tag.outputs.jvm-tag }}" >> $GITHUB_OUTPUT

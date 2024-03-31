@@ -37,6 +37,6 @@ class RemoteGitRepoBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer: DockerComposeContainer<*> = "examples/git/docker-compose.yml".toComposeContainer()
+        val cloudConfigContainer: DockerComposeContainer<*> = "examples/git/compose.yml".toComposeContainer()
     }
 }

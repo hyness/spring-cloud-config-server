@@ -63,6 +63,6 @@ class SecurityEncryptTest {
 
     companion object {
         @Container
-        val cloudConfigContainer: DockerComposeContainer<*> = "examples/security/docker-compose.yml".toComposeContainer()
+        val cloudConfigContainer: DockerComposeContainer<*> = "examples/security/compose.yml".toComposeContainer()
     }
 }
