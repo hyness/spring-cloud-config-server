@@ -1,0 +1,60 @@
+name: Build and deploy OCI image to registry
+
+on:
+  workflow_call:
+    inputs:
+      image-jvm-type:
+        description: JVM type for output image
+        type: string
+        required: false
+        default: jre
+      image-jvm-version:
+        description: JVM version for output image
+        type: string
+        required: false
+        default: 17
+      image-name:
+        description: The output image name
+        type: string
+        required: true
+      java-build-distribution:
+        description: Java distribution to use for build
+        type: string
+        required: false
+        default: temurin
+      java-build-version:
+        description: Java version to build with
+        type: string
+        required: false
+        default: 17
+    secrets:
+      dockerUsername:
+        description: The output registry username
+        required: true
+      dockerPassword:
+        description: The output registry password
+        required: true
+
+jobs:
+  build-and-push:
+    name: Build and push OCI image to ${{ inputs.registry }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK ${{ inputs.java-build-version }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: ${{ inputs.java-build-distribution }}
+          java-version: ${{ inputs.java-build-version }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Build and push Java ${{ inputs.image-jvm-version }} ${{ inputs.image-jvm-type }} OCI image
+        run: >
+          ./gradlew bootBuildImage
+          -PjvmType=${{ inputs.image-jvm-type }}
+          -PjdkVersion=${{ inputs.image-jvm-version }}
+          -PdockerUsername=${{ secrets.dockerUsername }}
+          -PdockerPassword=${{ secrets.dockerPassword }}
+          --imageName=${{ inputs.image-name }}
+          --publishImage

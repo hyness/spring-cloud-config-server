@@ -1,0 +1,44 @@
+name: Create build variables
+
+on:
+  workflow_call:
+    inputs:
+      registry:
+        description: Registry to deploy artifacts (docker.io, ghcr.io)
+        required: false
+        type: string
+        default: docker.io
+
+jobs:
+  build-variables:
+    name: Create build variables
+    runs-on: ubuntu-latest
+    outputs:
+      cloud-config-build-version: ${{ steps.create-variables-output.outputs.cloud-config-build-version }}
+      cloud-config-build-version-short: ${{ steps.create-variables-output.outputs.cloud-config-build-version-short }}
+      cloud-config-latest-version: ${{ steps.create-variables-output.outputs.cloud-config-latest-version }}
+      cloud-config-latest-version-short: ${{ steps.create-variables-output.outputs.cloud-config-latest-version-short }}
+      registry: ${{ steps.create-variables-output.outputs.registry }}
+      short-sha: ${{ steps.create-variables-output.outputs.short-sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update the registry
+        run: echo "REGISTRY=${{ inputs.registry }}" >> $GITHUB_ENV
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+      - name: Set latest cloud config version
+        run: echo "CLOUD_CONFIG_LATEST_VERSION=`curl -s https://search.maven.org/solrsearch/select\?q\=g:%22org.springframework.cloud%22%20AND%20a:%22spring-cloud-config-server%22 | jq -r '.response.docs[0].latestVersion'`" >> $GITHUB_ENV
+      - name: Set build cloud config version
+        run: echo "CLOUD_CONFIG_BUILD_VERSION=`./gradlew dependencyInsight --dependency org.springframework.cloud:spring-cloud-config-server | grep 'org.springframework.cloud:spring-cloud-config-server:' | tail -1 | cut -d ':' -f 3-`" >> $GITHUB_ENV
+      - name: Create outputs
+        id: create-variables-output
+        run: |
+          echo "cloud-config-build-version=`echo $CLOUD_CONFIG_BUILD_VERSION`" >> $GITHUB_OUTPUT
+          echo "cloud-config-build-version-short=`echo $CLOUD_CONFIG_BUILD_VERSION | cut -d. -f1,2`" >> $GITHUB_OUTPUT
+          echo "cloud-config-latest-version=`echo $CLOUD_CONFIG_LATEST_VERSION`" >> $GITHUB_OUTPUT
+          echo "cloud-config-latest-version-short=`echo $CLOUD_CONFIG_LATEST_VERSION | cut -d. -f1,2`" >> $GITHUB_OUTPUT
+          echo "registry=`echo $REGISTRY`" >> $GITHUB_OUTPUT
+          echo "short-sha=`echo $GITHUB_SHA | cut -c1-8`" >> $GITHUB_OUTPUT

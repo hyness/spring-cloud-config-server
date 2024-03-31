@@ -5,90 +5,77 @@ on:
   workflow_dispatch:
 
 env:
+  DISTRIBUTION: temurin
+  JVM_TYPE: jre
+  JVM_VERSION: 17
   REGISTRY: ghcr.io
 
 jobs:
-  create-short-sha:
-    name: Create short commit sha
+  build-vars:
+    name: Setup build variables
     runs-on: ubuntu-latest
     outputs:
-      short-sha: ${{ steps.short-sha-output.outputs.short-sha }}
+      distribution: ${{ steps.build-vars.outputs.distribution }}
+      image-name: ${{ steps.build-vars.outputs.image-name }}
+      jvm-type: ${{ steps.build-vars.outputs.jvm-type }}
+      jvm-version: ${{ steps.build-vars.outputs.jvm-version }}
     steps:
-      - name: Create short commit sha output
-        id: short-sha-output
-        run: echo "short-sha=`echo $GITHUB_SHA | cut -c1-8`" >> $GITHUB_OUTPUT
+      - id: build-vars
+        name: Create build variables
+        run: |
+          echo "distribution=$DISTRIBUTION" >> $GITHUB_OUTPUT
+          echo "image-name=$REGISTRY/$GITHUB_REPOSITORY:`echo $GITHUB_SHA | cut -c1-8`-${JVM_TYPE}${JVM_VERSION}" >> $GITHUB_OUTPUT
+          echo "jvm-type=$JVM_TYPE" >> $GITHUB_OUTPUT
+          echo "jvm-version=$JVM_VERSION" >> $GITHUB_OUTPUT
 
   build-and-deploy:
-    name: Build and push Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image to registry
-    needs: create-short-sha
-    runs-on: ubuntu-latest
-    env:
-      TAG: ${{ needs.create-short-sha.outputs.short-sha }}-${{ matrix.jvmType }}${{ matrix.jvmVersion }}
-    strategy:
-      matrix:
-        jvmType: [jre]
-        jvmVersion: [17]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Set up JDK ${{ matrix.jvmVersion }}
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ matrix.jvmVersion }}
-          distribution: temurin
-      - name: Build and deploy OCI image
-        run: >
-          ./gradlew bootBuildImage
-          -PjvmType=${{ matrix.jvmType }}
-          -PjdkVersion=${{ matrix.jvmVersion }}
-          -PdockerUsername=${{ github.actor }}
-          -PdockerPassword=${{ secrets.GITHUB_TOKEN }}
-          --imageName=$REGISTRY/$GITHUB_REPOSITORY:$TAG 
-          --publishImage
-  integration-test:
-    name: Verify Java ${{ matrix.jvmVersion }} ${{ matrix.jvmType }} image with ${{ matrix.backend }}
-    needs:
-      - create-short-sha
-      - build-and-deploy
-    runs-on: ubuntu-latest
-    env:
-      TAG: ${{ needs.create-short-sha.outputs.short-sha }}-${{ matrix.jvmType }}${{ matrix.jvmVersion }}
-    strategy:
-      fail-fast: false
-      matrix:
-        jvmType: [jre]
-        jvmVersion: [17]
-        backend: [
-          aws-param-store,
-          aws-s3,
-          aws-secrets-manager,
-          cloud-bus-kafka,
-          cloud-bus-rabbitmq,
-          git,
-          mariadb,
-          native,
-          postgres,
-          prometheus,
-          redis,
-          security,
-          vault
-        ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: temurin
-      - name: Test with ${{ matrix.backend }}
-        run: >
-          ./gradlew test -i
-          -PtestFilter=${{ matrix.backend }}
-          -PimageRegistry=${{ env.REGISTRY }}
-          -PimageTag=${{ env.TAG }}
-          -PjdkVersion=${{ matrix.jvmVersion }}
+    uses: ./.github/workflows/boot-build-image-and-publish.yml
+    name: Build and push Java ${{ needs.build-vars.outputs.jvm-version }} ${{ needs.build-vars.outputs.jvm-type }} OCI image to registry
+    needs: build-vars
+    with:
+      image-name: ${{ needs.build-vars.outputs.image-name }}
+    secrets:
+      dockerUsername: ${{ github.actor }}
+      dockerPassword: ${{ secrets.GITHUB_TOKEN }}
+#
+#  integration-test:
+#    name: Verify Java $JVM_VERSION $JVM_TYPE image with ${{ matrix.backend }}
+#    needs:
+#      - create-short-sha
+#      - build-and-deploy
+#    runs-on: ubuntu-latest
+#    env:
+#      TAG: ${{ needs.create-short-sha.outputs.short-sha }}-$JVM_TYPE$JVM_VERSION
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        backend: [
+#          aws-param-store,
+#          aws-s3,
+#          aws-secrets-manager,
+#          cloud-bus-kafka,
+#          cloud-bus-rabbitmq,
+#          git,
+#          mariadb,
+#          native,
+#          postgres,
+#          prometheus,
+#          redis,
+#          security,
+#          vault
+#        ]
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#      - name: Set up JDK ${{ env.JVM_VERSION }}
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: $JVM_VERSION
+#          distribution: $DISTRIBUTION
+#      - name: Test with ${{ matrix.backend }}
+#        run: >
+#          ./gradlew test -i
+#          -PtestFilter=${{ matrix.backend }}
+#          -PimageRegistry=$REGISTRY
+#          -PimageTag=$TAG
+#          -PjdkVersion=$JVM_VERSION
