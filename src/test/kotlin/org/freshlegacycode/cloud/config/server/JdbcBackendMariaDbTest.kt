@@ -12,7 +12,7 @@ class JdbcBackendMariaDbTest : JdbcBackendTest() {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/jdbc/mariadb/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/jdbc/mariadb/compose.yml".toComposeContainer().apply {
             withExposedService("mariadb", 3306, Wait.forListeningPort())
         }
     }

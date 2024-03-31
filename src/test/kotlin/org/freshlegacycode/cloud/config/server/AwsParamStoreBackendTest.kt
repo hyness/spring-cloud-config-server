@@ -42,7 +42,7 @@ class AwsParamStoreBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/aws/paramstore/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/aws/paramstore/compose.yml".toComposeContainer().apply {
             withExposedService("localstack", 4566, Wait.forListeningPort())
         }
 

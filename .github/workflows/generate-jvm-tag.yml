@@ -1,0 +1,28 @@
+name: Generate a jvm tag
+
+on:
+  workflow_call:
+    inputs:
+      jvm-type:
+        description: JVM type for output image
+        type: string
+        required: true
+      jvm-version:
+        description: JVM version for output image
+        type: string
+        required: true
+    outputs:
+      jvm-tag:
+        description: JVM tag used in docker tags
+        value: ${{ jobs.generate-jvm-tag.outputs.jvm-tag }}
+
+jobs:
+  generate-jvm-tag:
+    name: Generate a jvm tag
+    runs-on: ubuntu-latest
+    outputs:
+      jvm-tag: ${{ steps.write-tag.outputs.jvm-tag }}
+    steps:
+      - name: Write output
+        id: write-tag
+        run: echo "jvm-tag=${{ format('{0}{1}', inputs.jvm-type, inputs.jvm-version) }}" >> $GITHUB_OUTPUT

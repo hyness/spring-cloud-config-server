@@ -40,7 +40,7 @@ class CloudBusRabbitRemoteGitBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/cloud-bus/rabbit/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/cloud-bus/rabbit/compose.yml".toComposeContainer().apply {
             withExposedService("rabbitmq", 5672, Wait.forListeningPort())
         }
     }

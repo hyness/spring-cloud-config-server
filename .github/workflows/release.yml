@@ -1,0 +1,64 @@
+name: Release build
+
+on:
+  workflow_call:
+    inputs:
+      build-version:
+        description: Version of docker image
+        type: string
+        required: true
+      latest-version:
+        description: Latest version of docker image
+        type: string
+        required: true
+      jvm-type:
+        description: JVM type for output image
+        type: string
+        default: jre
+      jvm-version:
+        description: JVM version for output image
+        type: string
+        default: 17
+      image-name:
+        description: The output image name
+        type: string
+        default: ${{ github.repository }}
+      registry:
+        description: The registry to deploy to
+        type: string
+        required: true
+
+jobs:
+  docker-tags:
+    uses: ./.github/workflows/generate-docker-tags.yml
+    with:
+      build-version: ${{ inputs.build-version }}
+      latest-version: ${{ inputs.latest-version }}
+      jvm-version: ${{ inputs.jvm-version }}
+      jvm-type: ${{ inputs.jvm-type }}
+
+  jvm-tag:
+    uses: ./.github/workflows/generate-jvm-tag.yml
+    with:
+      jvm-type: ${{ inputs.jvm-type }}
+      jvm-version: ${{ inputs.jvm-version }}
+
+  sha-tag:
+    uses: ./.github/workflows/create-sha-docker-tag.yml
+    with:
+      jvm-type: ${{ inputs.jvm-type }}
+      jvm-version: ${{ inputs.jvm-version }}
+
+  build-and-deploy:
+    name: Build and deploy Java ${{ needs.jvm-tag.outputs.jvm-tag }} OCI image to registry
+    uses: ./.github/workflows/build-and-deploy-image.yml
+    needs:
+      - docker-tags
+      - jvm-tag
+      - sha-tag
+    with:
+      image-name: ${{ inputs.image-name }}:${{ needs.sha-tag.outputs.tag }}
+      image-jvm-version: ${{ inputs.jvm-version }}
+      image-jvm-type: ${{ inputs.jvm-type }}
+      registry: ${{ inputs.registry }}
+      tags: ${{ needs.docker-tags.outputs.tags }}

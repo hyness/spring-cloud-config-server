@@ -39,6 +39,6 @@ class PrometheusActuatorTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/prometheus/docker-compose.yml".toComposeContainer()
+        val cloudConfigContainer = "examples/prometheus/compose.yml".toComposeContainer()
     }
 }

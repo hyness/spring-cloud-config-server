@@ -38,7 +38,7 @@ class VaultBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/vault/docker-compose.yml".toComposeContainer().apply {
+        val cloudConfigContainer = "examples/vault/compose.yml".toComposeContainer().apply {
             withExposedService("vault", 8200, Wait.forListeningPort())
         }
 
