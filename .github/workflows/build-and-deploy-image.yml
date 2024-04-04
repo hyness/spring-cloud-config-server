@@ -59,25 +59,26 @@ jobs:
         if: inputs.tags != ''
         run: echo "TAGS=-PdockerTags=${{ inputs.tags }}" >> $GITHUB_ENV
 
-      - name: Setup Docker Hub credentials
+      - name: Login to DockerHub
         if: inputs.registry == 'docker.io'
-        run: |
-          echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
-          echo "DOCKER_PASSWORD=${{ secrets.DOCKERHUB_TOKEN }}" >> $GITHUB_ENV
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Setup GitHub Container Registry credentials
+      - name: Login to GitHub Container Registry
         if: inputs.registry == 'ghcr.io'
-        run: |
-          echo "DOCKER_USERNAME=${{ github.actor }}" >> $GITHUB_ENV
-          echo "DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and deploy OCI image
         run: >
           ./gradlew bootBuildImage
           -PjvmType=${{ inputs.image-jvm-type }}
           -PjdkVersion=${{ inputs.image-jvm-version }}
-          -PdockerUsername=${{ env.DOCKER_USERNAME }}
-          -PdockerPassword=${{ env.DOCKER_PASSWORD }}
           $TAGS
           --imageName=${{ inputs.registry }}/${{ inputs.image-name }}
           --publishImage
