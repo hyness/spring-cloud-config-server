@@ -44,6 +44,7 @@ jobs:
       jvm-version: ${{ matrix.jvmVersion }}
       jvm-type: ${{ matrix.jvmType }}
       registry: ${{ needs.build-vars.outputs.registry }}
+    secrets: inherit
 
   update-docker-hub-description:
     name: Update Docker Hub README

@@ -62,3 +62,4 @@ jobs:
       image-jvm-type: ${{ inputs.jvm-type }}
       registry: ${{ inputs.registry }}
       tags: ${{ needs.docker-tags.outputs.tags }}
+    secrets: inherit
