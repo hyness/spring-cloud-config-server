@@ -8,8 +8,6 @@ plugins {
 
 val jdkVersion: String by project
 val jvmType: String by project
-val dockerUsername: String by project
-val dockerPassword: String by project
 val dockerTags: String? by project
 val imageRegistry: String? by project
 val imageName: String? by project
@@ -54,10 +52,6 @@ tasks {
             "paketo-buildpacks/environment-variables",
             "gcr.io/paketo-buildpacks/health-checker"
         )
-        docker.publishRegistry {
-            username = dockerUsername
-            password = dockerPassword
-        }
         environment = mapOf(
             "BP_JVM_TYPE" to jvmType,
             "BP_JVM_VERSION" to jdkVersion,
