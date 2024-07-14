@@ -52,7 +52,7 @@ tasks {
             "paketo-buildpacks/dist-zip",
             "paketo-buildpacks/spring-boot",
             "paketo-buildpacks/environment-variables",
-            "gcr.io/paketo-buildpacks/health-checker"
+            "gcr.io/paketo-buildpacks/health-checker:1.17.0"
         )
         docker.publishRegistry {
             username = dockerUsername
