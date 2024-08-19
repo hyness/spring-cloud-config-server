@@ -90,3 +90,25 @@ jobs:
           -PimageRegistry=${{ needs.build-vars.outputs.registry }}
           -PjdkVersion=${{ needs.build-vars.outputs.jvm-version }}
           -PimageTag=${{ needs.sha-tag.outputs.tag }}
+
+  vulnerability-scan:
+    name: Scan for vulnerabilities
+    runs-on: ubuntu-latest
+    needs:
+      - integration-test
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{ needs.build-vars.outputs.registry }}/${{ github.repository }}:${{ needs.sha-tag.outputs.tag }}
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif

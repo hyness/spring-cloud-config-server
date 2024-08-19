@@ -42,7 +42,7 @@ tasks {
     }
 
     bootBuildImage {
-        applicationDirectory = "/opt/spring-cloud-config-server"
+//        applicationDirectory = "/opt/spring-cloud-config-server"
         builder = "paketobuildpacks/builder-jammy-tiny"
         buildpacks = listOf(
             "paketo-buildpacks/ca-certificates",
@@ -52,7 +52,7 @@ tasks {
             "paketo-buildpacks/dist-zip",
             "paketo-buildpacks/spring-boot",
             "paketo-buildpacks/environment-variables",
-            "gcr.io/paketo-buildpacks/health-checker:1.17.0"
+            "gcr.io/paketo-buildpacks/health-checker"
         )
         docker.publishRegistry {
             username = dockerUsername

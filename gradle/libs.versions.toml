@@ -2,7 +2,7 @@
 aws = "2.17.195"
 kotlin = "1.9.24"
 kotlin-logging = "6.0.3"
-spring-boot = "3.2.6"
+spring-boot = "3.2.8"
 spring-cloud = "2023.0.3"
 spring-cloud-config = "4.1.3"
 
