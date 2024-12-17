@@ -1,10 +1,10 @@
 [versions]
 aws = "2.17.195"
-kotlin = "1.9.24"
+kotlin = "1.9.25"
 kotlin-logging = "6.0.3"
-spring-boot = "3.2.6"
+spring-boot = "3.2.12"
 spring-cloud = "2023.0.3"
-spring-cloud-config = "4.1.3"
+spring-cloud-config = "4.1.4"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -43,8 +43,8 @@ spring-cloud = { module = "org.springframework.cloud:spring-cloud-dependencies",
 spring-cloud-bus = { module = "org.springframework.cloud:spring-cloud-bus" }
 spring-cloud-bus-amqp = { module = "org.springframework.cloud:spring-cloud-starter-bus-amqp" }
 spring-cloud-bus-kafka = { module = "org.springframework.cloud:spring-cloud-starter-bus-kafka" }
-spring-cloud-config-monitor = { module = "org.springframework.cloud:spring-cloud-config-monitor" }
-spring-cloud-config-server = { module = "org.springframework.cloud:spring-cloud-config-server" }
+spring-cloud-config-monitor = { module = "org.springframework.cloud:spring-cloud-config-monitor", version.ref = "spring-cloud-config" }
+spring-cloud-config-server = { module = "org.springframework.cloud:spring-cloud-config-server", version.ref = "spring-cloud-config" }
 spring-jdbc = { module = "org.springframework:spring-jdbc" }
 spring-vault = { module = "org.springframework.vault:spring-vault-core" }
 testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter" }

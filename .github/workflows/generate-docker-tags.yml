@@ -63,10 +63,17 @@ jobs:
       tags: ${{ steps.write-tags.outputs.tags }}
     env:
       IS_JVM_DEFAULT: ${{ needs.jvm-tag.outputs.jvm-tag == needs.jvm-tag-default.outputs.jvm-tag }}
-      IS_LATEST_VERSION: ${{ inputs.build-version == inputs.latest-version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Remove prefix, if necessary
+        run: |
+          echo "BUILD_VERSION=`echo "${{ inputs.build-version }} | sed 's/.* -> //'`" >> $GITHUB_ENV
+
+      - name: Determine if latest version
+        run: |
+          echo "IS_LATEST_VERSION=${{ env.BUILD_VERSION == inputs.latest-version }}" >> $GITHUB_ENV
 
       - name: Create docker tags
         uses: docker/metadata-action@v5
@@ -76,12 +83,12 @@ jobs:
           sep-tags: ','
           tags: |
             type=raw,value=latest,enable=${{ env.IS_LATEST_VERSION && env.IS_JVM_DEFAULT }}
-            type=semver,pattern={{version}},value=${{ inputs.build-version }},enable=${{ env.IS_JVM_DEFAULT }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.build-version }},enable=${{ env.IS_JVM_DEFAULT }}
+            type=semver,pattern={{version}},value=${{ env.BUILD_VERSION }},enable=${{ env.IS_JVM_DEFAULT }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.BUILD_VERSION }},enable=${{ env.IS_JVM_DEFAULT }}
 
             type=raw,value=${{ needs.jvm-tag.outputs.jvm-tag }}
-            type=semver,pattern={{major}}.{{minor}},suffix=-${{ needs.jvm-tag.outputs.jvm-tag }},value=${{ inputs.build-version }}
-            type=semver,pattern={{version}},suffix=-{{sha}}-${{ needs.jvm-tag.outputs.jvm-tag }},value=${{ inputs.build-version }}
+            type=semver,pattern={{major}}.{{minor}},suffix=-${{ needs.jvm-tag.outputs.jvm-tag }},value=${{ env.BUILD_VERSION }}
+            type=semver,pattern={{version}},suffix=-{{sha}}-${{ needs.jvm-tag.outputs.jvm-tag }},value=${{ env.BUILD_VERSION }}
 
       - name: Write output
         id: write-tags
