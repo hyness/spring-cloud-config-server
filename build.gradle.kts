@@ -43,7 +43,6 @@ tasks {
 
     bootBuildImage {
         applicationDirectory = "/opt/spring-cloud-config-server"
-        builder = "paketobuildpacks/builder-jammy-tiny"
         buildpacks = listOf(
             "paketo-buildpacks/ca-certificates",
             "paketo-buildpacks/bellsoft-liberica",
@@ -95,4 +94,12 @@ dependencies {
     testImplementation(libs.testcontainers.junit5)
     testImplementation(libs.kotlin.logging)
     testImplementation(libs.awaitility.kotlin)
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.name.startsWith("spring-cloud-function-")) {
+            useVersion("4.2.1")
+        }
+    }
 }

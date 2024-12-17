@@ -96,7 +96,7 @@ class ConfigServerSecurityConfiguration(val properties: ConfigServerSecurityProp
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http {
-            authorizeRequests {
+            authorizeHttpRequests {
                 authorize(EndpointRequest.to(HealthEndpoint::class.java), permitAll)
                 properties.allowedPaths.forEach {
                     authorize(it, permitAll)
