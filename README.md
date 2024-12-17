@@ -9,16 +9,10 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `4.1.4-jre17`, `4.1-jre17`, `jre17`, `4.1.4`, `4.1`, `latest`
-* `4.1.4-jdk17`, `4.1-jdk17`, `jdk17`
-* `4.1.4-jre21`, `4.1-jre21`, `jre21`
-* `4.1.4-jdk21`, `4.1-jdk21`, `jdk21`
-
-#### Build updates for 4.x
-* *Based on Spring Cloud Config Server 4.x & Spring Boot 3.x which is based on Java 17 baseline*
-* *Some configuration has changed since 3.x, [see the updated examples](https://github.com/hyness/spring-cloud-config-server/tree/main/examples)*
-* *Default image is based on Java 17.*
-* *JRE builds are now available and the default for latest, 4.1, 4.1.4*
+* `4.2.0-jre17`, `4.2-jre17`, `jre17`, `4.2.0`, `4.2`, `latest`
+* `4.2.0-jdk17`, `4.2-jdk17`, `jdk17`
+* `4.2.0-jre21`, `4.2-jre21`, `jre21`
+* `4.2.0-jdk21`, `4.2-jdk21`, `jdk21`
 
 ### Usage
 ```

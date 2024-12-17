@@ -1,10 +1,10 @@
 [versions]
 aws = "2.17.195"
 kotlin = "1.9.25"
-kotlin-logging = "6.0.3"
-spring-boot = "3.2.12"
-spring-cloud = "2023.0.3"
-spring-cloud-config = "4.1.4"
+kotlin-logging = "7.0.3"
+spring-boot = "3.4.0"
+spring-cloud = "2024.0.0"
+spring-cloud-config = "4.2.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
