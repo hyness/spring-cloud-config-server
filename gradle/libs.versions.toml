@@ -1,5 +1,6 @@
 [versions]
 aws = "2.17.195"
+aws-msk-iam-auth = "2.3.0"
 kotlin = "1.9.25"
 kotlin-logging = "7.0.4"
 spring-boot = "3.4.3"
@@ -12,13 +13,14 @@ kotlin-plugin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref 
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 
 [bundles]
-aws = ["aws-s3", "aws-secretsmanager", "aws-ssm", "aws-sts"]
+aws = ["aws-msk-iam-auth", "aws-s3", "aws-secretsmanager", "aws-ssm", "aws-sts"]
 jdbc-drivers = ["jdbc-driver-firebird", "jdbc-driver-hikari", "jdbc-driver-mariadb", "jdbc-driver-mssql", "jdbc-driver-postgres"]
 kotlin = ["kotlin-reflect", "kotlin-stdlib"]
 spring-cloud-bus = ["spring-cloud-bus", "spring-cloud-bus-kafka", "spring-cloud-bus-amqp"]
 spring-cloud-config = ["spring-cloud-config-server", "spring-cloud-config-monitor"]
 
 [libraries]
+aws-msk-iam-auth = { module = "software.amazon.msk:aws-msk-iam-auth", version.ref = "aws-msk-iam-auth" }
 aws-s3 = { module = "software.amazon.awssdk:s3", version.ref = "aws" }
 aws-secretsmanager = { module = "software.amazon.awssdk:secretsmanager", version.ref = "aws" }
 aws-ssm = { module = "software.amazon.awssdk:ssm", version.ref = "aws" }
