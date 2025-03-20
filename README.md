@@ -1,7 +1,7 @@
 # Spring Cloud Config Server
 A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/reference/).
 
-![CI Build](https://github.com/hyness/spring-cloud-config-server/workflows/CI/badge.svg?branch=main)
+![CI Build](https://github.com/hyness/spring-cloud-config-server/actions/workflows/ci.yml/badge.svg)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
@@ -9,10 +9,10 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `4.2.0-jre17`, `4.2-jre17`, `jre17`, `4.2.0`, `4.2`, `latest`
-* `4.2.0-jdk17`, `4.2-jdk17`, `jdk17`
-* `4.2.0-jre21`, `4.2-jre21`, `jre21`
-* `4.2.0-jdk21`, `4.2-jdk21`, `jdk21`
+* `4.2.1-jre17`, `4.2-jre17`, `jre17`, `4.2.1`, `4.2`, `latest`
+* `4.2.1-jdk17`, `4.2-jdk17`, `jdk17`
+* `4.2.1-jre21`, `4.2-jre21`, `jre21`
+* `4.2.1-jdk21`, `4.2-jdk21`, `jdk21`
 
 ### Usage
 ```
