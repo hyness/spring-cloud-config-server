@@ -22,7 +22,7 @@ tasks {
     }
 
     compileKotlin {
-        kotlinOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
+        compilerOptions.freeCompilerArgs = listOf("-Xjsr305=strict")
     }
 
     test {
