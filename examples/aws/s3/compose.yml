@@ -68,7 +68,7 @@ services:
         - --spring.cloud.config.server.awss3.bucket=sample-bucket
 
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack
     networks:
       aws:
         aliases:

@@ -11,8 +11,8 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
-@Tags(Tag("integration"), Tag("native"))
 @Testcontainers
+@Tags(Tag("integration"), Tag("native"))
 class FileSystemBackendTest {
     @EnumSource
     @ParameterizedTest
@@ -33,6 +33,7 @@ class FileSystemBackendTest {
             .jsonPath("$.name").isEqualTo("foo")
             .jsonPath("$.propertySources[0].name").isEqualTo("file:/native-files/foo-development.properties")
     }
+
     companion object {
         @Container
         val cloudConfigContainer = "examples/native/compose.yml".toComposeContainer()

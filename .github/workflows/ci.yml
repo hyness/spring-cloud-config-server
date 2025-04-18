@@ -51,6 +51,7 @@ jobs:
     needs:
       - build-vars
       - build-and-deploy
+      - sha-tag
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
