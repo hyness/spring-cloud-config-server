@@ -8,13 +8,13 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.testcontainers.containers.DockerComposeContainer
+import org.testcontainers.containers.ComposeContainer
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @Testcontainers
 @Tags(Tag("integration"), Tag("jdbc"))
 abstract class JdbcBackendTest {
-    abstract fun getContainer(): DockerComposeContainer<*>
+    abstract fun getContainer(): ComposeContainer
 
     @EnumSource
     @ParameterizedTest

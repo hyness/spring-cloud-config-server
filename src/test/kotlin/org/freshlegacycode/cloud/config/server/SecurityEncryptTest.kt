@@ -11,7 +11,7 @@ import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.TEXT_PLAIN
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters.fromValue
-import org.testcontainers.containers.DockerComposeContainer
+import org.testcontainers.containers.ComposeContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
@@ -63,6 +63,6 @@ class SecurityEncryptTest {
 
     companion object {
         @Container
-        val cloudConfigContainer: DockerComposeContainer<*> = "examples/security/compose.yml".toComposeContainer()
+        val cloudConfigContainer: ComposeContainer = "examples/security/compose.yml".toComposeContainer()
     }
 }

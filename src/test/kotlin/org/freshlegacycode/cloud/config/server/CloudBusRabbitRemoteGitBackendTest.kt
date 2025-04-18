@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
@@ -41,7 +40,7 @@ class CloudBusRabbitRemoteGitBackendTest {
     companion object {
         @Container
         val cloudConfigContainer = "examples/cloud-bus/rabbit/compose.yml".toComposeContainer().apply {
-            withExposedService("rabbitmq", 5672, Wait.forListeningPort())
+            withExposedService("rabbitmq", 5672)
         }
     }
 }

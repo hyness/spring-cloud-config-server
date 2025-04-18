@@ -1,6 +1,8 @@
 package org.freshlegacycode.cloud.config.server
 
+import org.assertj.core.api.Assertions.assertThat
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.containerTimeout
+import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logConsumer
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logger
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -9,9 +11,11 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
+import org.testcontainers.containers.ComposeContainer
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.jvm.optionals.getOrNull
 
 @Testcontainers
 @Tags(Tag("integration"), Tag("aws"), Tag("aws-secrets-manager"))
@@ -39,17 +43,20 @@ class AwsSecretsManagerBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/aws/secretsmanager/compose.yml".toComposeContainer().apply {
-            withExposedService("localstack", 4566, Wait.forListeningPort())
-        }
+        val cloudConfigContainer: ComposeContainer = "examples/aws/secretsmanager/compose.yml".toComposeContainer()
+            .withExposedService("localstack",4566, Wait.forHealthcheck())
+            .withLogConsumer("localstack", logConsumer)
 
         @JvmStatic
         @BeforeAll
         internal fun populateData() {
-            cloudConfigContainer.getContainerByServiceName("localstack")
-                .ifPresent {
-                    it.execInContainer("sh", "/data/populate-secretsmanager.sh")
-                }
+            logger.info { "Populating test data" }
+            val execResult = (cloudConfigContainer.getContainerByServiceName("localstack")
+                .getOrNull()
+                ?.execInContainer("sh", "/data/populate-secretsmanager.sh")
+                ?: throw RuntimeException("Could not populate secretsmanager test data"))
+
+            assertThat(execResult.exitCode).isZero()
         }
     }
 }

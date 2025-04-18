@@ -13,10 +13,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
-import org.springframework.cloud.bus.BusAutoConfiguration
-import org.springframework.cloud.bus.BusRefreshAutoConfiguration
-import org.springframework.cloud.bus.BusStreamAutoConfiguration
-import org.springframework.cloud.bus.PathServiceMatcherAutoConfiguration
+import org.springframework.cloud.bus.*
 import org.springframework.cloud.bus.jackson.BusJacksonAutoConfiguration
 import org.springframework.cloud.config.monitor.EnvironmentMonitorAutoConfiguration
 import org.springframework.cloud.config.server.EnableConfigServer
@@ -43,6 +40,7 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     PathServiceMatcherAutoConfiguration::class,
     BusAutoConfiguration::class,
     BusRefreshAutoConfiguration::class,
+    BusShutdownAutoConfiguration::class,
     BusStreamAutoConfiguration::class,
     BusJacksonAutoConfiguration::class,
     EnvironmentMonitorAutoConfiguration::class,
@@ -73,6 +71,7 @@ internal class CloudBusRabbitConfiguration : CloudBusConfiguration()
 
 @Import(BusAutoConfiguration::class,
         BusRefreshAutoConfiguration::class,
+        BusShutdownAutoConfiguration::class,
         BusStreamAutoConfiguration::class,
         BusJacksonAutoConfiguration::class,
         PathServiceMatcherAutoConfiguration::class,

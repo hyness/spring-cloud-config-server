@@ -1,6 +1,8 @@
 package org.freshlegacycode.cloud.config.server
 
+import org.assertj.core.api.Assertions.assertThat
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.containerTimeout
+import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logConsumer
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logger
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
@@ -9,9 +11,10 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.containers.ComposeContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.jvm.optionals.getOrNull
 
 @Testcontainers
 @Tags(Tag("integration"), Tag("vault"))
@@ -38,17 +41,20 @@ class VaultBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer = "examples/vault/compose.yml".toComposeContainer().apply {
-            withExposedService("vault", 8200, Wait.forListeningPort())
-        }
+        val cloudConfigContainer: ComposeContainer = "examples/vault/compose.yml".toComposeContainer()
+            .withExposedService("vault", 8200)
+            .withLogConsumer("vault", logConsumer)
 
         @JvmStatic
         @BeforeAll
         internal fun populateData() {
-            cloudConfigContainer.getContainerByServiceName("vault")
-                .ifPresent {
-                    it.execInContainer("sh", "/populate-vault.sh")
-                }
+            logger.info { "Populating test data" }
+            val execResult = (cloudConfigContainer.getContainerByServiceName("vault")
+                .getOrNull()
+                ?.execInContainer("sh", "/data/populate-vault.sh")
+                ?: throw RuntimeException("Could not populate vault test data"))
+
+            assertThat(execResult.exitCode).isZero()
         }
     }
 }
