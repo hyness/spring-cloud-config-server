@@ -1,5 +1,6 @@
 package org.freshlegacycode.cloud.config.server
 
+import org.assertj.core.api.Assertions.assertThat
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.containerTimeout
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logger
 import org.junit.jupiter.api.BeforeAll
@@ -12,6 +13,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.jvm.optionals.getOrNull
 
 @Testcontainers
 @Tags(Tag("integration"), Tag("aws"), Tag("aws-param-store"))
@@ -21,11 +23,8 @@ class AwsParamStoreBackendTest {
     @ParameterizedTest
     internal fun `given a config server, when configured with aws parameter store backend, is valid`(type: ContainerConfigurationType) {
         logger.info { "Verifying ${type.label}" }
-        val url = cloudConfigContainer.getContainerByServiceName(type.container)
-            .orElseThrow()
-            .let { "http://localhost:${it.firstMappedPort}" }
         val webClient = WebTestClient.bindToServer()
-            .baseUrl(url)
+            .baseUrl(cloudConfigContainer.getUrl(type))
             .responseTimeout(containerTimeout)
             .build()
 
@@ -43,16 +42,19 @@ class AwsParamStoreBackendTest {
     companion object {
         @Container
         val cloudConfigContainer = "examples/aws/paramstore/compose.yml".toComposeContainer().apply {
-            withExposedService("localstack", 4566, Wait.forListeningPort())
+            withExposedService("localstack", 4566, "/_localstack/health".run(Wait::forHttp))
         }
 
         @JvmStatic
         @BeforeAll
         internal fun populateData() {
-            cloudConfigContainer.getContainerByServiceName("localstack")
-                .ifPresent {
-                    it.execInContainer("sh", "/data/populate-paramstore.sh")
-                }
+            logger.info { "Populating test data" }
+            val execResult = (cloudConfigContainer.getContainerByServiceName("localstack")
+                .getOrNull()
+                ?.execInContainer("sh", "/data/populate-paramstore.sh")
+                ?: throw RuntimeException("Could not populate paramstore test data"))
+
+            assertThat(execResult.exitCode).isZero()
         }
     }
 }

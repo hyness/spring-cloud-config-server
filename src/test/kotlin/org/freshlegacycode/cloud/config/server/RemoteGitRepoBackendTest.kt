@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.testcontainers.containers.DockerComposeContainer
+import org.testcontainers.containers.ComposeContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 
@@ -37,6 +37,6 @@ class RemoteGitRepoBackendTest {
 
     companion object {
         @Container
-        val cloudConfigContainer: DockerComposeContainer<*> = "examples/git/compose.yml".toComposeContainer()
+        val cloudConfigContainer: ComposeContainer = "examples/git/compose.yml".toComposeContainer()
     }
 }

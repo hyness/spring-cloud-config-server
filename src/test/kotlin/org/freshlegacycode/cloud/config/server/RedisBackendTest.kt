@@ -1,5 +1,6 @@
 package org.freshlegacycode.cloud.config.server
 
+import org.assertj.core.api.Assertions.assertThat
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.containerTimeout
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logger
 import org.junit.jupiter.api.BeforeAll
@@ -9,9 +10,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.reactive.server.WebTestClient
-import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.jvm.optionals.getOrNull
 
 @Testcontainers
 @Tags(Tag("integration"), Tag("redis"))
@@ -39,16 +40,19 @@ class RedisBackendTest {
     companion object {
         @Container
         val cloudConfigContainer = "examples/redis/compose.yml".toComposeContainer().apply {
-            withExposedService("redis", 6379, Wait.forListeningPort())
+            withExposedService("redis", 6379)
         }
 
         @JvmStatic
         @BeforeAll
         internal fun populateData() {
-            cloudConfigContainer.getContainerByServiceName("redis")
-                .ifPresent {
-                    it.execInContainer("sh", "/data/populate-redis.sh")
-                }
+            logger.info { "Populating test data" }
+            val execResult = (cloudConfigContainer.getContainerByServiceName("redis")
+                .getOrNull()
+                ?.execInContainer("sh", "/data/populate-redis.sh")
+                ?: throw RuntimeException("Could not populate redis test data"))
+
+            assertThat(execResult.exitCode).isZero()
         }
     }
 }

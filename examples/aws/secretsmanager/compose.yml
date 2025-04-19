@@ -65,7 +65,7 @@ services:
         - --spring.cloud.config.server.aws-secretsmanager.region=us-east-1
 
   localstack:
-    image: localstack/localstack:latest
+    image: localstack/localstack
     networks:
       aws:
         aliases:
