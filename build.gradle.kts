@@ -99,7 +99,7 @@ dependencies {
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.name.startsWith("spring-cloud-function-")) {
-            useVersion("4.2.1")
+            useVersion("4.2.2")
         }
     }
 }
