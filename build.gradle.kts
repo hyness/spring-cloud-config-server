@@ -17,6 +17,12 @@ val imageTag: String? by project
 val testFilter: String? by project
 
 tasks {
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(jdkVersion.toInt()))
+        }
+    }
+
     version = versionCatalogs.firstNotNullOf {
         it.findVersion("spring.cloud.config").orElse(null)
     }
@@ -51,7 +57,7 @@ tasks {
             "paketo-buildpacks/dist-zip",
             "paketo-buildpacks/spring-boot",
             "paketo-buildpacks/environment-variables",
-            "gcr.io/paketo-buildpacks/health-checker:1.17.0"
+            "paketobuildpacks/health-checker:1.17.0"
         )
         docker.publishRegistry {
             username = dockerUsername
@@ -94,12 +100,4 @@ dependencies {
     testImplementation(libs.testcontainers.junit5)
     testImplementation(libs.kotlin.logging)
     testImplementation(libs.awaitility.kotlin)
-}
-
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.name.startsWith("spring-cloud-function-")) {
-            useVersion("4.2.2")
-        }
-    }
 }
