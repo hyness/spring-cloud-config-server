@@ -1,6 +1,8 @@
 package org.freshlegacycode.cloud.config.server
 
+import org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
 import org.assertj.core.api.Assertions.assertThat
+import org.bouncycastle.util.encoders.Base64
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.containerTimeout
 import org.freshlegacycode.cloud.config.server.ConfigServerApplicationTests.Companion.logger
 import org.junit.jupiter.api.Tag
@@ -14,8 +16,6 @@ import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.testcontainers.containers.ComposeContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric
-import org.testcontainers.shaded.org.bouncycastle.util.encoders.Base64
 
 @Testcontainers
 @Tags(Tag("integration"), Tag("security"))

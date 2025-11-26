@@ -1,18 +1,25 @@
 package org.freshlegacycode.cloud.config.server
 
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest
-import org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration
-import org.springframework.boot.actuate.health.HealthEndpoint
+import org.springframework.boot.amqp.autoconfigure.RabbitAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration
+import org.springframework.boot.health.actuate.endpoint.HealthEndpoint
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
+import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
 import org.springframework.boot.runApplication
+import org.springframework.boot.security.autoconfigure.ReactiveUserDetailsServiceAutoConfiguration
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration
+import org.springframework.boot.security.autoconfigure.actuate.web.reactive.ReactiveManagementWebSecurityAutoConfiguration
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest
+import org.springframework.boot.security.autoconfigure.actuate.web.servlet.ManagementWebSecurityAutoConfiguration
+import org.springframework.boot.security.autoconfigure.rsocket.RSocketSecurityAutoConfiguration
+import org.springframework.boot.security.autoconfigure.web.reactive.ReactiveWebSecurityAutoConfiguration
+import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
+import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
 import org.springframework.cloud.bus.*
 import org.springframework.cloud.bus.jackson.BusJacksonAutoConfiguration
 import org.springframework.cloud.config.monitor.EnvironmentMonitorAutoConfiguration
@@ -27,13 +34,12 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.cloud.stream.binder.kafka.config.ExtendedBindingHandlerMappingsProviderConfiguration as KafkaBinderAutoConfiguration
 import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHandlerMappingsProviderConfiguration as RabbitBinderAutoConfiguration
 
+
 @EnableConfigServer
 @SpringBootApplication(exclude = [
     DataSourceAutoConfiguration::class,
-    RedisAutoConfiguration::class,
+    DataRedisAutoConfiguration::class,
     ManagementContextAutoConfiguration::class,
-    ManagementWebSecurityAutoConfiguration::class,
-    SecurityAutoConfiguration::class,
     RabbitBinderAutoConfiguration::class,
     KafkaBinderAutoConfiguration::class,
     BusAutoConfiguration::class,
@@ -46,6 +52,17 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     EnvironmentMonitorAutoConfiguration::class,
     KafkaAutoConfiguration::class,
     RabbitAutoConfiguration::class,
+    // Security Autoconfiguration
+    ManagementWebSecurityAutoConfiguration::class,
+    SecurityAutoConfiguration::class,
+    ReactiveUserDetailsServiceAutoConfiguration::class,
+    UserDetailsServiceAutoConfiguration::class,
+    ReactiveManagementWebSecurityAutoConfiguration::class,
+    RSocketSecurityAutoConfiguration::class,
+    ReactiveWebSecurityAutoConfiguration::class,
+    SecurityFilterAutoConfiguration::class,
+    ServletWebSecurityAutoConfiguration::class,
+
 ])
 class ConfigServerApplication
 
@@ -80,12 +97,22 @@ internal abstract class CloudBusConfiguration
 
 @Profile("redis")
 @Configuration
-@Import(RedisAutoConfiguration::class)
+@Import(DataRedisAutoConfiguration::class)
 internal class RedisBackendConfiguration
 
 @Profile("security")
 @Configuration
-@Import(SecurityAutoConfiguration::class, ManagementWebSecurityAutoConfiguration::class)
+@Import(
+    SecurityAutoConfiguration::class,
+    ManagementWebSecurityAutoConfiguration::class,
+    ReactiveUserDetailsServiceAutoConfiguration::class,
+    UserDetailsServiceAutoConfiguration::class,
+    ReactiveManagementWebSecurityAutoConfiguration::class,
+    RSocketSecurityAutoConfiguration::class,
+    ReactiveWebSecurityAutoConfiguration::class,
+    SecurityFilterAutoConfiguration::class,
+    ServletWebSecurityAutoConfiguration::class,
+)
 internal class SecurityConfiguration
 
 @Profile("security")

@@ -50,14 +50,14 @@ tasks {
     bootBuildImage {
         applicationDirectory = "/opt/spring-cloud-config-server"
         buildpacks = listOf(
-            "paketo-buildpacks/ca-certificates",
-            "paketo-buildpacks/bellsoft-liberica",
-            "paketo-buildpacks/syft",
-            "paketo-buildpacks/executable-jar",
-            "paketo-buildpacks/dist-zip",
-            "paketo-buildpacks/spring-boot",
-            "paketo-buildpacks/environment-variables",
-            "paketobuildpacks/health-checker:1.17.0"
+            "docker.io/paketobuildpacks/ca-certificates",
+            "docker.io/paketobuildpacks/bellsoft-liberica",
+            "docker.io/paketobuildpacks/syft",
+            "docker.io/paketobuildpacks/executable-jar",
+            "docker.io/paketobuildpacks/dist-zip",
+            "docker.io/paketobuildpacks/spring-boot",
+            "docker.io/paketobuildpacks/environment-variables",
+            "docker.io/paketobuildpacks/health-checker:1.17.0"
         )
         docker.publishRegistry {
             username = dockerUsername
@@ -86,11 +86,13 @@ dependencies {
     implementation(platform(libs.spring.cloud))
     implementation(libs.bundles.spring.cloud.config)
     implementation(libs.bundles.spring.cloud.bus)
+    implementation(libs.spring.boot)
     implementation(libs.spring.boot.actuator)
     implementation(libs.spring.data.redis)
     implementation(libs.spring.boot.security)
     implementation(libs.spring.jdbc)
     implementation(libs.spring.vault)
+    implementation(libs.spring.security.data)
     implementation(libs.bundles.kotlin)
     implementation(libs.bundles.aws)
     runtimeOnly(libs.bundles.jdbc.drivers)

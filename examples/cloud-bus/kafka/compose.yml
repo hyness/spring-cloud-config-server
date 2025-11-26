@@ -60,7 +60,7 @@ services:
       - "8888"
 
   kafka:
-    image: bitnami/kafka:3.6
+    image: bitnamilegacy/kafka:3.6
     networks:
      - app-tier
     ports:

@@ -1,11 +1,11 @@
 [versions]
-aws = "2.30.23"
-aws-msk-iam-auth = "2.3.0"
-kotlin = "2.1.0"
-kotlin-logging = "7.0.7"
-spring-boot = "3.5.0"
-spring-cloud = "2025.0.0"
-spring-cloud-config = "4.3.0"
+aws = "2.36.3"
+aws-msk-iam-auth = "2.3.5"
+kotlin = "2.2.21"
+kotlin-logging = "7.0.13"
+spring-boot = "4.0.0"
+spring-cloud = "2025.1.0"
+spring-cloud-config = "5.0.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -35,9 +35,10 @@ kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = 
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
+spring-boot = { module = "org.springframework.boot:spring-boot-starter-classic" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
 spring-boot-security = { module = "org.springframework.boot:spring-boot-starter-security" }
-spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test-classic" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
 spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring-cloud = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring-cloud" }
@@ -47,5 +48,6 @@ spring-cloud-bus-kafka = { module = "org.springframework.cloud:spring-cloud-star
 spring-cloud-config-monitor = { module = "org.springframework.cloud:spring-cloud-config-monitor", version.ref = "spring-cloud-config" }
 spring-cloud-config-server = { module = "org.springframework.cloud:spring-cloud-config-server", version.ref = "spring-cloud-config" }
 spring-jdbc = { module = "org.springframework:spring-jdbc" }
+spring-security-data = { module = "org.springframework.security:spring-security-data" }
 spring-vault = { module = "org.springframework.vault:spring-vault-core" }
-testcontainers-junit5 = { module = "org.testcontainers:junit-jupiter" }
+testcontainers-junit5 = { module = "org.testcontainers:testcontainers-junit-jupiter" }
