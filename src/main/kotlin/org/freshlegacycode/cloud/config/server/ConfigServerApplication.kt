@@ -11,6 +11,9 @@ import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
 import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
 import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration
 import org.springframework.boot.mongodb.autoconfigure.MongoReactiveAutoConfiguration
+import org.springframework.boot.mongodb.autoconfigure.health.MongoHealthContributorAutoConfiguration
+import org.springframework.boot.mongodb.autoconfigure.health.MongoReactiveHealthContributorAutoConfiguration
+import org.springframework.boot.mongodb.autoconfigure.metrics.MongoMetricsAutoConfiguration
 import org.springframework.boot.runApplication
 import org.springframework.boot.security.autoconfigure.ReactiveUserDetailsServiceAutoConfiguration
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration
@@ -22,7 +25,6 @@ import org.springframework.boot.security.autoconfigure.rsocket.RSocketSecurityAu
 import org.springframework.boot.security.autoconfigure.web.reactive.ReactiveWebSecurityAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
-import org.springframework.boot.transaction.autoconfigure.TransactionAutoConfiguration
 import org.springframework.cloud.bus.*
 import org.springframework.cloud.bus.jackson.BusJacksonAutoConfiguration
 import org.springframework.cloud.config.monitor.EnvironmentMonitorAutoConfiguration
@@ -66,8 +68,10 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     ServletWebSecurityAutoConfiguration::class,
     // MongoDB Autoconfiguration
     MongoAutoConfiguration::class,
+    MongoHealthContributorAutoConfiguration::class,
+    MongoMetricsAutoConfiguration::class,
     MongoReactiveAutoConfiguration::class,
-    TransactionAutoConfiguration::class,
+    MongoReactiveHealthContributorAutoConfiguration::class,
 ])
 class ConfigServerApplication
 
@@ -103,8 +107,10 @@ internal abstract class CloudBusConfiguration
 @Profile("mongodb")
 @Configuration
 @Import(MongoAutoConfiguration::class,
+    MongoHealthContributorAutoConfiguration::class,
+    MongoMetricsAutoConfiguration::class,
     MongoReactiveAutoConfiguration::class,
-    TransactionAutoConfiguration::class)
+    MongoReactiveHealthContributorAutoConfiguration::class)
 internal class MongoDBBackendConfiguration
 
 @Profile("redis")

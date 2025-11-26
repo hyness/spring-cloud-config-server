@@ -35,20 +35,26 @@ kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = 
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 micrometer-prometheus = { module = "io.micrometer:micrometer-registry-prometheus" }
-spring-boot = { module = "org.springframework.boot:spring-boot-starter-classic" }
 spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+spring-boot-actuator-test = { module = "org.springframework.boot:spring-boot-starter-actuator-test" }
+spring-boot-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb" }
+spring-boot-data-mongodb-test = { module = "org.springframework.boot:spring-boot-starter-data-mongodb-test" }
+spring-boot-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-boot-data-redis-test = { module = "org.springframework.boot:spring-boot-starter-data-redis-test" }
+spring-boot-jdbc = { module = "org.springframework.boot:spring-boot-starter-jdbc" }
+spring-boot-jdbc-test = { module = "org.springframework.boot:spring-boot-starter-jdbc-test" }
+spring-boot-micrometer-metrics = { module = "org.springframework.boot:spring-boot-starter-micrometer-metrics" }
+spring-boot-micrometer-metrics-test = { module = "org.springframework.boot:spring-boot-starter-micrometer-metrics-test" }
+spring-boot-mongodb = { module = "org.springframework.boot:spring-boot-starter-mongodb" }
+spring-boot-mongodb-test = { module = "org.springframework.boot:spring-boot-starter-mongodb-test" }
 spring-boot-security = { module = "org.springframework.boot:spring-boot-starter-security" }
-spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test-classic" }
+spring-boot-security-test = { module = "org.springframework.boot:spring-boot-starter-security-test" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
-spring-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb" }
-spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring-cloud = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring-cloud" }
 spring-cloud-bus = { module = "org.springframework.cloud:spring-cloud-bus" }
 spring-cloud-bus-amqp = { module = "org.springframework.cloud:spring-cloud-starter-bus-amqp" }
 spring-cloud-bus-kafka = { module = "org.springframework.cloud:spring-cloud-starter-bus-kafka" }
 spring-cloud-config-monitor = { module = "org.springframework.cloud:spring-cloud-config-monitor", version.ref = "spring-cloud-config" }
 spring-cloud-config-server = { module = "org.springframework.cloud:spring-cloud-config-server", version.ref = "spring-cloud-config" }
-spring-jdbc = { module = "org.springframework:spring-jdbc" }
-spring-security-data = { module = "org.springframework.security:spring-security-data" }
 spring-vault = { module = "org.springframework.vault:spring-vault-core" }
 testcontainers-junit5 = { module = "org.testcontainers:testcontainers-junit-jupiter" }
