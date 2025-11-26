@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: mongodb
+  mongodb:
+    host: mongodb
+    port: '27017'
+    database: foo
+    username: user
+    password: pass

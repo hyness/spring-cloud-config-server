@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.bundles.spring.cloud.bus)
     implementation(libs.spring.boot)
     implementation(libs.spring.boot.actuator)
+    implementation(libs.spring.data.mongodb)
     implementation(libs.spring.data.redis)
     implementation(libs.spring.boot.security)
     implementation(libs.spring.jdbc)

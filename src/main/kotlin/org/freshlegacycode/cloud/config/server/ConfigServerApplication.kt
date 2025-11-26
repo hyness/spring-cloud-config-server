@@ -9,6 +9,8 @@ import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfigurat
 import org.springframework.boot.health.actuate.endpoint.HealthEndpoint
 import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration
 import org.springframework.boot.kafka.autoconfigure.KafkaAutoConfiguration
+import org.springframework.boot.mongodb.autoconfigure.MongoAutoConfiguration
+import org.springframework.boot.mongodb.autoconfigure.MongoReactiveAutoConfiguration
 import org.springframework.boot.runApplication
 import org.springframework.boot.security.autoconfigure.ReactiveUserDetailsServiceAutoConfiguration
 import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration
@@ -20,6 +22,7 @@ import org.springframework.boot.security.autoconfigure.rsocket.RSocketSecurityAu
 import org.springframework.boot.security.autoconfigure.web.reactive.ReactiveWebSecurityAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration
 import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration
+import org.springframework.boot.transaction.autoconfigure.TransactionAutoConfiguration
 import org.springframework.cloud.bus.*
 import org.springframework.cloud.bus.jackson.BusJacksonAutoConfiguration
 import org.springframework.cloud.config.monitor.EnvironmentMonitorAutoConfiguration
@@ -33,7 +36,6 @@ import org.springframework.security.config.annotation.web.invoke
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.cloud.stream.binder.kafka.config.ExtendedBindingHandlerMappingsProviderConfiguration as KafkaBinderAutoConfiguration
 import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHandlerMappingsProviderConfiguration as RabbitBinderAutoConfiguration
-
 
 @EnableConfigServer
 @SpringBootApplication(exclude = [
@@ -62,7 +64,10 @@ import org.springframework.cloud.stream.binder.rabbit.config.ExtendedBindingHand
     ReactiveWebSecurityAutoConfiguration::class,
     SecurityFilterAutoConfiguration::class,
     ServletWebSecurityAutoConfiguration::class,
-
+    // MongoDB Autoconfiguration
+    MongoAutoConfiguration::class,
+    MongoReactiveAutoConfiguration::class,
+    TransactionAutoConfiguration::class,
 ])
 class ConfigServerApplication
 
@@ -94,6 +99,13 @@ internal class CloudBusRabbitConfiguration : CloudBusConfiguration()
         PathServiceMatcherAutoConfiguration::class,
         EnvironmentMonitorAutoConfiguration::class)
 internal abstract class CloudBusConfiguration
+
+@Profile("mongodb")
+@Configuration
+@Import(MongoAutoConfiguration::class,
+    MongoReactiveAutoConfiguration::class,
+    TransactionAutoConfiguration::class)
+internal class MongoDBBackendConfiguration
 
 @Profile("redis")
 @Configuration

@@ -143,6 +143,17 @@ docker run -it -p 8888:8888 \
       -e SPRING_DATA_REDIS_PORT=6379
       hyness/spring-cloud-config-server
 ```
+#### MongoDB
+```
+docker run -it -p 8888:8888 \
+      -e SPRING_PROFILES_ACTIVE=mongodb \
+      -e SPRING_MONGO_HOST=localhost
+      -e SPRING_MONGO_PORT=27017
+      -e SPRING_MONGO_DATABASE=my_db_name
+      -e SPRING_MONGO_USERNAME=my_db_username
+      -e SPRING_MONGO_PASSWORD=my_db_password
+      hyness/spring-cloud-config-server
+```
 #### JDBC
 ```
 docker run -it -p 8888:8888 \

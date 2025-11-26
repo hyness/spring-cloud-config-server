@@ -64,6 +64,7 @@ jobs:
           cloud-bus-rabbitmq,
           git,
           mariadb,
+          mongodb,
           native,
           postgres,
           prometheus,

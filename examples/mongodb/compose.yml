@@ -1,0 +1,69 @@
+# Docker Compose example for testing a mongodb backed repo
+
+services:
+  # Configured through environment variables
+  config-server-env:
+    depends_on:
+      - mongodb
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: mongodb
+      SPRING_MONGODB_HOST: mongodb
+      SPRING_MONGODB_PORT: 27017
+      SPRING_MONGODB_DATABASE: foo
+      SPRING_MONGODB_USERNAME: user
+      SPRING_MONGODB_PASSWORD: pass
+
+  # Configured through mounted config volume
+  config-server-dir:
+    depends_on:
+      - mongodb
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8888"
+    volumes:
+      - ./config:/config
+
+  # Configured through system properties
+  config-server-props:
+    depends_on:
+      - mongodb
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8888"
+    environment:
+      JAVA_OPTS: >
+        -Dspring.profiles.active=mongodb
+        -Dspring.mongodb.host=mongodb
+        -Dspring.mongodb.port=27017
+        -Dspring.mongodb.database=foo
+        -Dspring.mongodb.username=user
+        -Dspring.mongodb.password=pass
+
+  # Configured through command line arguments
+  config-server-args:
+    depends_on:
+      - mongodb
+    image: "${REGISTRY:-docker.io}/${IMAGE_NAME:-hyness/spring-cloud-config-server}:${TAG:-latest}"
+    ports:
+      - "8888"
+    command:
+      - --spring.profiles.active=mongodb
+      - --spring.mongodb.host=mongodb
+      - --spring.mongodb.port=27017
+      - --spring.mongodb.database=foo
+      - --spring.mongodb.username=user
+      - --spring.mongodb.password=pass
+
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=foo
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+    volumes:
+      - ./populate-mongo.sh:/docker-entrypoint-initdb.d/populate-mongo.sh

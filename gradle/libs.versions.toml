@@ -40,6 +40,7 @@ spring-boot-actuator = { module = "org.springframework.boot:spring-boot-starter-
 spring-boot-security = { module = "org.springframework.boot:spring-boot-starter-security" }
 spring-boot-test = { module = "org.springframework.boot:spring-boot-starter-test-classic" }
 spring-boot-testcontainers = { module = "org.springframework.boot:spring-boot-testcontainers" }
+spring-data-mongodb = { module = "org.springframework.boot:spring-boot-starter-data-mongodb" }
 spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 spring-cloud = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring-cloud" }
 spring-cloud-bus = { module = "org.springframework.cloud:spring-cloud-bus" }
