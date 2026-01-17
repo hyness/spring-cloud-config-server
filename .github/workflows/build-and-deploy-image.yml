@@ -30,6 +30,10 @@ on:
       tags:
         description: Comma separated list of docker tags to create
         type: string
+      runner:
+        description: GitHub runner to use
+        type: string
+        default: ubuntu-latest
 
 jobs:
   generate-jvm-tag:
@@ -41,7 +45,7 @@ jobs:
   build-and-push:
     name: Build and deploy Java ${{ needs.generate-jvm-tag.outputs.jvm-tag }} OCI image to registry
     needs: generate-jvm-tag
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

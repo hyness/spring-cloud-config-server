@@ -42,9 +42,13 @@ jobs:
     needs:
       - build-vars
       - sha-tag
+    strategy:
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm64]
     with:
       image-name: ${{ github.repository }}:${{ needs.sha-tag.outputs.tag }}
       registry: ${{ needs.build-vars.outputs.registry }}
+      runner: ${{ matrix.runner }}
 
   integration-test:
     name: Verify OCI image with ${{ matrix.backend }}
@@ -52,7 +56,7 @@ jobs:
       - build-vars
       - build-and-deploy
       - sha-tag
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
@@ -72,6 +76,7 @@ jobs:
           security,
           vault
         ]
+        runner: [ubuntu-latest, ubuntu-24.04-arm64]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
