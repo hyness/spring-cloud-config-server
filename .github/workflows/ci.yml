@@ -95,5 +95,6 @@ jobs:
           ./gradlew test -i
           -PtestFilter=${{ matrix.backend }}
           -PimageRegistry=${{ needs.build-vars.outputs.registry }}
+          -PimageName=${{ github.repository }}:${{ needs.sha-tag.outputs.tag }}
           -PjdkVersion=${{ needs.build-vars.outputs.jvm-version }}
           -PimageTag=${{ needs.sha-tag.outputs.tag }}
