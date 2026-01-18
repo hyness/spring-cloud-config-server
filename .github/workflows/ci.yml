@@ -44,7 +44,7 @@ jobs:
       - sha-tag
     strategy:
       matrix:
-        runner: [ubuntu-latest, ubuntu-24.04-arm64]
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
     with:
       image-name: ${{ github.repository }}:${{ needs.sha-tag.outputs.tag }}
       registry: ${{ needs.build-vars.outputs.registry }}
@@ -76,7 +76,7 @@ jobs:
           security,
           vault
         ]
-        runner: [ubuntu-latest, ubuntu-24.04-arm64]
+        runner: [ubuntu-latest, ubuntu-24.04-arm]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
