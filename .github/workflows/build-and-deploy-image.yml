@@ -75,7 +75,7 @@ jobs:
           echo "DOCKER_USERNAME=${{ github.actor }}" >> $GITHUB_ENV
           echo "DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Build and deploy OCI image
+      - name: Build and deploy OCI image on ${{ inputs.runner }}
         run: >
           ./gradlew bootBuildImage
           -PjvmType=${{ inputs.image-jvm-type }}

@@ -51,7 +51,7 @@ jobs:
       runner: ${{ matrix.runner }}
 
   integration-test:
-    name: Verify OCI image with ${{ matrix.backend }}
+    name: Verify OCI image with ${{ matrix.backend }} on ${{ matrix.runner }}
     needs:
       - build-vars
       - build-and-deploy
