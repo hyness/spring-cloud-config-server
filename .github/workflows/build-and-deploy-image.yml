@@ -3,6 +3,10 @@ name: Build and deploy OCI image to registry
 on:
   workflow_call:
     inputs:
+      arch:
+        description: Architecture to build (x64, arm)
+        type: string
+        default: x64
       image-jvm-type:
         description: JVM type for output image
         type: string
@@ -35,13 +39,16 @@ jobs:
   generate-jvm-tag:
     uses: ./.github/workflows/generate-jvm-tag.yml
     with:
-      jvm-type: ${{ inputs.jvm-type }}
-      jvm-version: ${{ inputs.jvm-version }}
+      jvm-type: ${{ inputs.image-jvm-type }}
+      jvm-version: ${{ inputs.image-jvm-version }}
 
   build-and-push:
-    name: Build and deploy Java ${{ needs.generate-jvm-tag.outputs.jvm-tag }} OCI image to registry
+    name: Build and deploy ${{ inputs.arch }} OCI image
     needs: generate-jvm-tag
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.arch == 'arm' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+    outputs:
+      image-name: ${{ steps.outputs.outputs.image-name }}
+      arch: ${{ inputs.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,7 +64,18 @@ jobs:
 
       - name: Add tags environment variable
         if: inputs.tags != ''
-        run: echo "TAGS=-PdockerTags=${{ inputs.tags }}" >> $GITHUB_ENV
+        run: |
+          IFS=',' read -ra TAG_ARRAY <<< "${{ inputs.tags }}"
+          ARCH_TAGS=""
+          for tag in "${TAG_ARRAY[@]}"; do
+            tag=$(echo "$tag" | xargs)
+            if [ -z "$ARCH_TAGS" ]; then
+              ARCH_TAGS="${tag}-${{ inputs.arch }}"
+            else
+              ARCH_TAGS="${ARCH_TAGS},${tag}-${{ inputs.arch }}"
+            fi
+          done
+          echo "DOCKER_TAGS=$ARCH_TAGS" >> $GITHUB_ENV
 
       - name: Setup Docker Hub credentials
         if: inputs.registry == 'docker.io'
@@ -72,6 +90,7 @@ jobs:
           echo "DOCKER_PASSWORD=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
 
       - name: Build and deploy OCI image
+        id: build
         run: >
           ./gradlew bootBuildImage
           -PjvmType=${{ inputs.image-jvm-type }}
@@ -79,5 +98,11 @@ jobs:
           -PdockerUsername=${{ env.DOCKER_USERNAME }}
           -PdockerPassword=${{ env.DOCKER_PASSWORD }}
           $TAGS
-          --imageName=${{ inputs.registry }}/${{ inputs.image-name }}
+          -PimagePlatform=${{ inputs.arch == 'arm' && 'linux/arm64' || 'linux/amd64' }}
+          --imageName="${{ inputs.registry }}/${{ inputs.image-name }}"
           --publishImage
+
+      - name: Output image name
+        id: outputs
+        run: |
+          echo "image-name=${{ inputs.registry }}/${{ inputs.image-name }}" >> $GITHUB_OUTPUT

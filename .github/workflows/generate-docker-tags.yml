@@ -69,7 +69,7 @@ jobs:
 
       - name: Remove prefix, if necessary
         run: |
-          echo "BUILD_VERSION=`echo "${{ inputs.build-version }} | sed 's/.* -> //'`" >> $GITHUB_ENV
+          echo "BUILD_VERSION=`echo "${{ inputs.build-version }}" | sed 's/.* -> //'`" >> $GITHUB_ENV
 
       - name: Determine if latest version
         run: |

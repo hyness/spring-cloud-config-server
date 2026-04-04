@@ -3,6 +3,15 @@ name: Build and test
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      arch:
+        description: Architecture to build/test (x64, arm, all)
+        type: choice
+        options:
+          - x64
+          - arm
+          - all
+        default: all
 
 env:
   DISTRIBUTION: temurin
@@ -37,25 +46,30 @@ jobs:
       jvm-version: ${{ needs.build-vars.outputs.jvm-version }}
 
   build-and-deploy:
-    name: Build and deploy OCI image
+    name: Build and deploy ${{ matrix.arch }} OCI image
     uses: ./.github/workflows/build-and-deploy-image.yml
     needs:
       - build-vars
       - sha-tag
+    strategy:
+      matrix:
+        arch: [x64, arm]
     with:
-      image-name: ${{ github.repository }}:${{ needs.sha-tag.outputs.tag }}
+      image-name: ${{ github.repository }}:${{ needs.sha-tag.outputs.tag }}-${{ matrix.arch }}
       registry: ${{ needs.build-vars.outputs.registry }}
+      arch: ${{ matrix.arch }}
 
   integration-test:
-    name: Verify OCI image with ${{ matrix.backend }}
+    name: Verify ${{ matrix.arch }} OCI image with ${{ matrix.backend }}
     needs:
       - build-vars
       - build-and-deploy
       - sha-tag
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.arch == 'arm' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
+        arch: [x64, arm]
         backend: [
           aws-param-store,
           aws-s3,
@@ -88,7 +102,9 @@ jobs:
       - name: Test with ${{ matrix.backend }}
         run: >
           ./gradlew test -i
+          -Dtestcontainers.socat.image=alpine/socat:1.7.4.4
           -PtestFilter=${{ matrix.backend }}
           -PimageRegistry=${{ needs.build-vars.outputs.registry }}
+          -PimageName=${{ github.repository }}
           -PjdkVersion=${{ needs.build-vars.outputs.jvm-version }}
-          -PimageTag=${{ needs.sha-tag.outputs.tag }}
+          -PimageTag=${{ needs.sha-tag.outputs.tag }}-${{ matrix.arch }}
