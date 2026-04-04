@@ -75,7 +75,7 @@ services:
       - --spring.cloud.config.server.awsparamstore.region=us-east-1
 
   localstack:
-    image: localstack/localstack:stable
+    image: localstack/localstack:3.8.1
     networks:
       aws:
         aliases:

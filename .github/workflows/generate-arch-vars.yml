@@ -1,0 +1,30 @@
+name: Generate a runs-on image name for an architecture
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        description: Image to use for the given architecture
+        type: string
+        required: true
+    outputs:
+      runs-on-image-name:
+        description: Runs on image name for the given architecture
+        value: ${{ jobs.generate-runs-on-image-name.outputs.runs-on-image-name }}
+      image-platform:
+        description: Image platform for the given architecture
+        value: ${{ jobs.generate-runs-on-image-name.outputs.image-platform }}
+
+jobs:
+  generate-runs-on-image-name:
+    name: Generate an arch runs-on image name
+    runs-on: ubuntu-latest
+    outputs:
+      runs-on-image-name: ${{ steps.write-tag.outputs.runs-on-image-name }}
+      image-platform: ${{ steps.write-tag.outputs.runs-on-image-name }}
+    steps:
+      - name: Write output
+        id: write-runs-on-image-name
+        run: |
+          echo "runs-on-image-name=${{ inputs.arch == 'arm' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}" >> $GITHUB_OUTPUT
+          echo "image-platform=${{ inputs.arch == 'arm' && 'linux/arm64' || 'linux/amd64' }}" >> $GITHUB_OUTPUT

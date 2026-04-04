@@ -14,6 +14,10 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 * `5.0.1-jre21`, `5.0-jre21`, `jre21`
 * `5.0.1-jdk21`, `5.0-jdk21`, `jdk21`
 
+### Supported Platforms
+* arm
+* x64
+
 ### Usage
 ```
 docker run -it --name=spring-cloud-config-server \

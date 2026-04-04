@@ -72,8 +72,7 @@ tasks {
             "BPE_THC_PATH" to "/actuator/health",
             "BPE_THC_PORT" to "8888"
         )
-        imageName = "hyness/spring-cloud-config-server"
-        tags = dockerTags?.split(',')
+        tags = (dockerTags ?: System.getenv("DOCKER_TAGS"))?.split(',')?.filter { it.isNotBlank() }
     }
 }
 
