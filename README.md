@@ -9,10 +9,10 @@ A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-clo
 [![License](https://img.shields.io/github/license/hyness/spring-cloud-config-server)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Supported tags
-* `5.0.1-jre17`, `5.0-jre17`, `jre17`, `5.0.1`, `5.0`, `latest`
-* `5.0.1-jdk17`, `5.0-jdk17`, `jdk17`
-* `5.0.1-jre21`, `5.0-jre21`, `jre21`
-* `5.0.1-jdk21`, `5.0-jdk21`, `jdk21`
+* `5.0.2-jre17`, `5.0-jre17`, `jre17`, `5.0.2`, `5.0`, `latest`
+* `5.0.2-jdk17`, `5.0-jdk17`, `jdk17`
+* `5.0.2-jre21`, `5.0-jre21`, `jre21`
+* `5.0.2-jdk21`, `5.0-jdk21`, `jdk21`
 
 ### Supported Platforms
 * arm
