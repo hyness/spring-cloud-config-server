@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Spring Cloud Config Documentation
+    url: https://docs.spring.io/spring-cloud-config/reference/
+    about: Official Spring Cloud Config documentation
+  - name: Spring Boot Documentation
+    url: https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/
+    about: Spring Boot configuration and externalized configuration docs
