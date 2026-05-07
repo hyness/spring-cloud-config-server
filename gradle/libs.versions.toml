@@ -5,7 +5,7 @@ kotlin = "2.3.20"
 kotlin-logging = "8.0.01"
 spring-boot = "4.0.5"
 spring-cloud = "2025.1.1"
-spring-cloud-config = "5.0.2"
+spring-cloud-config = "5.0.3"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

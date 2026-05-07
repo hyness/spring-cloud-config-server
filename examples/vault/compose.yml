@@ -53,7 +53,7 @@ services:
 
   vault:
     privileged: true
-    image: hashicorp/vault
+    image: hashicorp/vault:1.21
     ports:
       - "8200:8200"
     environment:
