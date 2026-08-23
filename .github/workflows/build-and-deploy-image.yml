@@ -35,6 +35,10 @@ on:
         description: Comma separated list of docker tags to create
         type: string
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   generate-jvm-tag:
     uses: ./.github/workflows/generate-jvm-tag.yml
