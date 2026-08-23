@@ -28,9 +28,11 @@ jobs:
           private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
 
       - name: Self-hosted Renovate
-        uses: renovatebot/github-action@v41
+        uses: renovatebot/github-action@v46.2.2
         env:
           LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_PLATFORM: github
           RENOVATE_TOKEN: ${{ steps.app-token.outputs.token }}
+          RENOVATE_USERNAME: spring-cloud-config-server-auto[bot]
+          RENOVATE_GIT_AUTHOR: spring-cloud-config-server-auto[bot] <4693763+spring-cloud-config-server-auto[bot]@users.noreply.github.com>
