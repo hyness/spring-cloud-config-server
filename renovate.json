@@ -1,0 +1,39 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "timezone": "America/Los_Angeles",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "gradle": {
+    "enabled": true
+  },
+  "github-actions": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Keep Spring Cloud train and Spring Cloud Config in a single PR - project.version is derived from spring-cloud-config, so these must move together.",
+      "matchManagers": ["gradle"],
+      "matchPackageNames": [
+        "org.springframework.cloud:spring-cloud-dependencies",
+        "org.springframework.cloud:spring-cloud-config-server",
+        "org.springframework.cloud:spring-cloud-config-monitor"
+      ],
+      "groupName": "spring-cloud-config",
+      "commitMessageTopic": "Spring Cloud Config"
+    },
+    {
+      "description": "Spring Boot moves independently and can require code changes (e.g. #147), so keep it as its own PR.",
+      "matchManagers": ["gradle"],
+      "matchPackageNames": ["org.springframework.boot:*"],
+      "groupName": "spring-boot"
+    },
+    {
+      "description": "Never auto-merge - bumps need a real CI run (multi-arch image build + testcontainers integration matrix) and occasional code changes before merging.",
+      "matchManagers": ["gradle", "github-actions"],
+      "automerge": false
+    }
+  ]
+}
