@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Spring Cloud Config Server documentation
+    url: https://docs.spring.io/spring-cloud-config/reference/
+    about: Configuration options, properties, and behavior of Spring Cloud Config Server itself.
+  - name: Spring Cloud Config upstream issue tracker
+    url: https://github.com/spring-cloud/spring-cloud-config/issues
+    about: Bugs or feature requests about Spring Cloud Config Server's behavior (not this Docker packaging).
+  - name: Docker Hub
+    url: https://hub.docker.com/r/hyness/spring-cloud-config-server
+    about: Available tags and pulling the image.

@@ -1,8 +1,8 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an idea for this image or its packaging
 title: ''
-labels: ''
+labels: enhancement
 assignees: ''
 
 ---
@@ -17,4 +17,4 @@ A clear and concise description of what you want to happen.
 A clear and concise description of any alternative solutions or features you've considered.
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Note if this is a request for Spring Cloud Config Server itself (best raised upstream at [spring-cloud/spring-cloud-config](https://github.com/spring-cloud/spring-cloud-config)) versus something about this image/packaging (platforms, tags, base image, entrypoint behavior, etc.).

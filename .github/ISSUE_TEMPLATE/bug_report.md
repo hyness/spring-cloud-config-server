@@ -1,38 +1,34 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a problem with the Docker image or its configuration
 title: ''
-labels: ''
+labels: bug
 assignees: ''
 
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of what's wrong.
 
 **To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+The `docker run` / `docker-compose` command and any mounted configuration used to reproduce it:
+```
+docker run -it -p 8888:8888 \
+      -v /path/to/config:/config \
+      hyness/spring-cloud-config-server:<tag>
+```
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Logs**
+Relevant output from `docker logs` (please redact secrets/credentials).
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Environment**
+ - Image tag: [e.g. 5.0.4-jre17]
+ - Platform: [e.g. linux/amd64, linux/arm64]
+ - Docker version: [e.g. output of `docker version`]
+ - Config format: [e.g. application.yml, environment variables, Git-backed]
 
 **Additional context**
 Add any other context about the problem here.
