@@ -12,16 +12,11 @@
   },
   "packageRules": [
     {
-      "description": "Keep Spring Boot, the Spring Cloud train, and Spring Cloud Config in a single PR - Boot's version is dictated by whichever Cloud train is in use, and project.version is derived from spring-cloud-config, so all three must move together for auto-release to fire correctly.",
-      "matchManagers": ["gradle"],
-      "matchPackageNames": [
-        "org.springframework.boot:*",
-        "org.springframework.cloud:spring-cloud-dependencies",
-        "org.springframework.cloud:spring-cloud-config-server",
-        "org.springframework.cloud:spring-cloud-config-monitor"
-      ],
-      "groupName": "spring-cloud-config",
-      "commitMessageTopic": "Spring Cloud Config"
+      "description": "Group every dependency update (gradle + github-actions) into a single PR instead of one PR per dependency.",
+      "matchManagers": ["gradle", "github-actions"],
+      "groupName": "all dependencies",
+      "commitMessageTopic": "dependencies",
+      "schedule": ["before 6am on monday"]
     },
     {
       "description": "Never auto-merge - bumps need a real CI run (multi-arch image build + testcontainers integration matrix) and occasional code changes before merging.",
