@@ -12,7 +12,19 @@
   },
   "packageRules": [
     {
-      "description": "Keep Spring Boot, the Spring Cloud train, and Spring Cloud Config in a single PR - Boot's version is dictated by whichever Cloud train is in use, and project.version is derived from spring-cloud-config, so all three must move together for auto-release to fire correctly.",
+      "description": "Auto-merge once the full CI matrix (multi-arch image build + every backend integration test) passes - merging to main doesn't release anything, releases are still cut manually by tagging a version.",
+      "matchManagers": ["gradle", "github-actions"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Major version bumps get a human look before merging - API/behavior breaks aren't always caught by tests.",
+      "matchManagers": ["gradle", "github-actions"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Keep Spring Boot, the Spring Cloud train, and Spring Cloud Config in a single PR - Boot's version is dictated by whichever Cloud train is in use, and project.version is derived from spring-cloud-config, so all three must move together. Merging this is effectively the signal that a release is ready to be cut, so it always stays manual.",
       "matchManagers": ["gradle"],
       "matchPackageNames": [
         "org.springframework.boot:*",
@@ -21,11 +33,7 @@
         "org.springframework.cloud:spring-cloud-config-monitor"
       ],
       "groupName": "spring-cloud-config",
-      "commitMessageTopic": "Spring Cloud Config"
-    },
-    {
-      "description": "Never auto-merge - bumps need a real CI run (multi-arch image build + testcontainers integration matrix) and occasional code changes before merging.",
-      "matchManagers": ["gradle", "github-actions"],
+      "commitMessageTopic": "Spring Cloud Config",
       "automerge": false
     }
   ]
