@@ -2,6 +2,7 @@
 A docker image of [Spring Cloud Config Server](https://docs.spring.io/spring-cloud-config/reference/).
 
 ![CI Build](https://github.com/hyness/spring-cloud-config-server/actions/workflows/ci.yml/badge.svg)
+[![Trivy Scan](https://github.com/hyness/spring-cloud-config-server/actions/workflows/trivy-scan.yml/badge.svg)](https://github.com/hyness/spring-cloud-config-server/security/code-scanning)
 ![Docker Image Version (latest semver)](https://img.shields.io/docker/v/hyness/spring-cloud-config-server?sort=semver)
 [![Docker Stars](https://img.shields.io/docker/stars/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/hyness/spring-cloud-config-server.svg?style=flat)](https://hub.docker.com/r/hyness/spring-cloud-config-server)
