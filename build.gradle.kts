@@ -52,7 +52,9 @@ tasks {
         buildpacks = listOf(
             "docker.io/paketobuildpacks/ca-certificates",
             "docker.io/paketobuildpacks/bellsoft-liberica",
-            "docker.io/paketobuildpacks/syft",
+            // Pinned: syft 2.42.x picks the amd64 binary on arm64 builds (exec format error)
+            // https://github.com/paketo-buildpacks/syft/issues/479
+            "docker.io/paketobuildpacks/syft:2.41.0",
             "docker.io/paketobuildpacks/executable-jar",
             "docker.io/paketobuildpacks/dist-zip",
             "docker.io/paketobuildpacks/spring-boot",
